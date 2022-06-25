@@ -1,0 +1,533 @@
+#landipgagebody {
+    background-image: url('../images/R (1).jpeg');
+}
+.main {
+    display: flex;
+}
+.card-body {
+    background-color: white;
+}
+.logocontainer {
+    height: 100px;
+}
+#landlogo {
+    background-color: whitesmoke;
+}
+.logoimg {
+   width: 100%;
+   text-align: center;
+}
+#explanation {
+    background-color: #f2f2f2;
+}
+#modulesmgmt,#staffmgmtol {
+    background-color: #bfbfbf;
+    margin: 5px;
+}
+#modulesmgmt, h6 a {
+    text-decoration: none;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    color: #000000;  
+}
+#modulesmgmt h6 a:hover {
+    background-color: #00cc99;
+    letter-spacing: 4px;
+    padding: 2px;
+}
+.hovered {
+    background-color: #00cc99;
+    letter-spacing: 4px;
+    padding: 2px; 
+}
+#studentmgmtol,#staffmgmtol,#academicmgmtol,#financemgmtol,#communicationmgmtol,#librarymgmtol,#parentmgmtol {
+    background-color: white;
+    display: none;
+}
+#studentmgmtol,#staffmgmtol,#academicmgmtol,#financemgmtol,#communicationmgmtol,#librarymgmtol,#parentmgmtol li {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    letter-spacing: 1px;
+}
+#modulesservices {
+    background-color: #ccffcc;
+}
+.realexplanation {
+    border-left: 5px solid #00cc99;
+}
+#feerow {
+    background-color: #00cc44;
+    margin-bottom: 2px;
+}
+#feestructurediv {
+    background-color: #bfbfbf;
+    padding-top: 4px;
+}
+#submitfeeform {
+    background-color: #009933;
+}
+.realexplanation p {
+    font-size: 17px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.landingpagenav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px;
+    background-color: white;
+    flex-direction: row;
+}
+.landingpagenav a {
+    text-decoration: none;
+    font-weight: bold;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    padding: 5px;
+    margin: 3px;
+    border-right: 3px solid black;
+}
+.landingpagenav #aboutnav {
+    color:  black;
+}
+.landingpagenav #contactsnav {
+    color: #ff4d4d;
+}
+.landingpagenav #loginnav {
+    color: #00cc99;
+}
+.landingpagenav #regnav {
+    color:  #ffa500;
+}
+.landingpagenav #modulesnav {
+    color:  #e60000;
+}
+.landingpagenav #plansnav {
+    color:  #ff3399;
+}
+.landingpagenav #learnonlinenav {
+    color:  #009933;
+}
+.landingpagenav #learnonlinenav:hover,#plansnav:hover,#modulesnav:hover,#regnav:hover,#loginnav:hover,#contactsnav:hover,#aboutnav:hover,#markertplacenav:hover {
+    background-color: #009933;
+    color: white;
+    letter-spacing: 2px;
+}
+#somediv2,#somediv {
+    /* background-color: #009933; */
+    background-color: white;
+}
+#somediv2 p {
+    background-color: #e6e600;
+    padding: 5px;
+    letter-spacing: 2px;
+    font-family: 'Courier New', Courier, monospace;
+}
+#portalslinks {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: whitesmoke;
+}
+#portalslinks a {
+    text-decoration: none;
+    background-color: #00cc99;
+    padding: 5px;
+    width: 50%;
+    text-align: center;
+    border-radius: 5px;
+    color: #000000;
+    font-size: 18px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+#portalslinks a:hover {
+    background-color: #47d147;
+    box-shadow: 7px 7px lightseagreen;
+}
+#contactsdiv2 {
+    background-color: #262626;
+    padding: 30px;
+}
+#contacts3 {
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: center;
+    border-bottom: 1px solid #f2f2f2;
+    padding-bottom: 10px;
+}
+#contacts p {
+    color: #f2f2f2;
+}
+#contacts {
+    flex: 20%;
+    margin: 10px;
+}
+#quicklinks {
+    flex: 20%;
+    margin: 10px;
+}
+#services2 {
+    flex: 20%;
+    margin: 10px;
+}
+#contactform {
+    flex: 20%;
+    margin: 10px;
+}
+#contacts h6 {
+    color: white;
+    font-weight: bold;
+    /* border-bottom: 1px solid #00b300; */
+    /* text-align: center; */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#quicklinks h6 {
+    color: white;
+    font-weight: bold;
+    /* border-bottom: 1px solid #00b300; */
+    /* text-align: center; */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#services2 h6 {
+    color: white;
+    font-weight: bold;
+    /* border-bottom: 1px solid #00b300; */
+    /* text-align: center; */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#contactform h6 {
+    color: white;
+    font-weight: bold;
+    /* border-bottom: 1px solid #00b300; */
+    /* text-align: center; */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#contactlinks a{
+    color: #d9d9d9;
+    text-decoration: none;
+    font-weight: bold;
+}
+#contactlinks a:hover {
+    color: #009933;
+    font-weight: bold;
+}
+#contacts p {
+    color: #d9d9d9;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#contactsdiv2 p {
+    color: #d9d9d9;
+    margin-top: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#quicklinks a {
+    text-decoration: none;
+    color: #d9d9d9;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#quicklinks a:hover {
+    text-decoration: none;
+    color: #009933;
+    letter-spacing: 3px;
+    font-size: 17px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.registereqresponse,.registereqresponse2 {
+    background-color: #009933;
+    padding: 7px;
+    text-align: center;
+    color: white;
+}
+#messageform {
+    background-color: #ccffcc;
+    padding: 10px;
+}
+@media (max-width: 985px){
+    #contacts {
+        flex: 40%;
+        margin: 10px;
+    }
+    #quicklinks {
+        flex: 40%;
+        margin: 10px;
+    }
+    #services2 {
+        flex: 40%;
+        margin: 10px;
+    }
+    #contactform {
+        flex: 40%;
+        margin: 10px;
+    }
+}
+@media (max-width: 600px){
+    #contacts {
+        flex: 80%;
+        margin: 10px;
+    }
+    #quicklinks {
+        flex: 80%;
+        margin: 10px;
+    }
+    #services2 {
+        flex: 80%;
+        margin: 10px;
+    }
+    #contactform {
+        flex: 80%;
+        margin: 10px;
+    }
+}
+/* .landingpagenav a:hover {
+    background-color: #993333;
+    color: white;
+} */
+@media (max-width: 650px){
+    .landingpagenav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3px;
+        background-color: white;
+        flex-direction: column;
+    } 
+    .landingpagenav a {
+        text-decoration: none;
+        font-weight: bold;
+        padding: 2px;
+        margin: 3px;
+        border: 0;
+    }
+}
+.navigation {
+    margin: 10px;
+}
+.loginsignup {
+    float: right;
+}
+.description {
+    margin-top: 50px;
+}
+.imgdiv {
+    text-align: center;
+}
+.conbtn {
+    text-align: center;
+    margin: 20px;
+}
+.sidenavlinks a, .librarybtn, .academicbtn, .financesbtn, .peoplebtn{
+    padding: 3px 4px 3px 8px;
+    display: block;
+    color: white;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    width: 100%;
+}
+.fa-angle-left,.fa-angle-down {
+    float: right;
+    margin-top: 5px;
+}
+.sidenav a:hover, .librarybtn:hover, .academicbtn:hover, .financesbtn:hover, .peoplebtn:hover {
+    color: #f1f1f1;
+    background-color: #47d147;
+  }
+.library-dropdown,.academics-dropdown,.finances-dropdown,.people-dropdown {
+    background-color: whitesmoke;
+    padding-left: 20px;
+}
+.library-dropdown a,.academics-dropdown a,.finances-dropdown a,.people-dropdown a{
+    text-decoration: none;
+    color: black;
+
+}
+.sidenav {
+    width: 20%;
+    height: 100vh;
+    overflow-y: auto;
+} 
+.newsidenav {
+    display: none;
+    height: 100vh;
+    overflow-y: auto;
+}
+.maincontent {
+    width: 80%;
+    height: 100vh;
+    overflow-y: auto; 
+}
+.newmaincontent {
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+}
+.slogo {
+    height: 50px;
+    width: 100%;
+}
+.motto {
+    background-color: #e6e6e6;
+    text-transform: uppercase;
+    margin-bottom: 0px;
+    width: 100%;
+}
+.mottoheading {
+    padding: 10px;
+}
+.card {
+    height: 100vh;
+    overflow-y: auto; 
+}
+.card-body {
+    background-color: #808080;
+    padding: 10px;
+}
+.sidenavlinks {
+    background-color: #333333;
+    height: 100%;
+}
+.togglesidebar {
+    display: none;
+}
+/* .topnavdiv {
+    position: fixed;
+    width: 80%;
+    background-color: #cccccc;
+    z-index: 1;
+} */
+.topnav {
+    width: 100%;
+    background-color: #333;
+    height: 50px;
+    padding: 5px;
+}
+
+#navprofile {
+    border-radius: 50%;
+    height: 45px;
+    width: 45px;
+}
+.topnav a{
+    text-decoration: none;
+}
+.navtoggler {
+    font-size: 20px;
+    font-weight: bolder;
+    margin-right: 10px; 
+}
+#closesidenav {
+    font-size: 20px;
+    font-weight: bolder;
+    margin-right: 10px; 
+    display: none;
+}
+#user {
+    background-color: #e6e6e6; 
+    padding: 5px;
+    border-radius: 25px;
+}
+.greeting {
+    font-weight: bolder;
+    font-size: 20px;
+    color: honeydew;
+}
+.logouticon {
+    float: right;
+    font-size: 20px;
+    font-weight: bolder;
+    margin-right: 10px;
+}
+.modal {
+    width: 100%;
+}
+#teacherregform,#studentregform,#parentregform {
+    background-color: #e6e6e6;
+}
+#gradestable {
+    max-height: 400px;
+}
+.parentmatching {
+    background-color: #e6e6e6;
+}
+#studentselecttable, #tablediv {
+    max-height: 200px;
+}
+#studentsselectionmodel {
+    max-height: 400px;
+    overflow-y: auto;
+}
+#contactsdiv {
+    background-color: #f2f2f2;
+}
+@media (max-width: 1060px){
+	.sidenav {
+       display: none;
+    }
+    .topnavdiv {
+        width: 100%;
+    }
+    .maincontent {
+        width: 100%;
+    }
+    .newmaincontent {
+        width: 100%;
+    }
+    .newsidenav {
+        display: block;
+        position: absolute;
+        width: 40%;
+        z-index: 99;
+    }
+    #closesidenav {
+        display: block;
+    }
+}
+@media (max-width: 467px){
+    .newsidenav {
+        display: block;
+        position: absolute;
+        width: 70%;
+        z-index: 99;
+    } 
+}
+.pdfbody {
+    background-color: aqua;
+}
+.resultscomputation {
+    background-color: #e6e6e6;
+    padding: 5px;
+}
+.eliminated {
+    background-color: #d9d9d9;
+}
+.loader {
+    position: absolute;
+    right: 40%;
+    top: 50%;
+    z-index: 100;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid blue;
+    border-right: 16px solid green;
+    border-bottom: 16px solid red;
+    border-left: 16px solid pink;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+  }
+  
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  
