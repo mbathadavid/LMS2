@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use GuzzleHttp\Client;
 use App\Models\Admin;
 use App\Models\Librarian;
 use App\Models\Book;
@@ -87,6 +87,28 @@ class AdminController extends Controller
             $admin->phone = $request->phone;
             $admin->password = Hash::make('password123');
             $admin->save();
+
+            $schooldetails = School_Data::find($request->school);
+
+            $client = new Client();
+
+            $url = 'https://quicksms.advantasms.com/api/services/sendsms/?';
+
+            $params = [
+                "apikey" => "0872c31420f6d597a067e23dd27ba658",
+                "partnerID" => "5031",
+                "message" => "Hello ".$request->fname." ".$request->lname. ". Myschool has registered you as the system administrator for ".$schooldetails['name']. ". Use your Email ".$request->email." or phone number and password123 as your Password to access your account. Follow the link https://www.myschool.co.ke/staffportal to log in. Once you Log in register the rest of the sytem users for your school: Students, Teachers, Staff Members, and Parents. You are also required to register any other required details concernung your school. Experience the best with us.",
+                "shortcode" => "JuaMobile",
+                "mobile" => $request->phone
+            ];
+
+            $response = $client->request('GET', $url, [
+                'json' => $params,
+                'verify'  => false,
+            ]);
+
+            $responseBody = json_decode($response->getBody());
+
             return response()->json([
                 'status' => 200,
                 'messages' => 'Super Admin Registered Successfully'
@@ -249,6 +271,18 @@ public function parents(){
 
     return view('adminFiles.parents',$data);
 }
+//function for returning communication view
+public function communucationsview(){
+    $maxid = DB::table('school__data')->max('id');
+    $data = [
+        'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+        'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first()
+    ];
+
+    return view('adminFiles.communications',$data);
+}
+
+
 //function for returning staff
 public function staff(){
     $maxid = DB::table('school__data')->max('id');

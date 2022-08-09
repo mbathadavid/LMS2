@@ -316,7 +316,7 @@
     text-align: center;
     margin: 20px;
 }
-.sidenavlinks a, .librarybtn, .academicbtn, .financesbtn, .peoplebtn{
+.sidenavlinks a, .librarybtn, .academicbtn, .financesbtn, .peoplebtn,.communicatebtn{
     padding: 3px 4px 3px 8px;
     display: block;
     color: white;
@@ -331,15 +331,15 @@
     float: right;
     margin-top: 5px;
 }
-.sidenav a:hover, .librarybtn:hover, .academicbtn:hover, .financesbtn:hover, .peoplebtn:hover {
+.sidenav a:hover, .librarybtn:hover, .academicbtn:hover, .financesbtn:hover, .peoplebtn:hover, .communicatebtn:hover {
     color: #f1f1f1;
     background-color: #47d147;
   }
-.library-dropdown,.academics-dropdown,.finances-dropdown,.people-dropdown {
+.library-dropdown,.academics-dropdown,.finances-dropdown,.people-dropdown,.commsdropdown {
     background-color: whitesmoke;
     padding-left: 20px;
 }
-.library-dropdown a,.academics-dropdown a,.finances-dropdown a,.people-dropdown a{
+.library-dropdown a,.academics-dropdown a,.finances-dropdown a,.people-dropdown a,.commsdropdown a{
     text-decoration: none;
     color: black;
 

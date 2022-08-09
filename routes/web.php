@@ -17,6 +17,7 @@ use App\Http\Controllers\OverallGradeSystemController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\RegrequestController;
 use App\Http\Controllers\FeestructureController;
+use App\Http\Controllers\CommunicationsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -69,6 +70,11 @@ Route::get('/',[AdminController::class, 'landingpage']);
  Route::get('/classresults/{examid}/{classid}',[AdminController::class,'getClassCompResults']);
  /*Admin Routes end*/
 
+// communications routes start
+Route::get('/communications',[AdminController::class, 'communucationsview']);
+Route::post('/sendmessage',[CommunicationsController::class, 'sendMessage'])->name('admin.sendmessage');
+// communications routes end
+
 /*Fee structure modelling start*/
 Route::post('/registerfeestructure',[FeestructureController::class, 'createFeeStructure']);
 Route::get('/fetchfeestructures/{sid}',[FeestructureController::class, 'fetchFeestructures']);
@@ -103,6 +109,7 @@ Route::get('/fetchteachers/{sid}/{uid}/{stype}',[TeacherController::class,'fetch
 Route::get('/teachersexcelimport',[TeacherController::class,'excelimportview']);
 Route::post('/importteachers',[TeacherController::class,'importTeachers'])->name('teacher.import');
 Route::post('/assignpriviledges',[TeacherController::class,'assignpriviledges']);
+Route::post('/updateprofilepic',[TeacherController::class,'updateprofilepic'])->name('staff.updatepic');
 Route::get('/downloadteachers',[TeacherController::class,'exportTeachers']);
 Route::get('/getteacher/{id}',[TeacherController::class,'getTeacher']);
 Route::get('/deleteteacher/{id}',[TeacherController::class,'deleteTeacher']);

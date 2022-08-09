@@ -37,7 +37,6 @@
         <div class="row">
          <div class="text-center" id="parentimg2"></div>
             <div id="parentdetails" class="text-center">
-                
             </div>
         </div>
         </div>

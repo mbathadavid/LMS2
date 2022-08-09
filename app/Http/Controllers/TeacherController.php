@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+use GuzzleHttp\Client;
 use Excel;
 use App\Exports\TeacherExport;
 use App\Exports\TeachertemplateExport;
 use App\Imports\TeacherImport;
 use App\Models\Teacher;
 use App\Models\Staff;
+use App\Models\School_Data;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -55,9 +57,32 @@ class TeacherController extends Controller
                $teacher->Profile = 'avatar.png';
            }
            $teacher->save();
+
+           $schooldetails = School_Data::find($request->sid);
+
+           $client = new Client();
+
+            $url = 'https://quicksms.advantasms.com/api/services/sendsms/?';
+
+            $params = [
+                "apikey" => "0872c31420f6d597a067e23dd27ba658",
+                "partnerID" => "5031",
+                "message" => "Hello ".$request->firstname." ".$request->lastname. ".You have been registered as one of the Staff Members of ".$schooldetails['name']. ". Use your Email ".$request->email." or phone number and password123 as your Password to access your account. Follow the link https://www.myschool.co.ke/staffportal to log in. Experience the best with us. Contact 07927801096 to access our customer care services.",
+                "shortcode" => "JuaMobile",
+                "mobile" => $request->phone
+            ];
+
+            $response = $client->request('GET', $url, [
+                'json' => $params,
+                'verify'  => false,
+            ]);
+
+            $responseBody = json_decode($response->getBody());
+
+
            return response()->json([
                'status' => 200,
-               'messages' => $request->role."'s records registered successfully. They can use their Phone Number Or Email and Password as password123" 
+               'messages' => $request->role."'s records registered successfully. They can use their Phone Number Or Email and Password as password123", 
            ]);
        }
        
@@ -235,5 +260,48 @@ class TeacherController extends Controller
         'status' => 200,
         'messages' => "Account activated Successfullly"
         ]);
+    }
+
+    //Function to update profile picture
+    public function updateprofilepic(Request $request) {
+            if ($request->hasFile('profilepic')) {
+                $file = $request->file('profilepic');
+
+                    $validator = Validator::make($request->all(),[
+                        'profilepic' => 'required',
+                        'profilepic' => 'image'
+                    ],
+                    [
+                        'profilepic.required' => 'You must select an image to upload',
+                        'profilepic.image' => 'The file you are using for profile must be an image'
+                    ]);
+                
+                    if ($validator->fails()) {
+                        return response()->json([
+                            'status' => 400,
+                            'messages' => $validator->getMessageBag()
+                        ]);
+                    } else {
+                        $staff = Staff::find($request->uid); 
+                        $extension = $file->getClientOriginalExtension();
+                        $filename = time().'pro'.'.'.$extension;
+                        $file->move('images/', $filename);
+                        $staff->Profile = $filename;
+
+                        $staff->save();
+
+                        return response()->json([
+                            'status' => 200,
+                            'messages' => "You have Successfully updated your profile picture"
+                        ]);
+
+                        }
+                    } else {
+                            return response()->json([
+                                'status' => 401,
+                                'messages' => 'You must select an image to upload'
+                            ]);
+                    }
+        
     }
 }

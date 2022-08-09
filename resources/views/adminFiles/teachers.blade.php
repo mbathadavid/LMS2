@@ -85,7 +85,7 @@
                     <option value="Games Captain">Games Captain</option>
                     <option value="HOD">Head of Department</option>
                     <option value="Club Patron">Club Patron</option>
-                    <option value="Madam">Teacher</option>
+                    <option value="Teacher">Teacher</option>
                 </select>
                 <div class="invalid-feedback"></div>
              </div>
@@ -206,7 +206,7 @@
                             <option value="Ms">Miss</option>
                             <option value="Mr">Mr</option>
                             <option value="Mrs">Mrs</option>
-                            <option value="Madam">Madam</option>
+                            <option value="Teacher">Madam</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>

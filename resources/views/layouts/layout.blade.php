@@ -92,6 +92,12 @@
             $('#peopleicon').toggleClass('d-none');
             $('#peopleiconup').toggleClass('d-none');
         })
+        $('.communicatebtn').click(function(e){
+            e.preventDefault();
+            $('#commsdropdown').toggleClass('d-none');
+            $('#commicon').toggleClass('d-none');
+            $('#commiconup').toggleClass('d-none');
+        })
     </script>
     <script>
         $(document).ready(function(){
