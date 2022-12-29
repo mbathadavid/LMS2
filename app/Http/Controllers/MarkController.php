@@ -64,6 +64,7 @@ class MarkController extends Controller
         } else {
            for ($i=0; $i < count($newmarks); $i++) { 
                $mark = new Mark;
+               $mark->sid = $req->sid;
                $mark->classid = $req->classfield;
                $mark->examid = $req->examfield;
                $mark->subid = $req->subjectno;
@@ -86,6 +87,63 @@ class MarkController extends Controller
        
     }
     }
+
+    //Add missing marks
+    public function addmissingMarks(Request $req){
+        $ids = array_filter($req->enablemarksinsert);
+        $adms = array_filter($req->enteradmissionnumber);
+        $fnames = array_filter($req->enterfirstname);
+        $lnames = array_filter($req->enterlname);
+        $marks = array_filter($req->entermarks);
+        $maxscore = array_filter($req->entermaxscore);
+
+        if (count($ids) != count($marks)) {
+            return response()->json([
+                'status' => 401,
+                'messages' => 'System detected that marks for '.'<b>'.count($ids) - count($marks).'</b>'.' students missing. Please check 
+                and make sure you fill inorder to update.'
+            ]);
+        } else {
+            $excessmarks = [];
+            for ($i=0; $i < count($ids); $i++) { 
+                if ($marks[$i] > $maxscore[$i]) {
+                    array_push($excessmarks,$marks[$i]);
+                }   
+            }
+
+            if (count($excessmarks) > 0) {
+                return response()->json([
+                    'status' => 402,
+                    'messages' => 'The system detected the marks '.'<b>'.implode(',',$excessmarks).'</b>'.' being greater than 
+                    the maximum possible score.Please check and correct.'
+                   ]);
+            } else {
+                for ($i=0; $i < count($marks); $i++) { 
+                    $mark = new Mark;
+                    $mark->sid = $req->sid;
+                    $mark->classid = $req->classid;
+                    $mark->examid = $req->examid;
+                    $mark->subid = $req->subid;
+                    $mark->subject = $req->subname;
+                    $mark->AdmissionNo = $adms[$i];
+                    $mark->Fname = $fnames[$i];
+                    $mark->Lname = $lnames[$i];
+                    $mark->marks = $marks[$i];
+                    $mark->maxscore = $maxscore[$i];
+                    $mark->save();   
+                }
+
+                return response()->json([
+                    'status' => 200,
+                    'messages' => 'Marks for '.'<b>'.implode(',',$adms).'</b>'.' Added Successfully'
+               ]);
+            }
+         }
+
+
+    }
+
+
     //Function to update marks
     public function updateMarks(Request $req){
      /*   print_r($req->all());
@@ -139,19 +197,35 @@ class MarkController extends Controller
     public function fetchMarks($exam,$cid,$sid){
         $marks = Mark::where('classid',$cid)
                         ->where('examid',$exam)
-                        ->where('subid',$sid)
+                        ->where('subject',$sid)
                         ->get();
         $outof = Mark::select('maxscore')
                     ->where('classid',$cid)
                     ->where('examid',$exam)
-                    ->where('subid',$sid)
+                    ->where('subject',$sid)
                     ->first();
+
+        $class = classes::where('id',$cid)
+                          ->get();
+
         /* $pkeys = Mark::where('classid',$cid)
                 ->where('examid',$exam)
                 ->where('subid',$sid)
                 ->get(); */
         $students = Student::where('current_classid',$cid)
-                        ->get();
+                            //->when()
+                            ->get();
+                            //->toArray();
+
+        //$students = collect([$students]);
+
+        // $results = array_filter($students, function ($item) use ($sid){
+        //     if (stripos($item['suborlearningpaths'], $sid) !== false) {
+        //         return true;
+        //     } 
+        //         return false;  
+        // });
+
         $student = [];
         $score = [];
         $ids = [];
@@ -165,14 +239,37 @@ class MarkController extends Controller
         $pids = array_combine($student,$ids);
         return response()->json([
             'marks' => $marks,
+            'subject' => $sid,
             'pids' => $pids,
             'score' => $score,
             'students' => $students,
             'student' => implode(',',$student),
             'student2' => $student,
             'admsmarks' => $admsmarks,
-            'outof' => $outof
+            'outof' => $outof,
+            'class' => $class[0]['class'].' '.$class[0]['stream']
         ]);
+    }
+
+    //Delete marks
+    public function deleteMarks($stuid,$exam,$classid,$sub){
+        $mark = Mark::where('AdmissionNo',$stuid)
+                      ->where('examid',$exam)
+                      ->where('classid',$classid)
+                      ->where('subject',$sub)
+                      ->delete();
+
+        if ($mark) {
+            return response()->json([
+                'status' => 200,
+                'messages' => 'Marks for '.$stuid.' deleted successfully'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 401,
+                'messages' => 'Error while deleting. Please wait'
+            ]);
+        }  
     }
 
     //Function to check term
@@ -190,25 +287,48 @@ class MarkController extends Controller
     }
     //FetchMarks
     public function checkMarks(Request $req){
-        $threads = ResultThread::all();
+        $cla = classes::where('id',$req->class)
+                        ->where('sid',$req->sid)
+                         ->get();
+
+        // $sub = Subject::where('id',$req->subject)
+        //                 ->where('sid',$req->sid)
+        //                 ->get();   
+        
+        $sub = Subject::where('id',explode(',',$req->subject)[0])
+                        ->where('sid',$req->sid)
+                        ->get(); 
+
+        $actualclass = $cla[0]['class'];  
+        $actualsubject = $sub[0]['subject'];              
+
+        $threads = ResultThread::where('sid',$req->sid)
+                                ->OrderByDesc('id')
+                                ->get();
         $students = Student::where('current_classid',$req->class)
-                    ->get();
+                            ->get();
         $subject = Subject::select('subject')
+                    ->where('sid',$req->sid)
                     ->where('id',$req->subject)
                     ->first();
         $class = classes::select('class')
                     ->where('id',$req->class)
+                    ->where('sid',$req->sid)
                     ->first();
         $stream = classes::select('stream')
                     ->where('id',$req->class)
+                    ->where('sid',$req->sid)
                     ->first();
         $marks = Mark::where('classid',$req->class)
-                    ->where('subid',$req->subject)
+                    ->where('subject',$actualsubject)
+                    ->where('sid',$req->sid)
                     ->get();
         $exams = explode(',', $req->exams);
-        $grades = Grade::where('classid',$req->class)
-                ->where('subid',$req->subject)
-                ->get();
+
+        $grades = Grade::where('class',$actualclass)
+                    ->where('subject',$actualsubject)
+                    ->where('sid',$req->sid)
+                    ->get();
 
         $admnos = [];
         $marksids = [];
@@ -224,13 +344,13 @@ class MarkController extends Controller
             array_push($admnos, $student->AdmissionNo);
         }
 
-        // for ($i=0; $i < count($exams); $i++) { 
-        //     array_push($marksids, 'mark,'.$exams[$i]);
-        // }
-
         for ($i=0; $i < count($exams); $i++) { 
-            array_push($marksids,$exams[$i]);
+            array_push($marksids, 'mark,'.$exams[$i]);
         }
+
+        // for ($i=0; $i < count($exams); $i++) { 
+        //     array_push($marksids,$exams[$i]);
+        // }
 
             $admmark = [];
             for ($k=0; $k < count($admnos); $k++) { 
@@ -248,7 +368,7 @@ class MarkController extends Controller
 
         return response()->json([
             'subject' => $subject,
-            'cid' => $req->class,
+            'cid' => $cla[0]['id'],
             'sid' => explode(',',$req->subject)[0],
             'classid' => $req->class,
             'class' => $class,
@@ -260,8 +380,8 @@ class MarkController extends Controller
             'marks' => $marks,
             'threads' => $threads,
             'exams' => explode(',',$req->exams),
-            'examnames' => $examnames,
-            'grades' => $grades
+             'examnames' => $examnames,
+             'grades' => $grades
         ]); 
     }
 }

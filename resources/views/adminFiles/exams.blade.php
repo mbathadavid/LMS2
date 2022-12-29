@@ -9,7 +9,7 @@
     
     @else 
 <div class="container-fluid">
-@include('adminFiles.motto')
+
 <div class="main">
 <div id="sidenavigation" class="sidenav">
 @include('adminFiles.sidebar')
@@ -18,7 +18,8 @@
 @include('adminFiles.topnav')
 <h4>Examination(s)</h4>
 <div class="mb-2">
-<button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#examaddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD EXAM</button>
+<button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#examaddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD NEW EXAM</button>
+<button class="btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#CBCModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD NEW CBC ASSESSMENT</button>
 </div>
 <!---Exams modal start-->
 <div id="examaddModal" class="modal w3-animate-left" tabindex="-1">
@@ -32,6 +33,7 @@
         <form action="#" method="POST" id="examregisterform">
         <div class="row">
             <div class="col-lg-6">
+            <input hidden type="number" name="sid" id="sid" value="{{ session()->get('schooldetails.id') }}">
             <div class="form-group mb-2">
               <label for=""><h6 class="text-success">Name the exam e.g Exam 1, Opening Exam, CAT 1 etc</h6></label>
                 <input placeholder="Exam Name e.g Opening Exam" class="form-control" type="text" name="examname" id="examname">
@@ -205,12 +207,6 @@
 <!---Exams view Modal End--->
     <div class="m-2 p-2 border border-success border-1">
     <div class="table-responsive">
-    <div id="actionbtns" class="mb-2 d-none">
-        <button id="compresultsbtn" class="btn btn-sm btn-primary float-end m-1">Add Marks</button>
-        <button id="examviewbtn" class="btn btn-sm btn-success float-end m-1"><i class="fas fa-eye"></i>&nbsp;View</button>
-        <button id="exameditbtn" type="button" class="btn btn-sm btn-warning float-end m-1"><i class="fas fa-edit"></i>&nbsp;Edit</button> 
-        <button id="examdeletebtn" class="btn btn-sm btn-danger float-end m-1"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button>
-        </div>
 
         <div class="row d-none resultscomputation">
             <form action="#" id="computeresults">
@@ -229,8 +225,19 @@
             <hr>
         </div>
 
+
     <div id="response"></div>
-            <table class="table" id="table">
+    <div class="row">
+    <div id="actionbtns" class="mb-2 d-none">
+        <button id="compresultsbtn" class="btn btn-sm btn-primary float-end m-1">Add Marks</button>
+        <button id="examviewbtn" class="btn btn-sm btn-success float-end m-1"><i class="fas fa-eye"></i>&nbsp;View</button>
+        <button id="exameditbtn" type="button" class="btn btn-sm btn-warning float-end m-1"><i class="fas fa-edit"></i>&nbsp;Edit</button> 
+        <button id="examdeletebtn" class="btn btn-sm btn-danger float-end m-1"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button>
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-sm-11">
+            <h6 class="bg-warning text-center p-2">8-4-4 Examinations</h6>
+        <table class="table" id="table">
             <thead>
             <tr>
                 <th scope="col"><input type="checkbox" id="CheckAll"></th>
@@ -241,23 +248,16 @@
             </tr>
         </thead>
         <tbody id="examstable">
-        @if(count($exams) ==0)
-            <tr>
-            <td><h6 class="text-danger">There are currently no Exams registered</h6></td>
-            </tr>
-                @else
-                @foreach($exams as $exam)
-                <tr>
-                  <td><input name="examcheckbox" value="{{ $exam->id }}" id="examcheckbox" type="checkbox"></td>
-                  <td>{{ $exam->Examination }}</td>
-                  <td>{{ $exam->ExamType }}</td>
-                  <td>{{ $exam->Year }}</td>
-                  <td>{{ $exam->Term }}</td>
-                </tr>
-                    @endforeach
-                @endif
+        
         </tbody>
         </table>
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-sm-11">
+        <h6 class="bg-success text-center p-2">CBC Assessments</h6>
+        </div>
+    </div>
+            
     </div>
     </div>
 @endif
@@ -270,6 +270,7 @@ function preview(){
 <script>
     $(document).ready(function(){
         fecthclasses1()
+        exams()
         $.ajaxSetup({
         headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -287,9 +288,11 @@ function preview(){
 
         //function to fetchclasses
         function fecthclasses1(){
+            var sid = "{{ session()->get('schooldetails.id') }}";
+            var etype = "8-4-4";
             $.ajax({
                 method: 'GET',
-                url: '/fetchclasses',
+                url: `/fetchclasses2/${sid}/${etype}`,
                 success: function(res){
                    $("#classsestable").html('')
                     $.each(res.classes, function(key,item){
@@ -304,9 +307,11 @@ function preview(){
 
         //function to fetchclasses
         function fecthclasses2(){
+            var sid = "{{ session()->get('schooldetails.id') }}";
+            var etype = "8-4-4";
             $.ajax({
                 method: 'GET',
-                url: '/fetchclasses',
+                url: `/fetchclasses2/${sid}/${etype}`,
                 success: function(res){
                     console.log(res.exams)
                    $("#classsesedittable").html('')
@@ -322,9 +327,10 @@ function preview(){
 
         //function to fetchexams
         function exams(){
+            var sid = "{{ session()->get('schooldetails.id') }}"
             $.ajax({
                 method: 'GET',
-                url: '/fetchexams',
+                url: `/fetchexams/${sid}`,
                 success: function(res){
                     console.log(res)
                     if (res.exams.length == 0) {
@@ -387,7 +393,8 @@ function preview(){
             e.preventDefault();
             var classid = $('#classtocompre').val()
             var examid = $('#examresid').val();
-            window.location = `/classresults/${examid}/${classid}`;
+            var sid = "{{ session()->get('schooldetails.id') }}" 
+            window.location = `/classresults/${examid}/${classid}/${sid}`;
         })
 
         //Edit exam ajax Request
@@ -480,15 +487,18 @@ function preview(){
         }
         //function to fetchclasses
         function fecthclasses(){
+            var sid = "{{ session()->get('schooldetails.id') }}";
+            var etype = "8-4-4";
             $.ajax({
                 method: 'GET',
-                url: '/fetchclasses',
+                url: `/fetchclasses2/${sid}/${etype}`,
                 success: function(res){
                     console.log(res)
                     if (res.classes.length == 0) {
                         $('#classtocompre').text('Sorry!There are no classes added recently')
                     } else {
                         $('#classtocompre').html('');
+                        $('#classtocompre').append('<option value="">Select Class</option>');
                         $.each(res.classes, function(key,item){
                             $('#classtocompre').append('<option value="'+item.id+'">'+item.class+' '+item.stream+'</option>')
                         })

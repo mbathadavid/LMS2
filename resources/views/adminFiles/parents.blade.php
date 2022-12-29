@@ -11,7 +11,7 @@
     <h5 class="text-center"><a href="/schoolreg" class="link-info">Register School</a></h5>
     @else 
 <div class="container-fluid">
-@include('adminFiles.motto')
+
 <div class="main">
 <div id="sidenavigation" class="sidenav">
 @include('adminFiles.sidebar')
@@ -126,7 +126,7 @@
                              <thead>
                              <tr>
                                 <th scope="col">Sel</th>
-                                <th scope="col">Adm</th>
+                                <th scope="col">UPI</th>
                                 <th scope="col">Name</th> 
                             </tr>
                              </thead>
@@ -218,8 +218,8 @@
                     </div>
                     <div class="form-group mb-3">
                         <label for="">Gender</label><br>
-                        <input type="radio" name="gender" id="gender" value="male">&nbsp;Male
-                        <input type="radio" name="gender" id="gender" value="female">&nbsp;Female
+                        <input type="radio" name="gender" id="gender" value="Male">&nbsp;Male
+                        <input type="radio" name="gender" id="gender" value="Female">&nbsp;Female
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -242,7 +242,7 @@
                              <thead>
                              <tr>
                                 <th scope="col">Sel</th>
-                                <th scope="col">Adm</th>
+                                <th scope="col">UPI</th>
                                 <th scope="col">Name</th> 
                             </tr>
                              </thead>
@@ -354,8 +354,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                             $('#parentsstudent').html('')
                             $.each(res.students, function(key,item){
                             $('#parentsstudent').append('<tr>\
-                            <td><input value="'+item.AdmissionNo+'" id="childreg" type="checkbox" name="childreg"></td>\
-                            <td>'+item.AdmissionNo+'</td>\
+                            <td><input value="'+item.UPI+'" id="childreg" type="checkbox" name="childreg"></td>\
+                            <td>'+item.UPI+'</td>\
                             <td>'+item.Fname+' '+item.Lname+'</td>\
                             </tr>');
                         })
@@ -389,8 +389,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                             $('#editparentsstudent').html('')
                             $.each(res.students, function(key,item){
                             $('#editparentsstudent').append('<tr>\
-                            <td><input value="'+item.AdmissionNo+'" id="editchildreg" type="checkbox" name="editchildreg"></td>\
-                            <td>'+item.AdmissionNo+'</td>\
+                            <td><input value="'+item.UPI+'" id="editchildreg" type="checkbox" name="editchildreg"></td>\
+                            <td>'+item.UPI+'</td>\
                             <td>'+item.Fname+' '+item.Lname+'</td>\
                             </tr>');
                         })
@@ -420,6 +420,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                         $('#studentfilter').html('<h5 class="text-danger">There are no classes registered yet</h5>')
                     } else {
                         $('#studentfilter').html('');
+                        $('#studentfilter').append('<option value="">Select Class</option>');
+                        $('#studentfilter').append('<option value="ALL">ALL</option>');
                         $.each(res.classes, function(key,item){
                             $('#studentfilter').append('<option value="'+item.id+'">'+item.class+' '+(item.stream == null ? "" : item.stream)+'</option>');
                         })
@@ -439,6 +441,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                         $('#editstudentfilter').html('<h5 class="text-danger">There are no classes registered yet</h5>')
                     } else {
                         $('#editstudentfilter').html('');
+                        $('#editstudentfilter').append('<option value="">Select Class</option>');
+                        $('#editstudentfilter').append('<option value="ALL">ALL</option>');
                         $.each(res.classes, function(key,item){
                             $('#editstudentfilter').append('<option value="'+item.id+'">'+item.class+' '+(item.stream == null ? "" : item.stream)+'</option>');
                         })
@@ -632,14 +636,14 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 $('#editaltphone').val(data.AltPhone)
                 $('#editemail').val(data.Email)
                 
-                if (data.Gender == 'male') {
+                if (data.Gender == 'Male') {
                     $('#genderdiv').html('');
-                    $('#genderdiv').append('<input checked type="radio" name="editgender" id="editgender" value="male">&nbsp;Male\
-                        <input type="radio" name="editgender" id="editgender" value="female">&nbsp;Female');
+                    $('#genderdiv').append('<input checked type="radio" name="editgender" id="editgender" value="Male">&nbsp;Male\
+                        <input type="radio" name="editgender" id="editgender" value="Female">&nbsp;Female');
                 } else {
                     $('#genderdiv').html('');
-                    $('#genderdiv').append('<input type="radio" name="editgender" id="editgender" value="male">&nbsp;Male\
-                        <input checked type="radio" name="editgender" id="editgender" value="female">&nbsp;Female'); 
+                    $('#genderdiv').append('<input type="radio" name="editgender" id="editgender" value="Male">&nbsp;Male\
+                        <input checked type="radio" name="editgender" id="editgender" value="Female">&nbsp;Female'); 
                 }
 
                 }

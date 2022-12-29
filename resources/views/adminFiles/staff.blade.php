@@ -8,7 +8,7 @@
     <h5 class="text-center"><a href="/schoolreg" class="link-info">Register School</a></h5>
     @else 
 <div class="container-fluid">
-@include('adminFiles.motto')
+
 <div class="main">
 <div id="sidenavigation" class="sidenav">
 @include('adminFiles.sidebar')
@@ -428,7 +428,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     $('#teacheregbtn').val('REGISTER TEACHER');
                     $('#regresponse').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>')
                     $('#regresponse').removeClass('d-none');
-                    $('#teacherregform').find('input').val('');
+                    //$('#teacherregform').find('input').val('');
                    $('#frame').src = 'images/avatar.png';
                    $("#teacheraddModal").modal('hide'); 
                    }

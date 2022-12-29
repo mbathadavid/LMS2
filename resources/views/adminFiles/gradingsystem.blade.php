@@ -9,7 +9,7 @@
     
     @else 
 <div class="container-fluid">
-@include('adminFiles.motto')
+
 <div class="main">
 <div id="sidenavigation" class="sidenav">
 @include('adminFiles.sidebar')
@@ -118,6 +118,7 @@
 <h6 class="text-center text-danger p-1 bg-info d-none" id="graderegdiv"></h6>  
 <div class="">
 <h6 class="text-center text-success">Grading System</h6>
+<input type="number" name="sid" value="{{ session()->get('schooldetails.id') }}" id="sid" hidden>
      <div class="border border-success">
     <div class="form-group mb-2 d-none">
         <label for="">SUBJECT</label>
@@ -451,7 +452,7 @@
     <div class="invalid-feedback"></div>
      </div> 
     </div>  -->
-
+    <input type="number" name="sid" value="{{ session()->get('schooldetails.id') }}" id="sid" hidden>
     <div class="border border-danger p-2">
     <div id="gradestable" class="table-responsive">
     <table class="table w3-grey">
@@ -758,7 +759,8 @@
     <div id="overallgradingsytemform" class="p-2 mt-2 border border-2 border-info d-none w3-animate-bottom">
  <form action="#" class="p-2" method="POST" id="OverGradingForm">
      <h6 class="text-center w3-indigo p-2">OVERALL GRADING SYSTEM</h6>
-<h6 class="text-center text-danger p-1 bg-info d-none" id="graderegdiv"></h6>  
+<h6 class="text-center text-danger p-1 bg-info d-none" id="graderegdiv"></h6> 
+<input hidden type="number" value="{{ session()->get('schooldetails.id') }}" name="sid" id="sid"> 
 <div class="">
      <div class="border border-success">
     
@@ -1112,6 +1114,7 @@
  <form action="#" class="p-2" method="POST" id="OverGradingFormUpdate">
      <h6 class="text-center w3-purple p-2">OVERALL GRADING SYSTEM UPDATE <span id="classup"></span></h6>
 <h6 class="text-center text-danger p-1 bg-info d-none" id="graderegdiv"></h6>  
+<input hidden type="number" value="{{ session()->get('schooldetails.id') }}" name="sid" id="sid">
 <div class="">
      <div class="border border-success">
     
@@ -1442,6 +1445,10 @@
         }
         });
 
+        fetchclasses();
+        fetchsubjects();
+        overallgradeclasses();
+
         $('#gradingtype').change(function(){
             var gtype = $(this).val().toUpperCase();
             $('#typeth1').text(gtype)
@@ -1487,8 +1494,82 @@
             $('#overallgradingsytemupdateform').removeClass('d-none');
         })
 
+        //Function to fetch classes
+        function fetchclasses(){
+            var sid = "{{ session()->get('schooldetails.id') }}";
+            var etype = "8-4-4";
+            $.ajax({
+                method: 'GET',
+                url: `/fetchclasses2/${sid}/${etype}`,
+                success: function(res){
+                    console.log(res)
+                    if (res.classes.length == 0) {
+                        $('#class').text('Sorry!There are no classes added recently')
+                    } else {
+                        $('#class').html('');
+                        $('#class').append('<option value="">Select Class</option>');
+                        $('#class').append('<option value="FORM ONE">FORM ONE</option>');
+                        $('#class').append('<option value="FORM TWO">FORM TWO</option>');
+                        $('#class').append('<option value="FORM THREE">FORM THREE</option>');
+                        $('#class').append('<option value="FORM FOUR">FORM FOUR</option>');
+                        // $.each(res.classes, function(key,item){
+                        //     $('#class').append('<option value="'+item.id+'">'+item.class+' '+item.stream+'</option>')
+                        // })
+                    }
+                }
+            });
+        }
+
+        //Function to fetch subjects for overall grading
+        function overallgradeclasses(){
+            var sid = "{{ session()->get('schooldetails.id') }}";
+            var etype = "8-4-4";
+            $.ajax({
+                method: 'GET',
+                url: `/fetchclasses2/${sid}/${etype}`,
+                success: function(res){
+                    console.log(res)
+                    if (res.classes.length == 0) {
+                        $('#overallclass').text('Sorry!There are no classes added recently')
+                    } else {
+                        $('#overallclass').html('');
+                        $('#overallclass').append('<option value="">Select Class</option>');
+                        $('#overallclass').append('<option value="FORM ONE">FORM ONE</option>');
+                        $('#overallclass').append('<option value="FORM TWO">FORM TWO</option>');
+                        $('#overallclass').append('<option value="FORM THREE">FORM THREE</option>');
+                        $('#overallclass').append('<option value="FORM FOUR">FORM FOUR</option>');
+                        // $.each(res.classes, function(key,item){
+                        //     $('#overallclass').append('<option value="'+item.id+'">'+item.class+' '+item.stream+'</option>')
+                        // })
+                    }
+                }
+            });
+        }
+
+        //Function to fetch subjects
+        function fetchsubjects(){
+            var sid = "{{ session()->get('schooldetails.id') }}";
+            var etype = "8-4-4";
+            $.ajax({
+                method: 'GET',
+                url: `/fetchsubjects2/${sid}/${etype}`,
+                success: function(response){
+                    if (response.subjects.length == 0) {
+                        $('#subject').append('<option>No subjects Registered yet</option>')
+                    } else {
+                        $('#subject').html('')
+                        $('#subject').append('<option value="">Select Subject</option>')
+                        $.each(response.subjects, function(key,item){
+                            $('#subject').append('<option value="'+item.id+','+item.subject+'">'+item.subject+'</option>');
+                        }) 
+                    }
+                }
+            })
+        }
+
         //Handle grading system Update
         $('#gradingsytemupdate').click(function(e){
+            var sid = "{{ session()->get('schooldetails.id') }}";
             e.preventDefault();
             var clasval = $('#class').val();
             var subval = $('#subject').val();
@@ -1501,7 +1582,7 @@
 
             $.ajax({
                 method: 'GET',
-                url: `/fetchsubgrades/${clasval.split(',')[0]}/${subval.split(',')[0]}`,
+                url: `/fetchsubgrades/${sid}/${clasval.split(',')[0]}/${subval.split(',')[1]}`,
                 contentType: false,
                 processData: false,
                //dataType: 'json',
@@ -1641,6 +1722,7 @@
 
     //Handle subject grade viewing
         $('#viewsubgradingsystem').click(function(e){
+            var sid = "{{ session()->get('schooldetails.id') }}";
             $('#overallgradingsytemform').addClass('d-none')
             $('#updategradesdiv').addClass('d-none')
             $('#class').removeClass('is-invalid')
@@ -1665,7 +1747,7 @@
                 $('.loader').removeClass('d-none');
                 $.ajax({
                 method: 'GET',
-                url: `/fetchsubgrades/${clasval.split(',')[0]}/${subval.split(',')[0]}`,
+                url: `/fetchsubgrades/${sid}/${clasval.split(',')[0]}/${subval.split(',')[1]}`,
                 contentType: false,
                 processData: false,
                //dataType: 'json',
@@ -1746,7 +1828,7 @@
 
         $('#viewoverallgradsystem').click(function(e){
             e.preventDefault();
-            $('.loader').removeClass('d-none');
+            //$('.loader').removeClass('d-none');
             $('#gradesdiv').addClass('d-none')
             $('#updategradesdiv').addClass('d-none')
             $('#divgrades').addClass('d-none')

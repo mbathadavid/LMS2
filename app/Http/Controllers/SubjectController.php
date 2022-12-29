@@ -61,6 +61,16 @@ class SubjectController extends Controller
             'classes' => $classes
         ]);
     }
+    //fetch subjects2
+    public function fetchSubjects2($sid,$etype){
+        $subjects = Subject::where('sid',$sid)
+                            ->where('educationsystem',$etype)
+                            ->get();
+        return response()->json([
+            'subjects' => $subjects,
+            ]);
+    }
+
     //Delete Subject 
     public function deleteSubject($sid){
         $delaction = Subject::where('id',$sid)

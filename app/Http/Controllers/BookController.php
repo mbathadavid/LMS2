@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Book;
+use App\Models\Student;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -57,6 +58,7 @@ class BookController extends Controller
         //$books = Book::all();
         $books = Book::where('deleted',0)
                     ->where('sid',$sid)
+                    ->OrderByDesc('id')
                     ->get();
         return response()->json([
             'books' => $books
@@ -71,6 +73,8 @@ class BookController extends Controller
     }
     //issue book
     public function issueBook(Request $req){
+        $sid = session()->get('schooldetails.id');
+
         $validator = Validator::make($req->all(),[
             'dateborrowed' => 'required',
             'returndate' => 'required',
@@ -92,6 +96,49 @@ class BookController extends Controller
             $book->borrowed_by = $req->admnos;
             $book->fine = $req->fine;
             $book->save();
+
+
+            // if ($req->upiadm == "UPI") {
+            //     //$arraybooks = [];
+            //     $student = Student::where('UPI', $req->admnos)
+            //                         ->where('sid',$sid)
+            //                         ->get();
+
+            //     $studentresources = $student[0]['books'];
+            //     $studentid = $student[0]['id'];
+            //     $studentupdate = Student::find($studentid);
+
+            //     if ($studentresources == null) {
+            //        $studentupdate->books = $book['BookNumber'];
+            //        $studentupdate->save(); 
+            //     } else {
+            //         $booksarray = explode(',',$studentresources);
+            //         array_push($booksarray,$book['BookNumber']);
+            //         $studentupdate->books = implode(',',$booksarray);
+            //         $studentupdate->save(); 
+            //     }
+
+            // } else if ($req->upiadm == "admissonno") {
+            //     $student = Student::where('AdmissionNo', $req->admnos)
+            //                         ->where('sid',$sid)
+            //                         ->get();
+
+            //     $studentresources = $student[0]['books'];
+            //     $studentid = $student[0]['id'];
+            //     $studentupdate = Student::find($studentid);
+
+            //     if ($studentresources == null) {
+            //        $studentupdate->books = $book['BookNumber'];
+            //        $studentupdate->save(); 
+            //     } else {
+            //         $booksarray = explode(',',$studentresources);
+            //         array_push($booksarray,$book['BookNumber']);
+            //         $studentupdate->books = implode(',',$booksarray);
+            //         $studentupdate->save(); 
+            //     }
+
+            // }
+
             
             return response()->json([
                 'status' => 200,
@@ -102,16 +149,34 @@ class BookController extends Controller
     //collect book function
     public function collectBook($ids){
         $idarray = explode(',',$ids);
-       $bookids = [];
+        //$bookids = [];
         for ($i=0; $i < count($idarray); $i++) { 
             $book = Book::find($idarray[$i]);
             $book->Status = 'In Store';
+            $book->borrowed_by = '';
             $book->save();
         }
 
+        // for ($i=0; $i <  count($idarray); $i++) { 
+        //     $book = Book::find($idarray[$i]);
+        //     $stuide = $book['borrowed_by'];
+        //     $student = Student::where('AdmissionNo',$stuide)
+        //                         ->orWhere('UPI',$stuide)
+        //                         ->get();
+
+        //     $studentid = $student[0]['id'];
+        //     $actualstudent = Student::find($studentid);
+        //     $booksarray = explode(",",$actualstudent['books']);
+        //     $booknumber = $book['BookNumber'];
+        //     $removedbook = array_diff($booksarray,[$booknumber]);
+        //     $stringified = implode(",",$removedbook);
+        //     $actualstudent->books = $stringified;
+        //     $actualstudent->save();
+        // }
+
         return response()->json([
             'status' => 200,
-            'messages' => 'Books Returned to store Successfully'
+            'messages' => 'Books Returned to store Successfully',
         ]); 
     }
     //Delete a book

@@ -48,6 +48,7 @@
       <a href="/examresthread"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Results Thread</a>
       <a href="/autoresults"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Per Subject result auto-compute</a>
       <a href="/finalresults"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Final Results Computation</a>
+      <a href="/resultanalysis"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Result Analysis</a>
     </div>
     <button class="librarybtn outline-none fs-5">
     <i class="fas fa-book-reader"></i>&nbsp;Library
@@ -64,14 +65,15 @@
     </button>
     <div id="commsdropdown" class="commsdropdown d-none w3-animate-top">
       <!-- <a href="/library"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Librarians</a> -->
-      <a href="/communications" class="text-decoration-none fs-5"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send Message</a>
-      <a href="/communicationhistory" class="text-decoration-none fs-5"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Communication History</a>
+      <a href="/communications" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send SMS Message</a>
+      <a href="{{ route('admin.notify') }}" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send Notifications</a>
+      <a href="/communicationhistory" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Communication History</a>
     </div>
 
 
     <!-- <a href="/communications" class="text-decoration-none fs-5"><i class="fas fa-sms"></i>&nbsp;Communicate</a> -->
-    <a href="/" class="text-decoration-none fs-5"><i class="fas fa-bell"></i>&nbsp;Notifications</a>
-    <a href="/clubs" class="text-decoration-none fs-5"><i class="fas fa-user-friends"></i>&nbsp;Clubs</a>
+    <a href="{{ route('admin.notifications') }}" class="text-decoration-none fs-5"><i class="fas fa-bell"></i>&nbsp;Notifications</a>
+    <!-- <a href="/clubs" class="text-decoration-none fs-5"><i class="fas fa-user-friends"></i>&nbsp;Clubs</a> -->
     <a href="/" class="text-decoration-none fs-5">&nbsp;LOGOUT</a>
     <!-- <a href="/departments" class="text-decoration-none fs-5"><i class="fas fa-building"></i>&nbsp;Departments</a>
     <a href="/suppliers" class="text-decoration-none fs-5"><i class="fas fa-truck"></i>&nbsp;Suppliers</a> -->

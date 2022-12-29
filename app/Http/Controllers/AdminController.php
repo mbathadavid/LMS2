@@ -12,9 +12,11 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Mark;
 use App\Models\School;
+use App\Models\Guardian;
 use App\Models\Staff;
 use App\Models\School_Data;
 use App\Models\ResultThread;
+use App\Models\notifications;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -137,7 +139,7 @@ class AdminController extends Controller
         } else {
             if (is_numeric($request->emailorphone)) {
                 $school = School_Data::where('id',$request->school)->first();
-                $staff = Staff::where('Email',$request->emailorphone)
+                $staff = Staff::where('Phone',$request->emailorphone)
                             ->where('sid',$request->school)
                             ->first();
             if ($staff) {
@@ -152,7 +154,8 @@ class AdminController extends Controller
                             'messages' => 'Sorry! Your account has been disabled and therefore you cannot log in to system. Please contact your system administrator.'
                         ]);
                     } else {
-                    $request->session()->put('currentuserschool',json_encode($currentuserschool));
+                        $request->session()->put('LoggedInUser',$staff);
+                        $request->session()->put('schooldetails',$school);
                     return response()->json([
                         'status' => 200,
                         'messages' => 'success'
@@ -213,10 +216,116 @@ class AdminController extends Controller
     }
 
     public function dashboard(){
-        $maxid = DB::table('school__data')->max('id');
+        $sid = session()->get('schooldetails.id');
+        //$maxid = DB::table('school__data')->max('id');LoggedInUser
+        $schoolinfo = School_Data::find($sid);
+        $admininfo = Staff::find(session()->get('LoggedInUser.id'));
+        $totalstudents = Student::where('sid',$sid)
+                                ->get();
+
+        $cbcstudents = Student::where('sid',$sid)
+                                ->where('schoolsystem','CBC')
+                                ->get();
+
+        $oldsystemstudents = Student::where('sid',$sid)
+                                    ->where('schoolsystem','8-4-4')
+                                    ->get();
+
+        $malestudents = Student::where('sid',$sid)
+                                ->where('gender','male')
+                                ->get();
+
+        $femalestudents = Student::where('sid',$sid)
+                                ->where('gender','female')
+                                ->get();
+
+        $teachers = Staff::where('sid',$sid)
+                        ->where('Role','Teacher')
+                        ->get();
+
+        $femaleteachers = Staff::where('sid',$sid)
+                                ->where('Role','Teacher')
+                                ->where('Gender','Female')
+                                ->get();
+
+        $maleteachers = Staff::where('sid',$sid)
+                                ->where('Role','Teacher')
+                                ->where('Gender','Male')
+                                ->get();
+
+        $supportstaff = Staff::where('sid',$sid)
+                            ->where('Role','Support Staff')
+                            ->get();
+
+        $femalestaff = Staff::where('sid',$sid)
+                            ->where('Role','Support Staff')
+                            ->where('Gender','Female')
+                            ->get();
+
+        $malestaff = Staff::where('sid',$sid)
+                            ->where('Role','Support Staff')
+                            ->where('Gender','Mlae')
+                            ->get();
+
+        $stream = classes::where('sid',$sid)
+                        ->get();
+
+        $cbcstream = classes::where('sid',$sid)
+                            ->where('educationsystem','CBC')
+                            ->get();
+
+        $oldsystemstream = classes::where('sid',$sid)
+                                    ->where('educationsystem','8-4-4')
+                                    ->get();
+
+        $parents = Guardian::where('sid',$sid)
+                            ->get();
+
+        $maleparents = Guardian::where('sid',$sid)
+                                ->where('Gender','Male')
+                                ->get();
+
+        $femaleparents = Guardian::where('sid',$sid)
+                                    ->where('Gender','Female')
+                                    ->get();
+
+        $books = Book::where('sid',$sid)
+                      ->get();
+
+        $borrowedbooks = Book::where('sid',$sid)
+                              ->where('Status','Borrowed')
+                              ->get();
+
+        $instorebooks = Book::where('sid',$sid)
+                              ->where('Status','In Store')
+                              ->get();
+
+        
+        
         $data = [
-            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
-            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first()
+            'adminInfo' => $admininfo,
+            'schoolinfo' => $schoolinfo,
+            'sid' => $sid,
+            'books' => count($books),
+            'borrowedbooks' => count($borrowedbooks),
+            'instorebooks' => count($instorebooks),
+            'parents' => count($parents),
+            'maleparents' => count($maleparents),
+            'femaleparents' => count($femaleparents),
+            'totalstudents' => count($totalstudents),
+            'cbcstudents' => count($cbcstudents),
+            'oldsystemstudents' => count($oldsystemstudents),
+            'malestudents' => count($malestudents),
+            'femalestudents' => count($femalestudents),
+            'teachers' => count($teachers),
+            'femaleteachers' => count($femaleteachers),
+            'maleteachers' => count($maleteachers),
+            'supportstaff' => count($supportstaff),
+            'femalestaff' => count($femalestaff),
+            'malestaff' => count($malestaff),
+            'stream' => count($stream),
+            'cbcstream' => count($cbcstream),
+            'oldsystemstream' => count($oldsystemstream)
         ];
 
         return view('adminFiles.dashboard', $data);
@@ -377,12 +486,21 @@ public function financialReport(){
 public function autoresults(){
     //$exam = exam::all();
     $maxid = DB::table('school__data')->max('id');
+    $sid = session()->get('schooldetails.id');
+    $subjects = Subject::where('educationsystem','8-4-4')
+                        ->where('sid',$sid)
+                        ->get();
+
+    $classes = classes::where('educationsystem','8-4-4')
+                        ->where('sid',$sid)
+                        ->get();
+
     $data = [
         'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
-        'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+        'schoolinfo' => School_Data::find($sid),
         'exams' => exam::all(),
-        'subjects' => Subject::all(),
-        'classes' => classes::all()
+        'subjects' => $subjects,
+        'classes' => $classes
     ];
 
     return view('adminFiles.autoresults',$data);
@@ -421,12 +539,18 @@ public function suppliers(){
 }
 //Function for returning final Results view 
 public function finalresults(){
+    $sid = session()->get('schooldetails.id');
+    $classes = classes::where('educationsystem','8-4-4')
+                        ->where('sid',$sid)
+                        ->get();
+    $threads = ResultThread::where('sid',$sid)
+                            ->get();
     $maxid = DB::table('school__data')->max('id');
     $data = [
         'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
-        'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
-        'classes' => classes::all(),
-        'threads' => ResultThread::all()
+        'schoolinfo' => School_Data::find($sid),
+        'classes' => $classes,
+        'threads' => $threads
     ];
 
     return view('adminFiles.finalresults',$data);
@@ -506,8 +630,12 @@ public function examinations(){
         return view('adminFiles.exams',$data);
     }   
     //Function to return view for result computation
-    public function getClassCompResults($examid,$classid){
-        $classes = classes::all();
+    public function getClassCompResults($examid,$classid,$sid){
+        //$schoolid = session()->get('schooldetails.id');
+        // $classes = classes::all();
+        $classes = classes::where('sid',$sid)
+                            ->where('educationsystem','8-4-4')
+                            ->get();
         $currentclass = classes::find($classid);
         $currentexam = exam::find($examid);
         $students = Student::where('current_classid',$classid)
@@ -515,8 +643,11 @@ public function examinations(){
         $adms = [];
         $terms = Term::all();
         $exams = exam::where('deleted',0)
+                       ->where('sid',$sid)
+                       ->get();
+        $subjects = Subject::where('sid',$sid)
+                            ->where('educationsystem','8-4-4')
                             ->get();
-        $subjects = Subject::all();
         $marks = Mark::where('classid',$classid)
                         ->where('examid',$examid)
                        ->get();
@@ -542,6 +673,28 @@ public function examinations(){
         return view('adminFiles.computeresults',$data);
     }
 
+    //Function to return admin notifications page
+    public function notificationsView(){
+        $maxid = session()->get('schooldetails.id');
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first()
+        ];
+
+        return view('adminFiles.notifications',$data);
+    }
+
+    //Function to return Admin Notify page
+    public function adminnotififyView(){
+        $maxid = session()->get('schooldetails.id');
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first()
+        ];
+
+        return view('adminFiles.notify',$data); 
+    }
+    
     //function to logout
     public function logoutAdmin(){
         if (session()->has('LoggedInUser')) {

@@ -81,19 +81,21 @@ class GradeController extends Controller
                 'messages' => $validator->getMessageBag()
             ]);
         } else {
-            $results = Grade::where('subid',explode(',',$req->subject)[0])
-                        ->where('classid',explode(',',$req->class)[0])
+            $results = Grade::where('subject',explode(',',$req->subject)[1])
+                        ->where('class',explode(',',$req->class)[0])
                         ->get();
             if (count($results) >= 1) {
-                $results = Grade::where('subid',explode(',',$req->subject)[0])
-                            ->where('classid',explode(',',$req->class)[0])
+                $results = Grade::where('subject',explode(',',$req->subject)[1])
+                            ->where('class',explode(',',$req->class)[0])
                             ->delete();
             }
 
             $grade = new Grade;
             $grade->subid = explode(',',$req->subject)[0];
             $grade->subject = explode(',',$req->subject)[1];
-            $grade->classid = explode(',',$req->class)[0];
+            $grade->class = explode(',',$req->class)[0];
+            //$classname = classes::find($req->class);
+            $grade->sid = $req->sid;
             $grade->minA = $req->minA;
             $grade->maxA = $req->maxA;
             $grade->gradeA = $req->gradeA;
@@ -159,7 +161,7 @@ class GradeController extends Controller
             return response()->json([
                 'status' => 200,
                 //'messages' => explode(',',$req->classid)[1].' '.explode(',',$req->classid)[2].' '.explode(',',$req->subject)[1].' '.'Grading set Successfully'
-                'messages' => explode(',',$req->subject)[1].' '.'Grading System set Successfully for '.explode(',',$req->class)[1].' '.explode(',',$req->class)[2]
+                'messages' => explode(',',$req->subject)[1].' '.'Grading System set Successfully for '.$req->class
             ]);
         }
         

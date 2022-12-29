@@ -9,7 +9,7 @@
     
     @else 
 <div class="container-fluid">
-@include('adminFiles.motto')
+
 <div class="main">
 <div id="sidenavigation" class="sidenav w3-animate-right">
 @include('adminFiles.sidebar')
@@ -53,12 +53,30 @@
              <div class="invalid-feedback"></div>
              </div>
              <div class="form-group mb-2">
-                <label for="">Issued To</label>
-                <input placeholder="Admission No." class="form-control" list="admnos" name="admnos">
-                <datalist id="admnos">
+             <label for="">Select What to Issue With</label>
+             <select name="upiadm" id="upiadm" class="form-control">
+                <option value="">Select</option>
+                <option value="UPI">UPI Number</option>
+                <option value="admissonno">Admission Number</option>
+             </select>
+             <div class="invalid-feedback"></div>
+             </div>
+             <div id="issueto" class="form-group mb-2 d-none">
+                <label for="">Issue To</label>
+                    <table class="table" id="tableUPIadms">
+                    <thead>
+                    <tr>
+                        <th scope="col">Select</th>
+                        <th scope="col">UPI or Adm.</th>
+                        <th scope="col">Name</th>
+                    </tr>
+                </thead>
+                <tbody id="upiadmntable">
                     
-                </datalist>
-                <div class="invalid-feedback"></div>
+                </tbody>
+                </table>
+                
+
              </div>
             </div>
             <div class="form-group d-grid">
@@ -265,7 +283,7 @@
         <a href="/importbooks" type="button" class="btn-sm btn-primary" type="button"><i class="fas fa-file-csv"></i>&nbsp;IMPORT FROM EXCEL</a>
         <div id="booksregres" class="text-center d-none"></div>
         <div class="table-responsive">
-        <div id="actionbtns" class="d-none mb-2">
+        <div id="actionbtns" class="mb-2">
         <button id="bookcollectbtn" class="btn btn-sm btn-info float-end">Collect Book</button>
         <button id="issuebooksbtn" class="btn btn-sm btn-success float-end">Issue Book</button>
         <button id="bookseditbtn" type="button" class="btn btn-sm btn-warning float-end"><i class="fas fa-edit"></i>&nbsp;Edit</button> 
@@ -351,7 +369,7 @@ function preview(){
 
                     $('#tableforbooks').DataTable({
                     ordering: false,
-                    paging: false,
+                    paging: true,
                     searching: true
                         });
 
@@ -494,8 +512,14 @@ function preview(){
             })
     }
     
-    //Function to filter to fetch students
-        function fetchStudents(){
+    //Select the adm or Upi
+     $("#upiadm").change(function(e){
+        var value = $(this).val();
+        //$('#upiadmntable').html('');
+        if (value !== "") {
+            $("#issueto").removeClass('d-none')
+            $("#bookissuebtn").removeClass('d-none')
+
             var sid = "{{ session()->get('schooldetails.id') }}";
 
             var filter = {
@@ -505,13 +529,67 @@ function preview(){
                     method: 'GET',
                     url: `/filterStudents/${filter.filtervalue}/${sid}`,
                     success: function(res){
-                        $('#admnos').html('');
+                    //console.log(res);
+                    $('#upiadmntable').html('');
+                    if (value == "UPI") {
                         $.each(res.students, function(key,item){
-                            $('#admnos').append('<option value="'+item.AdmissionNo+'">');
-                        })
+                            $('#upiadmntable').append('<tr>\
+                            <td><input id="studentcheckbox" type="checkbox" value="'+item.UPI+'" name="admnos[]"></td>\
+                            <td>'+item.UPI+'</td>\
+                            <td>'+item.Fname+' '+item.Lname+'</td>\
+                            </tr>');
+                        })  
+
+                        $("#tableUPIadms").DataTable().fnDestroy()
+
+                        $('#tableUPIadms').DataTable({
+                        ordering: false,
+                        paging: true,
+                        searching: true
+                            });
+                    } else if (value == "admissonno"){
+                        $.each(res.students, function(key,item){
+                            $('#upiadmntable').append('<tr>\
+                            <td><input id="studentcheckbox" type="checkbox" value="'+item.AdmissionNo+'" name="admnos[]"></td>\
+                            <td>'+item.AdmissionNo+'</td>\
+                            <td>'+item.Fname+' '+item.Lname+'</td>\
+                            </tr>');
+                        }) 
+                        
+                        $("#tableUPIadms").DataTable().fnDestroy()
+
+                        $('#tableUPIadms').DataTable({
+                        ordering: false,
+                        paging: true,
+                        searching: true
+                            });
+                    }
                     }
                     })
-                }
+        } else {
+            $("#issueto").addClass('d-none')
+            $("#bookissuebtn").addClass('d-none')
+        }
+     }) 
+
+    //Function to filter to fetch students
+        // function fetchStudents(){
+        //     var sid = "{{ session()->get('schooldetails.id') }}";
+
+        //     var filter = {
+        //         'filtervalue' : 'ALL'
+        //     }
+        //         $.ajax({
+        //             method: 'GET',
+        //             url: `/filterStudents/${filter.filtervalue}/${sid}`,
+        //             success: function(res){
+        //                 $('#admnos').html('');
+        //                 $.each(res.students, function(key,item){
+        //                     $('#admnos').append('<option value="'+item.AdmissionNo+'">');
+        //                 })
+        //             }
+        //             })
+        //         }
 
      //show issue book modal
      $(document).on('click', '#issuebooksbtn',function(e){
@@ -525,7 +603,7 @@ function preview(){
         } else {
        fetchBookStatus(ids);
             fetchBook(ids)
-            fetchStudents()
+            //fetchStudents()
            //$('#issueBookModal').modal('show'); 
         }
      })
@@ -563,6 +641,7 @@ function preview(){
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchbooks();
                     $('#booksregres').removeClass('d-none');
@@ -614,9 +693,22 @@ function preview(){
 
      //Book issuing ajax request
         $('#issuebookform').submit(function(e){
+            e.preventDefault();
          $('#bookissuebtn').val('PLEASE WAIT...');
-         e.preventDefault();
+
+         var ids = []
+         $('#studentcheckbox:checked').each(function(i){
+            ids[i] = $(this).val()
+        })
+
+        if (ids.length < 1) {
+            alert("Please Select a Student to whom you are going to issue the book");
+        } else if (ids.length > 1) {
+            alert("Please Select only one student. The book Can Only be Issued to One Student");
+        } else {
          var formdata = new FormData($(this)[0]);
+         formdata.append('admnos',ids);
+
          $.ajax({
              method: 'POST',
              url: '/issuebook',
@@ -642,6 +734,7 @@ function preview(){
                 }
             }
          })
+        }
      })
     
     })

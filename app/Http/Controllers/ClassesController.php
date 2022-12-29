@@ -71,10 +71,12 @@ class ClassesController extends Controller
     }
     }
 
-    //function to fetch classes
-    public function fetchclasses($sid){
+    //function to fetch classes for marks compuation 
+    public function fetchclasses2($sid,$etype){
         $classes = classes::where('deleted',0)
                             ->where('sid',$sid)
+                            ->where('educationsystem',$etype)
+                            ->OrderByDesc('id')
                             ->get();
         //$exams = DB::select('select classnames FROM exams where deleted = ?',[0]);
         //$exams = exam::where('deleted',0)
@@ -83,6 +85,21 @@ class ClassesController extends Controller
             //'exams' => $exams,
             'classes' => $classes
         ]);
+    }
+    
+    //Fetch classes
+    public function fetchclasses($sid){
+        $classes = classes::where('deleted',0)
+        ->where('sid',$sid)
+        ->OrderByDesc('id')
+        ->get();
+        //$exams = DB::select('select classnames FROM exams where deleted = ?',[0]);
+        //$exams = exam::where('deleted',0)
+            //->get();
+        return response()->json([
+        //'exams' => $exams,
+        'classes' => $classes
+        ]); 
     }
     //Function to delete class
     public function deleteClasses($ids){

@@ -19,7 +19,10 @@ class CreateStudentsTable extends Migration
             $table->string('Fname');
             $table->string('Sname')->nullable();
             $table->string('Lname')->nullable();
-            $table->string('AdmissionNo');
+            $table->string('AdmissionNo')->nullable();
+            $table->string('EduSystem');
+            $table->string('UPI');
+            $table->string('StudentId')->nullable();
             $table->string('schoolsystem');
             $table->string('current_class');
             $table->Integer('current_classid');
@@ -32,9 +35,15 @@ class CreateStudentsTable extends Migration
             $table->string('disability')->nullable();
             $table->string('d_description')->nullable();
             $table->string('parentinfo')->nullable();
-            $table->string('feebalance')->nullable();
+            $table->integer('pendingbalances')->default('0');
+            $table->integer('feebalance')->default('0');
+            $table->integer('ovbalance')->default('0');
             $table->string('password')->nullable();
             $table->string('profile')->default('avatar.png');
+            $table->string('pathway')->nullable();
+            $table->string('suborlearningpaths')->nullable();
+            $table->longText('books')->nullable();
+            $table->string('subids')->nullable();
             $table->tinyInteger('deleted')->default('0');
             $table->tinyInteger('completed')->default('0');
             $table->timestamps();

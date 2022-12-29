@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\overallGradeSystem;
+use App\Models\classes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -68,15 +69,16 @@ class OverallGradeSystemController extends Controller
                 'messages' => $validator->getMessageBag()
             ]);
         } else {
-            $results = overallGradeSystem::where('classid',explode(',',$req->class)[0])
+            $results = overallGradeSystem::where('class',explode(',',$req->class)[0])
                                             ->get();
             if (count($results) >= 1) {
-                $results = overallGradeSystem::where('classid',explode(',',$req->class)[0])
+                $results = overallGradeSystem::where('class',explode(',',$req->class)[0])
                                                 ->delete();
             }
 
             $grade = new overallGradeSystem;
-            $grade->classid = explode(',',$req->class)[0];
+            $grade->class = explode(',',$req->class)[0];
+            $grade->sid = $req->sid;
             $grade->consideration = $req->gradingtype;
             $grade->minA = $req->minA;
             $grade->maxA = $req->maxA;
@@ -138,11 +140,14 @@ class OverallGradeSystemController extends Controller
     }
     //Function to fetch one Class Grading System
     public function fetchFinalResult($cid){
-        $grades = overallGradeSystem::where('classid',explode(',',$cid)[0])
+        $grades = overallGradeSystem::where('class',explode(',',$cid)[0])
                                         ->get();
+
+        //$class = classes::find(explode(',',$cid)[0]);
         return response()->json([
             'grades' => $grades,
-            'class' => explode(',',$cid)[1].' '.explode(',',$cid)[2]
+            'class' => $cid
+            //'class' => $class['class'].' '.$class['stream']
         ]);
         
     }

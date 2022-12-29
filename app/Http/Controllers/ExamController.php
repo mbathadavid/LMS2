@@ -42,6 +42,7 @@ class ExamController extends Controller
                array_push($classnames,$classname.' '.$classstream);
            }
            $exam = new exam;
+           $exam->sid = $req->sid;
            $exam->Examination = $req->examname.'_'.$req->term.'_'.$req->year;
            $exam->Year = $req->year;
            $exam->classes = $req->classes;
@@ -58,8 +59,10 @@ class ExamController extends Controller
         }  
     }
     //function to return all exams
-    public function fetchExams(){
+    public function fetchExams($sid){
         $exams = exam::where('deleted',0)
+                        ->where('sid',$sid)
+                        ->OrderByDesc('id')
                         ->get();
         return response()->json([
             'exams' => $exams

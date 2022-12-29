@@ -9,7 +9,7 @@
     
     @else 
 <div class="container-fluid">
-@include('adminFiles.motto')
+
 <div class="main">
 <div id="sidenavigation" class="sidenav">
 @include('adminFiles.sidebar')
@@ -31,7 +31,7 @@
             <div class="col-lg-6 col-md-6 col-sm-12">
             <input type="number" name="uid" id="uid" value="{{ session()->get('LoggedInUser.id') }}" hidden>
             <div class="form-group mb-2">
-            <label for=""><h6 class="text-success">First Name</h6></label>
+            <label for=""><h6 class="text-success">Salutation</h6></label>
                 <select name="editsalutation" id="editsalutation" class="form-control">
                     <option value="{{ session()->get('LoggedInUser.Salutation') }}">{{ session()->get('LoggedInUser.Salutation') }}</option>
                     <option value="Ms">Miss</option>
@@ -80,8 +80,12 @@
                 <div class="invalid-feedback"></div>
              </div>
             </div>
-
+            @if(session()->get('LoggedInUser.Role') == 'Super Admin')
+            <div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>Your have all the System Priviledges</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+            @else
             <div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>Your Priviledges can only be updated by the school super Admin</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+            @endif
+            
          
             <div class="form-group mb-2 d-grid">
              <input type="submit" id="editaccountbtn" class="btn btn-success btn-sm rounded-0" value="UPDATE ACCOUNT DETAILS">
@@ -109,7 +113,25 @@
         <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8 col-sm-12">
          <input type="number" name="uid" id="uid" value="{{ session()->get('LoggedInUser.id') }}" hidden>
+            <div class="form-group mb-2">
+                <label for=""><h6 class="text-danger">Enter Current Password</h6></label>
+                <input type="password" name="cpass" id="cpass" placeholder="Your Current Password" class="form-control">
+                <div class="invalid-feedback"></div>
+             </div>
 
+             <div class="form-group mb-2">
+                <label for=""><h6 class="text-success">Enter New Password</h6></label>
+                <input type="password" name="npass" id="npass" placeholder="Your New Password" class="form-control">
+                <div class="invalid-feedback"></div>
+             </div>
+
+             <div class="form-group mb-2">
+                <label for=""><h6 class="text-success">Confirm New Password</h6></label>
+                <input type="password" name="cnpass" id="cnpass" placeholder="Confirm New Password" class="form-control">
+                <div class="invalid-feedback"></div>
+             </div>
+
+             <input type="submit" id="changepass" value="CHANGE PASSWORD" class="btn btn-info rounded-0 btn-sm form-control">
          </div>
          </div>
 
@@ -174,12 +196,16 @@
     <h5 class="text-center">Role : <b class="text-danger">{{ session()->get('LoggedInUser.Role') }}</b></h5>
     <div class="" style="background-color: #e6e6e6;">
         <h4 class="text-center text-success">System Priviledges</h4>
+        @if(session()->get('LoggedInUser.Role') == 'Super Admin')
+        <h6 class="text-center">You have all the system priviledges</h6>
+        @else
         @if(session()->get('LoggedInUser.priviledges') == null)
             <h6 class="text-center">No Priviledges Assigned Yet</h6>
         @else
             @for($i=0; $i < count(explode(',',session()->get('LoggedInUser.priviledges'))); $i++)
                 <p class="text-center">{{ explode(',',session()->get('LoggedInUser.priviledges'))[$i] }}</p>
             @endfor
+        @endif
         @endif
     </div>
 </div>
@@ -281,7 +307,73 @@ $(document).ready(function(){
                    }  
                }
             })
+        })
+        //Update Account Details
+        $("#editaccountform").submit(function(e){
+            e.preventDefault();
+            removeValidationClasses($("#editaccountform"))
+            $('#editaccountbtn').val('PLEASE WAIT...');
+            var formData = new FormData($('#editaccountform')[0]);
 
+            $.ajax({
+                method: 'POST',
+                url: '{{ route('staff.accountdeatails') }}',
+                contentType: false,
+                processData: false,
+                data: formData,
+               //dataType: 'json',
+                success: function(res){
+                console.log(res);
+                $('#editaccountbtn').val('UPDATE ACCOUNT DETAILS');
+                   if (res.status == 400) {
+                    showError('editsalutation', res.messages.editsalutation);
+                    showError('fname', res.messages.fname);
+                    showError('lname', res.messages.lname);
+                    showError('gender', res.messages.gender);
+                    showError('email', res.messages.email);
+                    showError('phone', res.messages.phone);
+                   } else if(res.status == 200){
+                    $('#accountupdatedivres').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>')
+                    removeValidationClasses($("#editaccountform"));
+                    $('#editaccountModal').modal('hide');
+                   } 
+               }
+            })
+        })
+
+        //Change Password Form Submit
+        $("#editpasswordform").submit(function(e){
+            e.preventDefault();
+            removeValidationClasses($("#editpasswordform"))
+            $('#changepass').val('PLEASE WAIT...');
+            var formData = new FormData($('#editpasswordform')[0]);
+            if ($("#npass").val() !== $("#cnpass").val()) {
+                alert("The Passwords do not Match. Please make Sure New Password and Confirm New Password Fields Match");
+            } else {
+            $.ajax({
+                method: 'POST',
+                url: '{{ route('staff.updatepassword') }}',
+                contentType: false,
+                processData: false,
+                data: formData,
+               //dataType: 'json',
+                success: function(res){
+                console.log(res);
+                $('#changepass').val('CHANGE PASSWORD');
+                   if (res.status == 400) {
+                    showError('cpass', res.messages.cpass);
+                    showError('npass', res.messages.npass);
+                    showError('cnpass', res.messages.cnpass);
+                   } else if(res.status == 200){
+                    $('#accountupdatedivres').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>')
+                    removeValidationClasses($("#editpasswordform"));
+                    $('#editaccountpasswordModal').modal('hide');
+                   } else if(res.status == 401) {
+                    showError('cpass', res.messages);  
+                   } 
+               }
+            })
+        }
         })
     
 })

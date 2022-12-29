@@ -18,7 +18,7 @@ class CreateGradesTable extends Migration
             $table->unsignedBigInteger('sid');
             $table->integer('subid');
             $table->string('subject');
-            $table->string('classid');
+            $table->string('class');
             $table->string('minA');
             $table->string('maxA');
             $table->string('pointA');

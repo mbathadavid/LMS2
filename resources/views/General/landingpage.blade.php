@@ -39,7 +39,7 @@
         @else
         <div id="portalslinks">
             <a href="#">Student Portal</a>
-            <a href="#">Parent Portal</a>
+            <a href="/parentlogin">Parent Portal</a>
             <a href="/adminlogin">Staff Portal</a>
         </div>
         <!-- <form action="#" class="bg-success p-3" id="login" method="post">

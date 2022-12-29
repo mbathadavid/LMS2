@@ -19,14 +19,14 @@ class FinalGradeController extends Controller
     //Insert Final Grade for Subject In Exam Thread 
    public function insertResults(Request $req){
      $records = FinalGrade::where('tid',$req->examthread)
-                         ->where('subid',$req->sid)
+                         ->where('subid',$req->subid)
                          ->where('classid',$req->cid)
                          ->get();
 
           
         if (count($records) >= 1) {
           $records = FinalGrade::where('tid',$req->examthread)
-                         ->where('subid',$req->sid)
+                         ->where('subid',$req->subid)
                          ->where('classid',$req->cid)
                          ->delete();   
         }
@@ -64,6 +64,13 @@ class FinalGradeController extends Controller
                   $points = $req->points;
                   $remarks = $req->remarks;
                   $examstocompute = explode(',',$req->examinations);
+                  $markscount = count($marks);
+                  $pointscount = count($points);
+                  $marksum = array_sum($marks);
+                  $pointsum = array_sum($points);
+                  $marksavg = $marksum/$markscount;
+                  $pointavg = $pointsum/$markscount;
+
 
 
                if (count($admnos) != count($marks)) {
@@ -74,12 +81,13 @@ class FinalGradeController extends Controller
                     ]);
                } else {
                     for ($i=0; $i < count($admnos); $i++) { 
-                         $finalgrade = new FinalGrade;
+                            $finalgrade = new FinalGrade;
+                            $finalgrade->sid = $req->sid;  
                             $finalgrade->tid = $req->examthread;
                             $finalgrade->AdmissionNo = $admnos[$i];
                             $finalgrade->Fname = $fnames[$i];
                             $finalgrade->Lname = $lnames[$i];
-                            $finalgrade->subid = $req->sid;
+                            $finalgrade->subid = $req->subid;
                             $finalgrade->classid = $req->cid;
                             $finalgrade->availablescores = $availablescores[$i];
                             
@@ -115,41 +123,56 @@ class FinalGradeController extends Controller
                     }
 
                     $data = FinalGrade::where('tid',$req->examthread)
-                                        ->where('subid',$req->sid)
+                                        ->where('subid',$req->subid)
                                         ->where('classid',$req->cid)
                                         ->orderBy('score','DESC')
                                         ->get();
 
                     $subject = Subject::select('subject')
-                                        ->where('id',$req->sid)
-                                        ->first();   
-                                        
-                    $clas = classes::select('class')
-                                        ->where('id',$req->cid)
-                                        ->first();
-
-                    $stream = classes::select('stream')
-                                        ->where('id',$req->cid)
+                                        ->where('id',$req->subid)
                                         ->first(); 
+                    
+                    // $subject = Subject::where('id',$req->sid)
+                    //                     ->where('sid',$req->sid)
+                    //                     ->first();
                                         
-                    $thread = ResultThread::select('name')
-                                        ->where('id',$req->examthread)
-                                        ->first(); 
+                    // $clas = classes::select('class')
+                    //                     ->where('id',$req->cid)
+                    //                     ->first();
 
-                    $term = ResultThread::select('term')
-                                        ->where('id',$req->examthread)
-                                        ->first();
+                    $clas = classes::where('id',$req->cid)
+                                    ->where('sid',$req->sid)
+                                    ->get();
+
+                    // $stream = classes::select('stream')
+                    //                     ->where('id',$req->cid)
+                    //                     ->first(); 
                                         
-                    $year = ResultThread::select('year')
-                                        ->where('id',$req->examthread)
-                                        ->first();                    
+                    // $thread = ResultThread::select('name')
+                    //                     ->where('id',$req->examthread)
+                    //                     ->first(); 
+
+                    $thread = ResultThread::where('id',$req->examthread)
+                                        ->where('sid',$req->sid)
+                                        ->get();
+
+                    // $term = ResultThread::select('term')
+                    //                     ->where('id',$req->examthread)
+                    //                     ->first();
+                                        
+                    // $year = ResultThread::select('year')
+                    //                     ->where('id',$req->examthread)
+                    //                     ->first();                    
 
                     return response()->json([
-                         'filename' => $clas['class'].'_'.$stream['stream'].'_'.$thread['thread'].'_'.$year['year'].'_'.$term['term'].'_'.$subject['subject'],
+                         'filename' => $clas[0]['class'].'_'.$clas[0]['stream'].'_'.$thread[0]['thread'].'_'.$thread[0]['year'].'_'.$thread[0]['term'].'_'.$subject['subject'],
                          'status' => 200,
                          'messages' => 'Marks Successfully added to Results Thread.',
                          'data' => $data,
-                         'examinations' => $req->examinations
+                         'examinations' => $req->examinations,
+                         'marksavg' => round($marksavg,3),
+                         'pointsavg' => round($pointavg,3),
+                         'gradingavg' => round($marksavg)
                     ]);
 
                }
@@ -175,16 +198,29 @@ class FinalGradeController extends Controller
                ]);
           } else {
                $tid = explode(',',$req->thread)[0];
-               $cid = explode(',',$req->class)[0];
-
-               $records = FinalGrade::where('tid',$tid)
-                                   ->where('classid',$cid)
+               //$cid = explode(',',$req->class)[0];
+                $cid = $req->class;
+                $classes = classes::where('class',$cid)
+                                   ->where('sid',$req->sid)
                                    ->get();
 
-               $students = Student::where('current_classid',$cid)
+                $classids = array();
+                foreach ($classes as $class) {
+                    array_push($classids,$class->id);
+                }                   
+
+               $records = FinalGrade::where('tid',$tid)
+                                   ->whereIn('classid',$classids)
+                                   ->get();
+
+               $students = Student::whereIn('current_classid',$classids)
+                                   ->where('sid',$req->sid)
                                    ->get(); 
                                    
-               $subjects = Subject::all();
+               // $subjects = Subject::all();
+               $subjects = Subject::where('sid',$req->sid)
+                                   ->where('educationsystem','8-4-4')
+                                   ->get();
 
                $subids = [];
                $subnames = [];
@@ -195,49 +231,65 @@ class FinalGradeController extends Controller
                     array_push($subnames,$subject->subject);
 
                     $studentscount = FinalGrade::where('tid',$tid)
-                                        ->where('classid',$cid)
+                                        ->whereIn('classid',$classids)
                                         ->where('subid',$subject->id)
+                                        ->where('sid',$req->sid)
                                         ->get();
 
                     array_push($stupersub,count($studentscount));
                }
 
                $finalsubstucount = array_combine($subnames,$stupersub);
+               $grades = overallGradeSystem::where('class',$cid)
+                                             ->where('sid',$req->sid)
+                                             ->get();
+
+               $subidnames = array_combine($subids,$subnames);
 
 
                return response()->json([
+                    'status' => 200,
+                    'subids' => $subids,
+                    'subnames' => $subnames,
+                    'subidnames' => $subidnames,
                     'students' => $students,
                     'records' => $records,
                     'subjects' => $subjects,
                     'substudents' => $finalsubstucount,
-                    'classthread' => explode(',',$req->class)[1].' '.explode(',',$req->class)[2].' '.explode(',',$req->thread)[1],
-                    'grades' => overallGradeSystem::where('classid',$cid)->first()
+                    'classthread' => $req->class.' '.explode(',',$req->thread)[1],
+                    'grades' => $grades
                ]);
           }
           
    }
    //Function to fetch Subject Grades
-   public function fetchSubGrades($cid,$subid){
-     $grades = Grade::where('subid',$subid)
-                    ->where('classid',$cid)
+   public function fetchSubGrades($sid,$cid,$subid){
+     $grades = Grade::where('subject',$subid)
+                    ->where('sid',$sid)
+                    ->where('class',$cid)
                     ->get();
      
-     $subject = Subject::select('subject')
-                    ->where('id',$subid)
+     $subject = Subject::where('subject',$subid)
+                    // ->where('id',$subid)
+                    ->where('educationsystem','8-4-4')
+                    ->where('sid',$sid)
                     ->first();   
                     
      $clas = classes::select('class')
                     ->where('id',$cid)
+                    ->where('sid',$sid)
                     ->first();
 
      $stream = classes::select('stream')
                     ->where('id',$cid)
+                    ->where('sid',$sid)
                     ->first();
                          
      return response()->json([
           'grades' => $grades,
+          'class' => $cid,
           'subject' => $subject['subject'],
-          'class' => $clas['class'].' '.$stream['stream'],
+          //'class' => $clas['class'].' '.$stream['stream'],
      ]);               
    }
 }

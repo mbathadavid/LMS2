@@ -42,6 +42,7 @@ class FeestructureController extends Controller
                 ]);
             } else {
                 $checkpriorreg = Feestructure::where('Term',$req->term)
+                                            ->where('sid',$req->sid)
                                             ->where('deleted',0)
                                             ->get();
 
@@ -90,9 +91,9 @@ class FeestructureController extends Controller
                         $fee->Term = $req->term;
                         $fee->classes = $classids[$i];
                         $fee->classnames = $classnames[$i];
-                        $fee->modules = $req->modules;
-                        $fee->amounts = $req->amounts;
-                        $fee->totalamount = array_sum(explode(',',$req->amounts));
+                        $fee->modules = implode(",",$modules);
+                        $fee->amounts = implode(",",$amounts);
+                        $fee->totalamount = array_sum($amounts);
                         $fee->cid = $req->uid;
                         $fee->crole = $createdby['Role'];
                         $fee->createdby = $createdby['Fname'].' '.$createdby['Lname'];
@@ -110,13 +111,74 @@ class FeestructureController extends Controller
             
         }
     } 
+
+    //Update Fee structure Function 
+    public function updateFeeStructure(Request $req) {
+       // return ['data' => $req->all()];
+       $modules = array_filter($req->editmodule);
+       $amount = array_filter($req->editamount);
+
+        if (count($modules) != count($amount)) {
+            return response()->json([
+                "status" => 401,
+                "messages" => "Fee Items and Amounts mismatched"
+            ]);
+        } else {
+            $feestructure = Feestructure::find($req->fid);
+            $feestructure->Term = $req->term;
+            $feestructure->modules = implode(",",$modules);
+            $feestructure->amounts = implode(",",$amount);
+            $feestructure->totalamount = array_sum($amount);
+            $feestructure->save();
+
+            return response()->json([
+                "status" => 200,
+                "messages" => "Fee Structure Updated Successfully"
+            ]);
+        }
+        
+    }
+
+    //Delete Fee Structure
+    public function deleteFeestructure($fids) {
+        $idarray = explode(',',$fids);
+
+        for ($k=0; $k < count($idarray); $k++) { 
+            $feestructure = Feestructure::where('id',$idarray[$k])
+                                        ->delete(); 
+        }
+
+        if ($feestructure) {
+            return response()->json([
+                "status" => 200,
+                "messages" => "Feestucture Deleted Successfully"
+            ]);
+        } else {
+            return response()->json([
+                "status" => 400,
+                "messages" => "An error occured while deleting the Fee Structure"
+            ]);
+        }
+        
+    }
+
     //Fetch fee structure
     public function fetchFeestructures($sid) {
         $feestructures = Feestructure::where('deleted',0)
                         ->where('sid',$sid)
+                        ->OrderByDesc('id')
                         ->get();
         return response()->json([
         'feestructures' => $feestructures
     ]);
+    }
+
+    //Fetch one Fee Structure
+    public function fetchFeestructure($fid) {
+        $feestructure = Feestructure::find($fid);
+
+        return response()->json([
+            'feestructure' => $feestructure
+        ]);
     }
 }

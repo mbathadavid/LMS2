@@ -8,7 +8,7 @@
     <h5 class="text-center"><a href="/schoolreg" class="link-info">Register School</a></h5>
     @else 
 <div class="container-fluid">
-@include('adminFiles.motto')
+
 <div class="main">
 <div id="sidenavigation" class="sidenav">
 @include('adminFiles.sidebar')
@@ -40,6 +40,20 @@
             <input hidden type="number" name="sid" id="sid" value="{{ session()->get('schooldetails.id') }}">
             <input type="number" name="seditid" id="seditid" hidden>
                 <div class="form-group mb-2">
+                <label for="">Education System</label>
+                <select class="form-control" name="sediteducation" id="sediteducation">
+                    <option id="sediteducationval"></option>
+                    <option value="8-4-4">8-4-4 System</option>
+                    <option value="CBC">CBC System</option>
+                </select>
+                <div class="invalid-feedback"></div>
+                </div>
+                <div class="form-group mb-2">
+                <label for="">UPI Number</label>
+                <input class="form-control" type="text" name="seditupi" id="seditupi">
+                <div class="invalid-feedback"></div>
+                </div>
+                <div class="form-group mb-2">
                 <label for="">Admission Number</label>
                 <input class="form-control" type="number" name="seditadmno" id="seditadmno">
                 <div class="invalid-feedback"></div>
@@ -65,14 +79,16 @@
                 </div>
                 <div class="invalid-feedback"></div>
                 </div>
-                <div class="form-group mb-2">
+                
+            </div>
+            <div class="col-lg-6">
+            <div class="form-group mb-2">
                 <label for="">Current Class</label>
                 <select class="form-control" name="seditclass" id="seditclass">
                     <option id="seditclassval"></option>
                 </select>
+                <div class="inavalid-feedback"></div>
                 </div>
-            </div>
-            <div class="col-lg-6">
             <div class="form-group mb-2">
                 <label for="">Date of Birth</label>
                 <input class="form-control" type="date" name="seditdob" id="seditdob">
@@ -138,6 +154,75 @@
 </div>
 <!---Student Edit modal start--->
 
+<!---Student Assign pathway modal start--->
+<div class="modal w3-animate-zoom" id="studentpathwayModal" tabindex="-1" aria-labelledby="studentpathwayModal">
+    <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title text-success text-center">Assigning Pathway to <span id="pathwayname" class="w3-indigo"></span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+       <form method="POST" action="#" id="studentassignpathwayform" enctype="multipart/form-data">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-6 col-md-8 col-sm-12">
+            <input type="number" name="studentid2" id="studentid2" class="form-control" hidden>
+            <div class="d-none" id="alertforassiningpathway">
+            <div class="alert w3-green alert-dismissible w3-animate-zoom show" role="alert"><strong>Sorry! Pathway Can Only be Assigned for Upper Secondary Students, i.e GRADES 10, 11, and 12</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
+            </div>
+
+            <div class="form-group mb-2" id="pathwayassign">
+                <label for="">Select the Pathway</label>
+                <select class="form-control" name="path" id="path">
+                <option value="">Select Pathway</option>
+                <option value="Arts and Sports Science Pathway">Arts and Sports Science Pathway</option>
+                <option value="Social Sciences Pathway">Social Sciences Pathway</option>
+                <option value="STEM Pathway">Science, Technology, Engineering,and Mathematics Pathway</option>
+                </select>
+                <div class="invalid-feedback"></div>
+            </div>
+
+            <div class="form-group mb-3 d-grid">
+                <button type="submit" id="assignpathway" class="btn btn-sm w3-indigo">ASSIGN PATHWAY TO STUDENT</button>
+            </div> 
+            </div>
+        </div>
+       </form>
+        </div>
+    </div>
+    </div>
+</div>
+<!---Student Assign pathway modal start--->
+
+<!---Student Subjects Modal start--->
+<div class="modal w3-animate-zoom" id="studentpathsubModal" tabindex="-1" aria-labelledby="studentpathsubModal">
+    <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title text-success text-center">ENROLL STUDENT TO SUBJECTS OR LEARNING AREA</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+       <form method="POST" action="#" id="studentassignsubsform" enctype="multipart/form-data">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-6 col-md-8 col-sm-12">
+            <input type="number" name="studentid" id="studentid" class="form-control" hidden>
+            <div id="subjectlist" class="mb-2">
+            
+            </div>
+
+            <div class="form-group mb-3 d-grid">
+                <button type="submit" id="assigpathway" class="btn btn-sm w3-green">ASSIGN SUBJECTS STUDENT</button>
+            </div> 
+            </div>
+        </div>
+       </form>
+        </div>
+    </div>
+    </div>
+</div>
+<!---Student Assign Pathway and Subjects Modal End--->
+
 <!---Student View modal start--->
 <div class="modal w3-animate-zoom" id="studentviewModal" tabindex="-1" aria-labelledby="promoteStudentModal">
     <div class="modal-dialog modal-lg">
@@ -149,32 +234,57 @@
         <div class="modal-body">
         <div class="row">
             <div class="text-center" id="studentimg"></div>
-         <div class="col-lg-4 p-2">
+         <div class="col-lg-3 p-2">
              <h5 class="text-center text-info">General Information</h5>
             <h6>Admission Number : <span id="viewadmno" class="text-success"></span></h6>
-            <h6>First Name : <span id="viewfname" class="text-success"></span></h6>
-            <h6>Second Name : <span id="viewsname" class="text-success"></span></h6>
-            <h6>Last Name : <span id="viewlname" class="text-success"></span></h6>
+            <h6>UPI Number : <span id="viewloginid" class="text-success"></span></h6>
+            <h6>Name : <span id="viewfname" class="text-success"></span></h6>
+            <!-- <h6>Second Name : <span id="viewsname" class="text-success"></span></h6>
+            <h6>Last Name : <span id="viewlname" class="text-success"></span></h6> -->
             <h6>Current Class : <span id="viewclass" class="text-success"></span></h6>
+            <h6>Pathway : <span id="viewpathway" class="text-success"></span></h6>
             <h6>Gender : <span id="viewgender" class="text-success"></span></h6>
             <h6>Date of Birth : <span id="viewdob" class="text-success"></span></h6>
             <h6>Account Active? : <span id="viewstatus" class="text-success"></span></h6>
             <h6>County of Origin : <span id="viewcounty" class="text-success"></span></h6>
             <h6>Sub County of Origin : <span id="viewscounty" class="text-success"></span></h6>
          </div>
-         <div class="col-lg-4 p-2">
+         <div class="col-lg-3 p-2">
             <h5 class="text-center text-info">Disability Issues</h5>
             <h6>Disabled? : <span id="viewdisabled" class="text-success"></span></h6>
             <h6 id="viewdis">Type of Disabilty : <span id="viewdisability" class="text-success"></span></h6>
             <h6 id="viewddes">Disability Description : <span id="viewddescription" class="text-success"></span></h6>
          </div>
-         <div class="col-lg-4 p-2">
+         <div class="col-lg-3 p-2">
+            <h5 class="text-center text-info">Subjects or Learning Areas</h5>
+            <div id="subjectsviewlist">
+
+            </div>
+         </div>
+         <div class="col-lg-3 p-2">
             <h5 class="text-center text-info">Parent/Guardian information</h5>
             <div id="parentinfo">
 
             </div>
          </div>
         </div>
+        <hr>
+        <div>
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <h6 class="text-danger">Books Issued to the Student</h6>
+                <div id="resources">
+
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <h4 class="text-danger">Fee Balance: <span class="text-success" id="feebalance"></span>/=</h4> 
+            </div>
+        </div>
+        
+        </div>
+
         </div>
     </div>
     </div>
@@ -221,6 +331,22 @@
                 <div class="col-lg-6">
                     
                     <div class="form-group mb-1">
+                    <label for="">Education System</label>
+                        <select class="form-control" name="educationsystem" id="educationsystem">
+                        <option value="">--Select Education</option>
+                        <option value="8-4-4">8-4-4 System</option>
+                        <option value="CBC">CBC System</option>
+                        </select>
+                        <div class="invalid_feedback"></div>
+                    </div>
+
+                    <div class="form-group mb-1">
+                        <label for="">UPI Number</label>
+                        <input type="text" placeholder="Enter UPI Number" name="upi" id="upi" class="form-control">
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div class="form-group mb-1">
                         <label for="">Admission Number</label>
                         <input placeholder="Admission Number" type="text" name="admissionNo" id="admissionNo" class="form-control">
                         <div class="invalid-feedback"></div>  
@@ -246,14 +372,6 @@
                         <input type="radio" name="gender" id="gender" value="female">&nbsp;Female
                         <div class="invalid-feedback"></div>
                     </div>
-                    <div class="form-group mb-1">
-                        <label for="">Current Class</label>
-                        <select class="form-control" name="current_class" id="current_class">
-                            <option value="">--select class--</option>
-                            
-                            </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
                     <!--
                     <div class="form-group mb-1">
                         <input type="checkbox" value="active" name="active" id="active">&nbsp; Active
@@ -264,6 +382,13 @@
                 
 
                 <div class="col-lg-6">
+                <div class="form-group mb-1">
+                        <label for="">Current Class</label>
+                        <select class="form-control" name="current_class" id="current_class">
+                            
+                            </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
                 <div class="form-group mb-1">
                         <label for="">Date of Birth</label>
                         <input placeholder="Date of Birth" type="date" name="dob" id="dob" class="form-control">
@@ -335,13 +460,15 @@
 <div class="row border border-3 border-info p-3">
     
 <div class="table-responsive">
-<div id="actionbtns" class="d-none mb-2 d-flex float-end">
+<div id="actionbtns" class="mb-2 d-flex">
 <button id="promotebtn" class="btn btn-sm btn-warning m-1">Promote Student</button>
 <button id="clearbtn" class="btn btn-sm btn-info m-1">Clear Student</button>
 <button id="deactivatebtn" class="btn btn-sm btn-primary m-1">Deactivate</button>
+<button id="pathwaybtn" class="btn btn-sm w3-indigo m-1">Assign Pathway</button>
+<button id="pathsubbtn" class="btn btn-sm w3-green m-1">Enroll Subjects</button>
 <button id="activatebtn" class="btn btn-sm btn-success m-1">Activate</button>
 <button id="examsbtn" class="btn btn-sm btn-danger m-1">View Results</button>
-<button id="viewfeesbtn" class="btn btn-sm btn-primary m-1">Fee Information</button>
+<button id="viewfeesbtn" class="btn btn-sm btn-primary m-1">Fee Payment History</button>
 <button id="viewbtn" class="btn btn-sm btn-info m-1"><i class="fas fa-eye"></i>&nbsp;View</button>
 <button id="editbtn" class="btn btn-sm btn-warning m-1"><i class="fas fa-edit"></i>&nbsp;Edit</button> 
 <button id="deletebtn" class="btn btn-sm btn-danger m-1"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button> 
@@ -352,6 +479,7 @@
                 <th scope="col">Select</th>
                 <th scope="col">Image</th>
                 <th scope="col">Admission No.</th>
+                <th scope="col">UPI</th>
                 <th scope="col">Name</th>
                 <th scope="col">Account Active?</th>
                 <th scope="col">Gender</th>
@@ -363,7 +491,7 @@
                 <th scope="col">Sub-County</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="studentstablebody">
             
         </tbody>
         </table>
@@ -453,16 +581,48 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 url: `/getstudent/${id}`,
                 //dataType: 'jsons',
                 success: function(res) {
+                    //console.log(res);
                     var data = res.student;
                     $('#titleadm').text(data.AdmissionNo+' '+data.Fname+' '+data.Lname);
                     $('#studentimg').html('<img src="images/'+data.profile+'" class="img-fluid"/>');
                     $('#viewadmno').text(data.AdmissionNo)
-                    $('#viewfname').text(data.Fname)
-                    $('#viewsname').text(data.Sname)
-                    $('#viewlname').text(data.Lname)
+                    $('#viewloginid').text(data.UPI)
+                    $('#viewfname').text(data.Fname+' '+data.Lname)
+                    // $('#viewsname').text(data.Sname)
+                    // $('#viewlname').text(data.Lname)
                     $('#viewgender').text(data.gender)
                     $('#viewdob').text(data.dob)
                     $('#viewclass').text(data.current_class)
+                    $('#feebalance').text(data.ovbalance)
+
+                    if (data.suborlearningpaths == null) {
+                        $("#subjectsviewlist").html('<div class="w3-green">Subjects or Learning areas not yet assigned</div>')
+                    } else {
+                        var subjects = data.suborlearningpaths.split(",");
+
+                        $("#subjectsviewlist").html("");
+
+                        for (let k = 0; k < subjects.length; k++) {
+                            const element = subjects[k];
+                            $("#subjectsviewlist").append('<h6>'+element+'</h6>');
+                        }
+                    }
+
+                    if (res.books.length == 0) {
+                        $("#resources").html('<div class="w3-green">The students has not been issued any Books yet.</div');
+                    } else {
+                        $("#resources").html("");
+                        $.each(res.books, function(key,item){
+                            $('#resources').append('<h6>'+item.BookNumber+'</h6>');
+                        })
+                    }
+
+                    if (data.pathway == null) {
+                        $('#viewpathway').text("Not Assigned"); 
+                    } else {
+                        $('#viewpathway').text(data.pathway); 
+                    }
+
                     $('#viewstatus').text(data.Active)
                     $('#viewcounty').text(data.county)
                     $('#viewscounty').text(data.subcounty)
@@ -498,18 +658,21 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 //dataType: 'jsons',
                 success: function(res) {
                 var data = res.student;
-                console.log(data)
+                //console.log(data)
                 $('#seditimgdiv').html('');
                 $('#seditimgdiv').html('<img width="150" id="frame2" height="150" class="img-fluid" src="images/'+data.profile+'" alt="">');
                 $('#seditid').val(data.id);
                 $('#seditadmno').val(data.AdmissionNo);
+                $('#seditupi').val(data.UPI);
+                $('#sediteducationval').val(data.schoolsystem);
+                $('#sediteducationval').text(data.schoolsystem);
                 $('#seditfname').val(data.Fname);
                 $('#seditsname').val(data.Sname);
                 $('#seditlname').val(data.Lname);
                 $('#seditdob').val(data.dob);
                 $('#seditcounty').val(data.county);
-                $('#seditclassval').val(data.current_class)
-                $('#seditclassval').text(data.current_class)
+                $('#seditclassval').val(data.current_class);
+                $('#seditclassval').text(data.current_class);
                 $('#seditscounty').val(data.subcounty);
                 $('#seditdisabilitydescription').val(data.d_description);
                 $('#editdisabilityval').val(data.disabled);
@@ -561,6 +724,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                         $('#current_class').html('<h5 class="text-danger">There are no classes registered yet</h5>')
                     } else {
                         $('#current_class').html('');
+                        $('#current_class').html('<option value="">--Select Class--</option>')
                         $.each(res.classes, function(key,item){
                             $('#current_class').append('<option value="'+item.id+','+item.class+' '+item.stream+'">'+item.class+' '+(item.stream == null ? "" : item.stream)+'</option>');
                         })
@@ -596,7 +760,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 method: 'GET',
                 url: `/fetchclasses/${sid}`,
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     if (res.classes.length == 0) {
                         $('#nextclass').html('');
                         $('#nextclass').html('<h5 class="text-danger">There are no classes registered yet</h5>')
@@ -627,6 +791,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                         <td><input value="'+item.id+'" type="checkbox" class="checkboxid" name="studentcheckbox" id="studentcheckbox"></td>\
                         <td><img  width="50" height="50" class="img-fluid" src="images/'+item.profile+'" alt=""></td>\
                         <td>'+item.AdmissionNo+'</td>\
+                        <td>'+item.UPI+'</td>\
                         <td>'+item.Fname+' '+item.Lname+'</td>\
                         <td><button class="btn btn-success btn-sm">'+item.Active+'</button></td>\
                         <td>'+item.gender+'</td>\
@@ -666,7 +831,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
             $('#teacheregbtn').val('PLEASE WAIT...');
             var formData = new FormData($('#studentregform')[0]);
 
-            $.ajax({
+            //var system = $("#educationsystem").val();
+                $.ajax({
                 method: 'POST',
                 url: '{{ route('student.register') }}',
                 contentType: false,
@@ -674,13 +840,17 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                data: formData,
                //dataType: 'json',
                success: function(res){
+                console.log(res);
                    if (res.status == 400) {
                     $('#teacheregbtn').val('REGISTER STUDENT');
                     showError('admissionNo', res.messages.admissionNo);
                     showError('firstname', res.messages.firstname);
                     showError('lastname', res.messages.lastname);
                     showError('secondname', res.messages.secondname);
+                    showError('upi', res.messages.upi);
+                    showError('educationsystem', res.messages.educationsystem);
                     showError('gender', res.messages.gender);
+                    showError('disabled', res.messages.disabled);
                     showError('current_class', res.messages.current_class);
                     showError('county', res.messages.county);
                     showError('subcounty', res.messages.subcounty);
@@ -697,10 +867,10 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     $('#regresponse').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                     $('#frame').src = 'images/avatar.png';
                     $("#teacheraddModal").modal('hide');
-                   }
-                   
+                   }    
                } 
-            });
+            });  
+            
         })
 
     //Edit Student ajax Request
@@ -718,8 +888,11 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                data: formData,
                //dataType: 'json',
                success: function(res){
+                    console.log(res)
                    if (res.status == 400) {
                     $('#sedtbtn').val('EDIT STUDENT');
+                    showError('sediteducation', res.messages.sediteducation);
+                    showError('seditupi', res.messages.seditupi);
                     showError('seditadmno', res.messages.seditadmno);
                     showError('seditfname', res.messages.seditfname);
                     showError('seditsname', res.messages.seditsname);
@@ -765,7 +938,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                   // console.log(res)
                    if (res.status == 200) {
                     fetchstudents();
                     fecthclasses()
@@ -800,7 +973,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchstudents();
                     fecthclasses()
@@ -898,6 +1071,169 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
             }  
         }
      })
+
+     //Enrolling to pathway
+     $(document).on('click', '#pathwaybtn',function(e){
+         e.preventDefault();
+         var ids = []
+         $('#studentcheckbox:checked').each(function(i){
+            ids[i] = $(this).val()
+        })
+        
+        if (ids.length < 1) {
+            alert('You must select Student who is to be enrolled to a pathway')
+        } else if (ids.length > 1){
+            alert('Only One Student Can be enrolled to a pathway at a time') 
+        } else {
+            $.ajax({
+                method: 'GET',
+                url: `/getstudentforpathway/${ids}`,
+                contentType: false,
+                processData: false,
+                //dataType: 'json',
+                success: function(res){
+                    // console.log(res.class.class)
+                    $("#studentid2").val(ids)
+                    $("#pathwayname").text(res.student.Fname+' '+res.student.Lname)
+
+                    if (res.class.class === "GRADE TEN" || res.class.class === "GRADE ELEVEN" || res.class.class === "GRADE TWELVE") {
+                        //console.log('Available for pathway Enrollment');
+                        $("#alertforassiningpathway").addClass('d-none');
+                        $("#pathwayassign").removeClass('d-none');
+                        $("#assignpathway").removeClass('d-none');   
+                    } 
+                    else {
+                        $("#alertforassiningpathway").removeClass('d-none');
+                        $("#pathwayassign").addClass('d-none');
+                        $("#assignpathway").addClass('d-none');
+                    }
+                    $("#studentpathwayModal").modal('show');
+                    }
+                })
+        }
+     })
+
+     //Submit Pathway Enrollment Form
+     $('#studentassignpathwayform').submit(function(e){
+        e.preventDefault();
+        removeValidationClasses($("#studentassignpathwayform"))
+        var formData = new FormData($('#studentassignpathwayform')[0]);
+    
+        $("#assignpathway").val('PLEASE WAIT...')
+
+            $.ajax({
+                method: 'POST',
+                url: '/assignpathway',
+                contentType: false,
+                processData: false,
+                data: formData,
+                //dataType: 'json',
+                success: function(res){
+                    console.log(res)
+                    $("#assignpathway").val('ASSIGN PATHWAY TO STUDENT')
+                   if (res.status == 200) {
+                    $('#studentpathwayModal').modal('hide');  
+                    fetchstudents();
+                    fecthclasses();
+                    $('#regresponse').removeClass('d-none');
+                    $('#regresponse').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                   } else if (res.status == 400){
+                    showError('path', res.messages.path);
+                   } else {
+                    $('#regresponse').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>Sorry! Something went wrong.Please try again later</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');  
+                   }
+                    }
+                }) 
+    })
+
+     //Assigning Pathway
+     $(document).on('click', '#pathsubbtn',function(e){
+         e.preventDefault();
+         var ids = []
+         $('#studentcheckbox:checked').each(function(i){
+            ids[i] = $(this).val()
+        })
+        
+        if (ids.length < 1) {
+            alert('You must select a Student to Enroll to Pathway and Assign Subjects')
+        } else if (ids.length > 1) {
+            alert('Select only one Student. You can only Enroll one Student at a time')
+        } else {
+            $.ajax({
+                method: 'GET',
+                url: `/getstudentforsubenrollment/${ids}`,
+                contentType: false,
+                processData: false,
+                //dataType: 'json',
+                success: function(res){
+                    //console.log(res)
+                    $('#studentid').val(ids);
+                    if (res.availstatus == "Not Available") {
+                        $("#assigpathway").addClass('d-none');
+                        $("#subjectlist").html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.missingpathway+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                    } else {
+                        //console.log(res.subjects.length);
+                        if (res.subjects.length == 0) {
+                            $("#subjectlist").html('<div class="alert w3-green alert-dismissible w3-animate-zoom show" role="alert"><strong>There are no subjects or learning paths that matches the level of the student. Please Register subjects or learning paths.</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                        } else {
+                            $("#assigpathway").removeClass('d-none');
+                            $("#subjectlist").html("");
+                            $.each(res.subjects, function(key,item){
+                                $("#subjectlist").append('<h6><input value="'+item.id+','+item.subject+'" type="checkbox" class="checkboxid" name="subjectid[]" id="subjectid"> '+item.subject+'</h6>');
+                            })
+                        }
+                    } 
+                    
+                    $("#studentpathsubModal").modal('show')
+
+                }
+                }) 
+            
+        }
+            
+     })
+
+     //Upload Subjects to be uploaded
+     $("#studentassignsubsform").submit(function(e){
+        e.preventDefault();
+        removeValidationClasses($("#studentassignsubsform"))
+        var formData = new FormData($('#studentassignsubsform')[0]);
+
+        $("#assigpathway").val('REGISTERING SUBJECTS...');
+
+        var subcount = [];
+        
+        $('#subjectid:checked').each(function(i){
+            subcount[i] = $(this).val()
+        })
+        
+        //console.log(subcount);
+
+        if (subcount == 0) {
+            alert("You need select the subjects or learning paths to enroll the student. Click the Checkbox Besides the the Subject Name");
+        } else {
+            $.ajax({
+                method: 'POST',
+                url: '/enrollsubjects',
+                contentType: false,
+               processData: false,
+               data: formData,
+               //dataType: 'json',
+               success: function(res){
+                if (res.status == 200) {
+                    fetchstudents();
+                    fecthclasses();
+                $('#regresponse').removeClass('d-none');
+                    $('#regresponse').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                   } else {
+                    $('#regresponse').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>Sorry! Something went wrong.Please try again later</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');  
+                   }
+                   $("#studentpathsubModal").modal("hide");      
+               }
+            })  
+        }
+     })
+
      //Student activating account ajax
     $(document).on('click', '#activatebtn',function(e){
          e.preventDefault();
@@ -965,6 +1301,25 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
            $('#studentupdateModal').modal('show'); 
         }
      })
+
+     //Get Fee Payment History viewfeesbtn
+     $(document).on('click', '#viewfeesbtn',function(e){
+         e.preventDefault();
+
+         var sid = "{{ session()->get('schooldetails.id') }}";
+         var stuid = [];
+
+         $('#studentcheckbox:checked').each(function(i){
+            stuid[i] = $(this).val()
+        })
+        if (stuid.length < 1) {
+            alert('Please select a student to view fee information');
+        } else if(stuid.length > 1){
+            alert('You can only view the fee information for only one student');
+        } else {
+            window.location = `feeinformation/${sid}/${stuid}`;
+        }
+     })     
 
     })
 </script>

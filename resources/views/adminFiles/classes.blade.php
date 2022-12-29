@@ -9,7 +9,7 @@
     
     @else 
 <div class="container-fluid">
-@include('adminFiles.motto')
+
 <div class="main">
 <div id="sidenavigation" class="sidenav">
 @include('adminFiles.sidebar')
@@ -419,11 +419,13 @@
         //function to fetch Teacher
         function fetchteachers() {
             var sid = {{ session()->get('schooldetails.id') }}
+            var utype = "Support Staff";
             $.ajax({
                 method: 'GET',
-                url: `/fetchteachers/${sid}`,
+                url: `/classteacher/${sid}/${utype}`,
                 //dataType: 'jsons',
                 success: function(res) {
+                    console.log(res.teachers);
                     if (res.teachers == 0) {
                         $("#teachers").html('')
                         $('#teachers').html('No Teachers registered yet')
@@ -440,9 +442,10 @@
         //fetchteachers2
         function fetchteachers2() {
             var sid = {{ session()->get('schooldetails.id') }}
+            var utype = "Support Staff";
             $.ajax({
                 method: 'GET',
-                url: `/fetchteachers/${sid}`,
+                url: `/classteacher/${sid}/${utype}`,
                 //dataType: 'jsons',
                 success: function(res) {
                         $('#editteacher').html('');

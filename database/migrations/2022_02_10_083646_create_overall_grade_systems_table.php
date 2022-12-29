@@ -16,7 +16,7 @@ class CreateOverallGradeSystemsTable extends Migration
         Schema::create('overall_grade_systems', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sid');
-            $table->integer('classid');
+            $table->string('class');
             $table->string('consideration');
             $table->string('minA');
             $table->string('maxA');

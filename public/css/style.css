@@ -29,6 +29,9 @@
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     color: #000000;  
 }
+#actionbtns {
+    overflow-x: auto;
+}
 #modulesmgmt h6 a:hover {
     background-color: #00cc99;
     letter-spacing: 4px;
@@ -54,12 +57,28 @@
     border-left: 5px solid #00cc99;
 }
 #feerow {
-    background-color: #00cc44;
+    background-color: lightgray;
     margin-bottom: 2px;
 }
 #feestructurediv {
     background-color: #bfbfbf;
     padding-top: 4px;
+}
+#amount:hover {
+    font-weight: bolder;
+    background-color: #00cc99;
+}
+#module:hover {
+    font-weight: bolder;
+    background-color: lightsalmon;
+}
+#editmodule {
+    font-weight: bolder;
+    background-color: lightsalmon;
+}
+#editamount {
+    font-weight: bolder;
+    background-color: #00cc99;  
 }
 #submitfeeform {
     background-color: #009933;
@@ -529,5 +548,101 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+  #receiptdiv {
+    background-color: #666666;
+    padding: 20px;
+    position: absolute;
+    z-index: 99;
+    width: 60%;
+    right: 20%;
+    left: 20%;
+    top: 0%;
+    height: auto;
+  }
+  #innerreceiptdiv {
+    background-color: white;
+    height: 100%;
+  }
+  @media screen and (max-width: 637px){
+    #receiptdiv {
+        background-color: #666666;
+        padding: 20px;
+        position: absolute;
+        z-index: 200%;
+        width: 80%;
+        right: 10%;
+        left: 10%;
+        top: 0%;
+        height: 100%;
+      }
+  }
+  @media screen and (max-width: 427px){
+    #receiptdiv {
+        background-color: #666666;
+        padding: 10px;
+        position: absolute;
+        z-index: 200%;
+        width: 98%;
+        right: 2%;
+        left: 2%;
+        top: 0%;
+        height: 100%;
+      }
+  }
+#feereport,#expenditurereport {
+    background-color: #666666;
+    padding: 20px;
+    position: absolute;
+    z-index: 99;
+    width: 96%;
+    right: 2%;
+    left: 2%;
+    top: 0%;
+    height: auto;  
+}
+#innerfeereport,#innerexpenditurereport {
+    background-color: white;
+    padding: 10px;
+}
+#students {
+    display: flex;
+    height: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
 
+}
+#student {
+    height: 170px;
+    width: 150px;
+    padding: 10px;
+    border: 3px solid black;
+    border-radius: 10px;
+}
+#innerstu {
+    background-color: gainsboro;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+#linktostudentdetails {
+    text-decoration: none;
+    text-align: center;
+    font-weight: bold;
+    background-color: #009933; 
+    padding: 2px;
+    border-radius: 5px;
+}
+#linktostudentdetails:hover {
+    background-color: #00cc99;
+    color: red;
+}
+#preview img {
+    max-width: 100%;
+    max-height: 400px;
+}
+#preview iframe {
+    width: 100%;
+    height: 300px;
+}
   

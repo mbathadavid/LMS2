@@ -9,25 +9,30 @@
     
     @else 
 <div class="container-fluid">
-@include('adminFiles.motto')
+
 <div class="main">
 <div id="sidenavigation" class="sidenav">
 @include('adminFiles.sidebar')
 </div>
 <div id="main" class="maincontent">
 @include('adminFiles.topnav')
-<h4 class="text-center text-danger"><i>Results Auto Computation</i></h4>
+<h5 class="text-center text-danger"><i>Results Auto Computation for Subjects</i></h5>
 
 <!--Start of determinant field---> 
 <div class="row">
 <form action="#" id="selectexams" method="POST">
 <div class="row d-flex justify-content-center p-2">
 <div class="col-lg-4 mb-2">
+<!-- <input type="number" name="sid" value="{{ session()->get('schooldetails.id') }}" id="sid" hidden> -->
 <div class="form-group">
 <label for="">Select Exams</label>
 <select class="form-control" name="exams" id="examsselect" multiple="">
 @foreach($exams as $exam)
+@if($exam->sid == session()->get('schooldetails.id'))
 <option value="{{ $exam->id }}">{{ $exam->Examination }}</option>
+@else
+
+@endif
 @endforeach
 </select>
 </div>
@@ -39,7 +44,11 @@
 <select name="class" id="class" class="form-control">
 <option value="">--Select Class--</option>
 @foreach($classes as $class)
+@if($class->sid == session()->get('schooldetails.id'))
 <option value="{{ $class->id }}">{{ $class->class }} {{ $class->stream }}</option>
+@else
+
+@endif
 @endforeach
 </select>
 </div>
@@ -74,8 +83,9 @@
 <!-------Start Computed Table start----->
 <div style="background-color: #e6e6e6;" id="computedresultsdiv" class="p-3 d-none">
 <div class="table-responsive">
-    <button id="printexcel" class="btn btn-sm w3-blue rounded-0 float-right"><i class="fas fa-file-csv"></i>&nbsp; PRINT EXCEL</button>
-    <button id="printpdf" class="btn btn-sm w3-red rounded-0"><i class="fas fa-file-pdf"></i>&nbsp; PRINT PDF</button>
+    <button id="printexcel" class="btn btn-sm w3-blue rounded-0 float-right"><i class="fas fa-file-csv"></i>&nbsp; DOWNLOAD EXCEL</button>
+    <button id="printpdf" class="btn btn-sm w3-red rounded-0"><i class="fas fa-file-pdf"></i>&nbsp; PRINT</button>
+    <button id="downloadpdf" class="btn btn-sm w3-green rounded-0"><i class="fas fa-file-pdf"></i>&nbsp; DOWNLOAD PDF</button>
         <div style="background-color: white;"  class="mt-3 mb-5 p-3" id="computedresforpdf">
         <h5 class="text-center text-success">{{ $schoolinfo->name }}</h5>
         <div style="height: 100px;" class="d-flex justify-content-center">
@@ -83,7 +93,7 @@
         </div>
         <h6 class="text-center text-danger">{{ $schoolinfo->motto }}</h6>
         <hr>
-        <h6 class="text-center w3-red p-2" id="pdfheading"></h6>
+        <h6 class="text-center w3-green p-2" id="pdfheading"></h6>
         <table class="table" id="computedmarks">
                 <thead id="theadings">
                     <!-- <tr>
@@ -99,7 +109,11 @@
                 <tbody id="computedresultstable">
                   
                 </tbody>
+                <h6 class="text-center">Mean Mark <b><span id="meanmark" class="text-danger"></span></b></h6>
+                <h6 class="text-center">Mean Points <b><span id="meanpoints" class="text-danger"></span></b></h6>
+                <h6 class="text-center">Mean Grade <b><span id="meangrade" class="text-danger"></span></b></h6>
             </table>
+            
             </div>
 </div>
 </div>
@@ -113,6 +127,7 @@
 <!--Start Results Computation------>
 <form id="computesubexamresults" style="" class="p-3 d-none w3-animate-left" action="#">
     <h6 class="w3-green p-1 text-center"><span id="computationheading"></span> RESULTS AUTO COMPUTATIONS</h6>
+    <!-- <input type="number" name="sid" value="{{ session()->get('schooldetails.id') }}" id="sid" hidden> -->
     <div class="table-responsive">
         <table class="table" id="gradestable1" style="background-color: #cccccc">
         <h6 class="text-center"><span class="text-danger" id="gradetableheading"></span></h6>
@@ -189,7 +204,7 @@
         <input id="updatemarks" type="submit" value="UPDATE MARKS" class="form-control btn btn-sm btn-danger d-none">
         </div>
         <div class="form-group mb-2 d-none">
-        <input type="number" name="sid" id="sid" class="form-control">
+        <input type="number" name="subid" id="subid" class="form-control">
         </div>
         <div class="form-group mb-2 d-none">
         <input type="number" name="cid" id="cid" class="form-control">
@@ -300,13 +315,15 @@
 
         //Exams select ajax
         $('#selectexams').submit(function(e){
+            var sid = "{{ session()->get('schooldetails.id') }}";
             $('.loader').removeClass('d-none')
             $('#computedresultsdiv').addClass('d-none')
             e.preventDefault()
             $('#subjectgrade').text('')
             $('#computesubexamresults').addClass('d-none');
             var formData = new FormData($(this)[0])
-            formData.append('exams',$('#examsselect').val())
+            formData.append('exams',$('#examsselect').val());
+            formData.append('sid',sid);
 
             $.ajax({
               method: 'POST',
@@ -315,17 +332,18 @@
               processData: false,
               data: formData,
               success: function(res){
+                console.log(res);
                 $('.loader').addClass('d-none')
                 console.log(res)
-                remarks = []
-                minmarks = []
-                maxmarks = []
+                remarks = [];
+                minmarks = [];
+                maxmarks = [];
                 grades = [];
                 points = [];
 
                 var array = res.grades[0];
                 $('#cid').val(res.cid);
-                $('#sid').val(res.sid)
+                $('#subid').val(res.sid)
                 $('#examthread').html('');
                 $('#examthread').append('<option value="">--Select Result Thread--</option>')
 
@@ -665,7 +683,7 @@
                             $(this).val('')
                             $(this).addClass('bg-danger')
                         } else {
-                            $(this).val(markSum[i]/examcount) 
+                            $(this).val((markSum[i]/examcount).toFixed(0)) 
                             $(this).addClass('w3-yellow') 
                         }
                     })
@@ -734,7 +752,7 @@
                             $(this).val('')
                             $(this).addClass('bg-danger')
                         } else {
-                            $(this).val(markSum[i]/examcounts[i]) 
+                            $(this).val((markSum[i]/examcounts[i]).toFixed(0)) 
                             $(this).addClass('w3-yellow') 
                         }
                     })
@@ -775,6 +793,7 @@
         })
         //Prepare an excel sheet
         $("#computesubexamresults").submit(function(e){
+            var sid = "{{ session()->get('schooldetails.id') }}";
             $('#computedresultsdiv').addClass('d-none')
             $('.loader').removeClass('d-none')
             e.preventDefault();
@@ -785,6 +804,7 @@
             } else {
             var formData = new FormData($('#computesubexamresults')[0]);
             formData.append('examinations',examinations);
+            formData.append('sid',sid);
 
             $.ajax({
                 method: 'POST',
@@ -857,6 +877,18 @@
 
                          })
                          filename = res.filename;
+                         $("#meanmark").text(res.marksavg);
+                         $("#meanpoints").text(res.pointsavg); 
+                         var avggrade = [];
+
+                         for (let k = 0; k < maxmarks.length; k++) {
+                            if (res.gradingavg >= filtredmin[k] && res.gradingavg <= maxmarks[k]) {
+                                avggrade.push(grades[k])
+                            }  
+                         }
+
+                         $("#meangrade").text(avggrade);
+
                          $('#pdfheading').text(res.filename);   
                             // $("#computedmarks").table2excel({
                             // exclude: ".excludeThisClass",
@@ -879,9 +911,18 @@
                 preserveColors: true
             })
         })
+
+        //Print a PDF
+        $('#printpdf').click(function(e){
+            e.preventDefault();
+            $("#computedresforpdf").print({
+                globalStyles : true,
+            })
+        })
+
         //Generate PDF
         window.onload = function(){
-        document.getElementById('printpdf').addEventListener('click',()=>{
+        document.getElementById('downloadpdf').addEventListener('click',()=>{
             const results = this.document.getElementById('computedresforpdf');
 
             var opt = {

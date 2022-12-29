@@ -8,7 +8,7 @@
     <h5 class="text-center"><a href="/schoolreg" class="link-info">Register School</a></h5>
     @else 
 <div class="container-fluid">
-@include('adminFiles.motto')
+
 <div class="main">
 <div id="sidenavigation" class="sidenav">
 @include('adminFiles.sidebar')
@@ -260,7 +260,7 @@
                     <div class="form-group mb-3">
                         <label for="">Gender</label><br>
                         <input type="radio" name="gender" id="gender" value="Male">&nbsp;Male
-                        <input type="radio" name="gender" id="gender1" value="Female">&nbsp;Female
+                        <input type="radio" name="gender" id="gender" value="Female">&nbsp;Female
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-group mb-3">
@@ -431,9 +431,9 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     $('#teacheregbtn').val('REGISTER TEACHER');
                     $('#regresponse').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>')
                     $('#regresponse').removeClass('d-none');
-                    $('#teacherregform').find('input').val('');
-                   $('#frame').src = 'images/avatar.png';
-                   $("#teacheraddModal").modal('hide'); 
+                    //$('#teacherregform').find('input').val('');
+                    $('#frame').src = 'images/avatar.png';
+                    $("#teacheraddModal").modal('hide'); 
                    }
                    
                }
@@ -560,14 +560,14 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     $('#editpositionval').val(data.Position);
                     $('#editpositionval').text(data.Position);
 
-                    if (data.Gender == 'male') {
+                    if (data.Gender == 'Male') {
                         $('#editgenderdiv').html('');
-                        $('#editgenderdiv').append('<input checked type="radio" name="editgender" id="editgender" value="male">&nbsp;Male\
-                        <input type="radio" name="editgender" id="editgender" value="female">&nbsp;Female');
+                        $('#editgenderdiv').append('<input checked type="radio" name="editgender" id="editgender" value="Male">&nbsp;Male\
+                        <input type="radio" name="editgender" id="editgender" value="Female">&nbsp;Female');
                     } else {
                         $('#editgenderdiv').html('');
-                        $('#editgenderdiv').html('<input type="radio" name="editgender" id="editgender" value="male">&nbsp;Male\
-                        <input checked type="radio" name="editgender" id="editgender" value="female">&nbsp;Female'); 
+                        $('#editgenderdiv').html('<input type="radio" name="editgender" id="editgender" value="Male">&nbsp;Male\
+                        <input checked type="radio" name="editgender" id="editgender" value="Female">&nbsp;Female'); 
                     }
                 }                   
                 })

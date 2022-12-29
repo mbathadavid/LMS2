@@ -94,10 +94,22 @@ class TeacherController extends Controller
                         ->where('sid',$sid)
                         // ->whereNotIn('id',$uid)
                         ->where('id','!=',$uid)
+                        ->OrderByDesc('id')
                         ->get();
       return response()->json([
           'teachers' => $teachers
       ]);  
+    }
+    //Fetch class teachers
+    public function classTeachers($sid,$utype){
+        $teachers = Staff::where('deleted',0)
+                        ->where('sid',$sid)
+                        // ->whereNotIn('id',$uid)
+                        ->where('Role','!=',$utype)
+                        ->get();
+        return response()->json([
+          'teachers' => $teachers
+      ]); 
     }
     //Export Teachers
     public function exportTeachers(){
@@ -289,6 +301,7 @@ class TeacherController extends Controller
                         $staff->Profile = $filename;
 
                         $staff->save();
+                        
 
                         return response()->json([
                             'status' => 200,
@@ -304,4 +317,77 @@ class TeacherController extends Controller
                     }
         
     }
+    //Update profile Details 
+    public function updateprofileDetails (Request $request) {
+        $validator = Validator::make($request->all(),[
+            'editsalutation' => 'required',
+            'fname' => 'required',
+            'lname' => 'required',
+            'phone' => 'required',
+            'email' => 'email|required',
+            'gender' => 'required',  
+           ],[
+            'editsalutation.required' => 'Salutation is required',
+            'fname.required' => 'First Name is required',
+            'lname.required' => 'Last Name is required',
+            'gender.required' => 'Gender of the teacher is required',
+            'email.required' => 'Email is required',
+            'email.email' => 'Email must be a valid email'
+           ]);
+
+           if ($validator->fails()) {
+                return response()->json([
+                    'status' => 400,
+                    'messages' => $validator->getMessageBag()
+                ]);
+           } else {
+                $staff = Staff::find($request->uid);
+                $staff->Salutation = $request->editsalutation;
+                $staff->Fname = $request->fname;
+                $staff->Lname = $request->lname;
+                $staff->Gender = $request->gender;
+                $staff->Email = $request->email;
+                $staff->Phone = $request->phone;
+                $staff->save();
+                return response()->json([
+                    'status' => 200,
+                    'messages' => "You have Successfully Updated Your Account Details. Log in Again to see the Changes" 
+                ]);
+           }
+    }
+    //Change Password
+    public function updatePassword(Request $request){
+        $validator = Validator::make($request->all(),[
+            'cpass' => 'required',
+            'npass' => 'required',
+            'cnpass' => 'required',
+           ],[
+            'cpass.required' => 'Current Password is Required',
+            'npass.required' => 'Your New Password is Required',
+            'cnpass.required' => 'You Must Confirm Your New Password'
+           ]);
+           
+           if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'messages' => $validator->getMessageBag()
+            ]);
+            } else {
+               $staff = Staff::find($request->uid);
+               if (Hash::check($request->cpass, $staff->password)) {
+                $staff->password = Hash::make($request->npass);
+                $staff->save();
+                return response()->json([
+                    'status' => 200,
+                    'messages' => 'You have Successfully Updated your Password'
+                ]);
+               } else {
+                return response()->json([
+                    'status' => 401,
+                    'messages' => 'Sorry. This is not your current password.'
+                ]);
+               }  
+            }
+    }
+
 }

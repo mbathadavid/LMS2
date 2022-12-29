@@ -26,7 +26,7 @@ class CreateParentsTable extends Migration
             $table->string('AltPhone')->nullable();
             $table->string('Email')->nullable();
             $table->string('Gender')->nullable();
-            $table->string('Paasword')->default('password123');
+            $table->string('Paasword');
             $table->string('Profile')->default('avatar.png');
             $table->timestamps();
 
