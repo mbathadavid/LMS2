@@ -10,6 +10,8 @@ use App\Http\Controllers\LibrarianController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\TermController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\CbcmarksController;
+use App\Http\Controllers\CbcassessmentController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\FinalGradeController;
 use App\Http\Controllers\ResultThreadController;
@@ -47,6 +49,11 @@ Route::get('/',[AdminController::class, 'landingpage']);
  Route::get('/resetpass',[AdminController::class, 'newpassreset']);
  Route::get('/admindashboard',[AdminController::class, 'dashboard'])->name('admindashboard');
  Route::get('/adminprofile',[AdminController::class, 'profile'])->name('adminprofile');
+ Route::get('/performance-analysis',[AdminController::class, 'performanceAnalysis']);
+ Route::get('/analysis/{class}/{tid}',[AdminController::class, 'classperformanceAnalysis']);
+//  Route::get('/analyze-subject-performance',[AdminController::class, 'analyzeSubjects']);
+ Route::get('/analyzesubject/{class}/{sid}/{subid}/{tid}',[AdminController::class, 'analyzeSubjects']);
+ Route::get('/subjectstudents',[AdminController::class, 'analyzeSubjects']);
  Route::get('/students',[AdminController::class, 'students'])->name('students');
  Route::get('/teachers',[AdminController::class, 'teachers'])->name('teachers');
  Route::get('/parents',[AdminController::class, 'parents'])->name('parents');
@@ -69,15 +76,20 @@ Route::get('/',[AdminController::class, 'landingpage']);
  Route::post('/adminlogin',[AdminController::class, 'loginAdmin'])->name('admin.login');
  Route::get('/adminlogout',[AdminController::class, 'logoutAdmin'])->name('admin.logout');
  Route::get('/examinations',[AdminController::class, 'examinations']);
+ Route::get('/cbc-assessments',[AdminController::class, 'cbcAssessments']);
  Route::get('/finalresults',[AdminController::class, 'finalresults']);
  Route::get('/gradingsystem',[AdminController::class, 'gradingsystem']);
- Route::get('/notifications',[AdminController::class, 'notificationsView'])->name('admin.notifications');
  Route::get('/classresults/{examid}/{classid}/{sid}',[AdminController::class,'getClassCompResults']);
+ Route::get('/addcbcmarks/{assessmentid}/{classid}/{sid}',[AdminController::class,'getCBCAddmarksView']);
  /*Admin Routes end*/
 
 // communications routes start
 Route::get('/communications',[AdminController::class, 'communucationsview']);
 Route::get('/notify',[AdminController::class, 'adminnotififyView'])->name('admin.notify');
+Route::get('/staff-noticeboard',[AdminController::class, 'adminnoticeboardView']);
+Route::get('/staff-notifications',[AdminController::class, 'notificationsView']);
+Route::get('/parent-messages',[AdminController::class, 'adminparentmessagesView'])->name('admin.parentmessages');
+Route::get('/my-messages',[AdminController::class, 'adminmymessagesView'])->name('admin.mymessages');
 Route::post('/sendmessage',[CommunicationsController::class, 'sendMessage'])->name('admin.sendmessage');
 // communications routes end
 
@@ -87,10 +99,13 @@ Route::post('/updatefeestructure',[FeestructureController::class, 'updateFeeStru
 Route::get('/fetchfeestructures/{sid}',[FeestructureController::class, 'fetchFeestructures']);
 Route::get('/fetchfeestructure/{fid}',[FeestructureController::class, 'fetchFeestructure']);
 Route::get('/deletefeestructure/{fid}',[FeestructureController::class, 'deleteFeestructure']);
+Route::post('/searchfeestructure',[FeestructureController::class, 'searchFeestructure']);
 /*Fee structure modelling end*/
 
 /*computefinalresults routes start*/
 Route::post('/insertcomputedmarks',[ComputedfinalresulstController::class, 'insertComputedmarks']);
+Route::post('/resultanalysis',[ComputedfinalresulstController::class, 'resultAnalysis']);
+Route::post('/subjectanalysis',[ComputedfinalresulstController::class, 'subjectAnalysis']);
 /*computefinalresults routes end*/
 
  /*School Details start*/
@@ -123,9 +138,9 @@ Route::get('/teachersexcelimport',[TeacherController::class,'excelimportview']);
 Route::get('/classteacher/{sid}/{utype}',[TeacherController::class,'classTeachers'])->name('teacher.class');
 Route::post('/importteachers',[TeacherController::class,'importTeachers'])->name('teacher.import');
 Route::post('/assignpriviledges',[TeacherController::class,'assignpriviledges']);
-Route::post('/updateprofilepic',[TeacherController::class,'updateprofilepic'])->name('staff.updatepic');
-Route::post('/updatestaffaccountDetails',[TeacherController::class,'updateprofileDetails'])->name('staff.accountdeatails');
-Route::post('/updatepassword',[TeacherController::class,'updatePassword'])->name('staff.updatepassword');
+Route::post('/updateteacherprofilepic',[TeacherController::class,'updateprofilepic']);
+Route::post('/updateteacheraccountDetails',[TeacherController::class,'updateprofileDetails'])->name('staff.accountdeatails');
+Route::post('/updatestaffpassword',[TeacherController::class,'updatePassword'])->name('staff.updatepassword');
 Route::get('/downloadteachers',[TeacherController::class,'exportTeachers']);
 Route::get('/getteacher/{id}',[TeacherController::class,'getTeacher']);
 Route::get('/deleteteacher/{id}',[TeacherController::class,'deleteTeacher']);
@@ -209,6 +224,15 @@ Route::get('/fetchexams/{sid}',[ExamController::class, 'fetchExams']);
 Route::get('/deleteexam/{id}',[ExamController::class, 'deleteExams']);
 Route::get('/getExam/{id}',[ExamController::class, 'getExam']);
 /**Examination Routes End */
+
+/**CBC Assessment Routes Start*/
+Route::post('/registerassessment',[CbcassessmentController::class, 'addAssessment']);
+Route::get('/fetchassesments/{sid}',[CbcassessmentController::class, 'fetchAssesments']);
+Route::get('/deleteassessment/{id}',[CbcassessmentController::class, 'deleteAssessment']);
+Route::get('/getassessment/{id}',[CbcassessmentController::class, 'getAssessment']);
+Route::post('/editassessment',[CbcassessmentController::class, 'editAssessment'])->name('assessment.edit');
+/**CBC Assessment Routes End*/
+
 /**Marks handling routes */
 Route::post('/addmarks',[MarkController::class, 'addMarks']);
 Route::post('/updatemarks',[MarkController::class, 'updateMarks']);
@@ -218,6 +242,15 @@ Route::get('/checkcurrentterm/{classval}',[MarkController::class, 'checkTerm']);
 Route::get('/fetchmarks/{exam}/{classid}/{sub}',[MarkController::class, 'fetchMarks']);
 Route::get('/deletemarks/{stuid}/{exam}/{classid}/{sub}',[MarkController::class, 'deleteMarks']);
 /**Marks handling routes end*/
+
+/**CBC Marks handling routes */
+Route::post('/addcbcmarks',[CbcmarksController::class, 'addMarks']);
+Route::post('/updatecbcmarks',[CbcmarksController::class, 'updateMarks']);
+Route::post('/addcbcmissingmarks',[CbcmarksController::class, 'addmissingMarks']);
+Route::get('/fetchcbcmarks/{exam}/{classid}/{sub}',[CbcmarksController::class, 'fetchMarks']);
+Route::get('/deletecbcmarks/{stuid}/{exam}/{classid}/{sub}',[CbcmarksController::class, 'deleteMarks']);
+/**CBC Marks handling routes */
+
 /**Auto Results Computation */
 Route::get('/autoresults',[AdminController::class, 'autoresults']);
 /**Auto Results Computation End */
@@ -239,7 +272,7 @@ Route::get('/deletethread/{tid}',[ResultThreadController::class, 'deleteThread']
 
 // Overall Grading system start
 Route::post('/addoverallgrading',[OverallGradeSystemController::class, 'registeroverallgrading']);
-Route::get('/fetchOverallgrading/{cid}',[OverallGradeSystemController::class, 'fetchFinalResult']);
+Route::get('/fetchOverallgrading/{sid}/{cid}',[OverallGradeSystemController::class, 'fetchFinalResult']);
 // Overall Grading system start
 
 /**Expenses Start */
@@ -257,9 +290,13 @@ Route::post('/expenditurereport',[ExpensesController::class, 'expenditureReport'
 /*Parent Account Routes start*/
 Route::get('/parentlogin',[GuardianController::class, 'loginview']); 
 Route::get('/parentdashboard',[GuardianController::class, 'parentDashboard'])->name('parentdashboard'); 
+Route::get('/feestructures',[GuardianController::class, 'feeStructure'])->name('parent.feestructure');
 Route::post('/parentlogin',[GuardianController::class, 'loginParent'])->name('parent.login');
 Route::get('/profile',[GuardianController::class, 'parentProfile'])->name('parent.profile');
 Route::get('/messaging',[GuardianController::class, 'messaging'])->name('parent.messaging');
+Route::get('/my-messaging',[GuardianController::class, 'myMessages'])->name('parent.mymessages');
+Route::get('/noticeboard',[GuardianController::class, 'noticeBoard'])->name('parent.noticeboard');
+Route::get('/notifications',[GuardianController::class, 'notifications'])->name('parent.notifications');
 Route::post('/updateprofilepic',[GuardianController::class,'updateprofilepic'])->name('parent.updatepic');
 Route::post('/updatestaffaccountDetails',[GuardianController::class,'updateprofileDetails'])->name('parent.accountdeatails');
 Route::post('/updatepassword',[GuardianController::class,'updatePassword'])->name('parent.updatepassword');
@@ -267,6 +304,9 @@ Route::post('/updatepassword',[GuardianController::class,'updatePassword'])->nam
 
 /*Notifications Routes start*/
 Route::post('/sendparentmessage',[NotificationsController::class,'receiveParentmessage'])->name('parent.message');
+Route::post('/replyparentmessage',[NotificationsController::class,'replyParentmessage'])->name('parent.reply');
 Route::post('/sendgeneralmessage',[NotificationsController::class,'receiveGeneralmessage'])->name('general.message');
 Route::get('/fetchadminotifications/{sid}',[NotificationsController::class,'fetchadmiNotifications']);
+Route::get('/fetchreplies/{mid}',[NotificationsController::class,'fetchmsgReplies']);
+Route::get('/deletemsg/{mid}',[NotificationsController::class,'delMessage']);
 /*Notif8cfations Routes End*/

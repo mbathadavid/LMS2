@@ -17,7 +17,7 @@ class CreateComputedfinalresulstsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('sid');
             $table->integer('tid');
-            $table->integer('AdmissionNo');
+            $table->string('AdmissionNo');
             $table->string('FName');
             $table->string('Lname');
             $table->integer('Finalscore')->nullable();
@@ -26,10 +26,14 @@ class CreateComputedfinalresulstsTable extends Migration
             $table->string('ScoresByPoints')->nullable();
             $table->string('ScoresByMarks')->nullable();
             $table->string('Grades')->nullable();
+            $table->string('KCPE_marks')->nullable();
+            $table->string('KCPE_rank')->nullable();
+            $table->string('Prev_Score')->nullable();
             $table->string('DEV')->nullable();
             $table->string('STRPOS')->nullable();
             $table->string('OVRPOS')->nullable();
             $table->string('Class');
+            $table->integer('Class_id');
             $table->string('Subjects')->nullable();
             $table->timestamps();
 

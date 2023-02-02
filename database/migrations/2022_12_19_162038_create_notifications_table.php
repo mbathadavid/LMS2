@@ -17,6 +17,7 @@ class CreateNotificationsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('sid');
             $table->string('type')->default('message');
+            $table->integer('replied')->default('0');
             $table->integer('replyfor')->default('0');
             $table->string('toberecievedby')->default('0');
             $table->string('noficationtxt');
@@ -29,6 +30,7 @@ class CreateNotificationsTable extends Migration
             $table->integer('uid')->default('0');
             $table->string('sendername');
             $table->integer('seen')->nullable();
+            $table->integer('deleted')->default('0');
             $table->timestamps();
 
             $table->foreign('sid')->references('id')->on('school__data')->onDelete('cascade');

@@ -1528,7 +1528,7 @@
                 method: 'GET',
                 url: `/fetchclasses2/${sid}/${etype}`,
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     if (res.classes.length == 0) {
                         $('#overallclass').text('Sorry!There are no classes added recently')
                     } else {
@@ -1837,6 +1837,7 @@
             
 
             var classval = $('#overallclass').val();
+            var sid = "{{ session()->get('schooldetails.id') }}";
 
             if (classval == '') {
                 showError('overallclass','You must select a class');
@@ -1844,12 +1845,12 @@
                 $('#overalldivgrades').removeClass('d-none')
                 $.ajax({
                 method: 'GET',
-                url: `/fetchOverallgrading/${classval}`,
+                url: `/fetchOverallgrading/${sid}/${classval}`,
                 contentType: false,
                 processData: false,
                //dataType: 'json',
                success: function(res){
-                console.log(res)
+                //console.log(res)
                 $('.loader').addClass('d-none');
                 $('#gradestable4').html('')
                 $('#overrallgradingheading').text(`${res.class}`)

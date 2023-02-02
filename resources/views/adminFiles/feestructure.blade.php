@@ -95,7 +95,7 @@
 <!--Create fee structure modal end--->
 
 
-<!---View  fee structure modal end--->
+<!---View  fee structure modal start--->
 <div id="viewFeetrstructureModal" class="modal w3-animate-left" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">

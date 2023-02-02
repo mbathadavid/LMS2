@@ -120,6 +120,30 @@
                 </div>
                 </form>
                 </div>
+
+                <div class="mb-2 border border-success border-3 p-2">
+                <form action="#" id="juniorsecondarysubjects" method="POST">
+                <input type="number" value="{{ session()->get('schooldetails.id') }}" name="sid" id="sid" hidden>
+                <input type="text" value="CBC" name="system" id="system" hidden>
+                <input type="text" value="Junior Secondary" name="level" id="level" hidden>
+                <input type="text" value="" name="pathway" id="pathway" hidden>
+                    <h6 class="text-center">Junior Secondary</h6>
+                    <table id="cbcsubjectstable" class="table">
+                    <thead>
+                    <tr>
+                      <th scope="col">Select</th>
+                      <th scope="col">Subject</th> 
+                    </tr>
+                    </thead>
+                    <tbody id="juniorsecondary">
+            
+                    </tbody>
+                </table>
+                <div class="form-group d-grid">
+                 <input type="submit" id="subregbtn" value="REGISTER JUNIOR-SECONDARY SUBJECTS" class="btn btn-sm rounded-0 btn-danger">
+                </div>
+                </form>
+                </div>
             </div> 
 
     @else( session()->get('schooldetails.level') === "SecondarySchool")
@@ -290,7 +314,7 @@
 
     <div class="table-responsive">
     <div id="response2"></div>
-        <h6 class="text-center text-danger"><b>REGISTERED OFFERED</b></h6>
+        <h6 class="text-center text-danger"><b>SUBJECTS OFFERED</b></h6>
         <table id="subjectstablebody" class="table">
             <thead>
                 <tr>

@@ -1,6 +1,6 @@
 @extends('layouts.layout')
 
-@section('title','DashBoard')
+@section('title','Profile')
 
 @section('content')
 @if($schoolinfo == null)
@@ -29,7 +29,7 @@
         <form action="#" id="editaccountform" class="p-2" method="POST" enctype="multipart/form-data">
          <div class="row justify-content-center">
             <div class="col-lg-6 col-md-6 col-sm-12">
-            <input type="number" name="uid" id="uid" value="{{ session()->get('LoggedInUser.id') }}" hidden>
+            <input type="number" name="uid" value="{{ session()->get('LoggedInUser.id') }}" hidden>
             <div class="form-group mb-2">
             <label for=""><h6 class="text-success">Salutation</h6></label>
                 <select name="editsalutation" id="editsalutation" class="form-control">
@@ -112,7 +112,7 @@
         <form action="#" id="editpasswordform" class="p-2" method="POST" enctype="multipart/form-data">
         <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8 col-sm-12">
-         <input type="number" name="uid" id="uid" value="{{ session()->get('LoggedInUser.id') }}" hidden>
+         <input type="number" name="uid" value="{{ session()->get('LoggedInUser.id') }}" hidden>
             <div class="form-group mb-2">
                 <label for=""><h6 class="text-danger">Enter Current Password</h6></label>
                 <input type="password" name="cpass" id="cpass" placeholder="Your Current Password" class="form-control">
@@ -155,7 +155,7 @@
         <form action="#" id="updateprofileform" class="p-2" method="POST" enctype="multipart/form-data">
         <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8 col-sm-12">
-         <input type="number" name="uid" id="uid" value="{{ session()->get('LoggedInUser.id') }}" hidden>
+         <input type="number" name="uid" value="{{ session()->get('LoggedInUser.id') }}" hidden>
 
          <div class="card" style="height: auto;">
             <div class="card-body">
@@ -287,13 +287,13 @@ $(document).ready(function(){
 
             $.ajax({
                 method: 'POST',
-                url: '{{ route('staff.updatepic') }}',
+                url: '/updateteacherprofilepic',
                 contentType: false,
                 processData: false,
                 data: formData,
                //dataType: 'json',
                 success: function(res){
-                console.log(res);
+                //console.log(res);
                 $('#submitprofupdate').val('UPDATE PROFILE');
                    if (res.status == 401) {
                     showError('profilepic', res.messages);
@@ -317,13 +317,13 @@ $(document).ready(function(){
 
             $.ajax({
                 method: 'POST',
-                url: '{{ route('staff.accountdeatails') }}',
+                url: '/updateteacheraccountDetails',
                 contentType: false,
                 processData: false,
                 data: formData,
                //dataType: 'json',
                 success: function(res){
-                console.log(res);
+                //console.log(res);
                 $('#editaccountbtn').val('UPDATE ACCOUNT DETAILS');
                    if (res.status == 400) {
                     showError('editsalutation', res.messages.editsalutation);
@@ -352,13 +352,13 @@ $(document).ready(function(){
             } else {
             $.ajax({
                 method: 'POST',
-                url: '{{ route('staff.updatepassword') }}',
+                url: '/updatestaffpassword',
                 contentType: false,
                 processData: false,
                 data: formData,
                //dataType: 'json',
                 success: function(res){
-                console.log(res);
+                //console.log(res);
                 $('#changepass').val('CHANGE PASSWORD');
                    if (res.status == 400) {
                     showError('cpass', res.messages.cpass);

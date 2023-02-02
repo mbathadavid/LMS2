@@ -181,4 +181,34 @@ class FeestructureController extends Controller
             'feestructure' => $feestructure
         ]);
     }
+
+    //Search Fee Structure
+    public function searchFeestructure(Request $req) {
+        $validator = Validator::make($req->all(),[
+            'term' => 'required',
+            'class' => 'required',
+        ],
+        [
+            'term.required' => 'You must select term',
+            'class.required' => 'You must select class',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'messages' => $validator->getMessageBag()
+            ]);
+        } else {
+            $feestructure = Feestructure::where('classes',$req->class)
+                                          ->where('term',$req->term)
+                                          ->get();
+
+            return response()->json([
+                'status' => 200,
+                'feestructure' => $feestructure
+            ]);
+        }
+        
+        
+    }
 }

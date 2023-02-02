@@ -135,7 +135,6 @@ class ExamController extends Controller
              'status' => 200,
              'messages' => 'Exam Added Successfully'
         ]);  
-    }
-    
+    } 
     }
 }

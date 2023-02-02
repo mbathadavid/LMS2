@@ -21,7 +21,8 @@ class StudentController extends Controller
     //Register student
     public function registerStudent(Request $req){
         $validator = Validator::make($req->all(),[
-            'upi' => 'required|unique:students',
+            //'upi' => 'required|unique:students',
+            'upi' => 'unique:students',
             'firstname' => 'required',
             'lastname' => 'required',
             'gender' => 'required',
@@ -32,7 +33,7 @@ class StudentController extends Controller
             'subcounty' => 'required',
             'file' => 'image'
         ],[
-            'upi.required' => 'You Must Enter the UPI Number',
+            //'upi.required' => 'You Must Enter the UPI Number',
             'upi.unique' => 'Sorry! This UPI Number has already registered another student',
             'firstname.required' => 'You must state the first name of the student',
             'lastname.required' => 'You must specify the last name of the student',
@@ -85,8 +86,8 @@ class StudentController extends Controller
                 //$ssytem = classes::find($classinfo[0]);
                 //$student->schoolsystem = $ssytem['educationsystem'];
                 $student->schoolsystem = $req->educationsystem;
+                $student->KCPE_marks = $req->kcpescore;
                 
-
                 $student->gender = $req->gender;
                 $student->dob = $req->dob;
                 $student->county = $req->county;
@@ -353,6 +354,8 @@ class StudentController extends Controller
 
     //Return Fee Payment View
     public function feeInformation($sid,$stuid){
+        $maxid = session()->get('schooldetails.id');
+
         $student = Student::find($stuid);
         $feepayments = feepayment::where('AdmorUPI',$student['AdmissionNo'])
                                   ->where('sid',$sid)
@@ -361,9 +364,9 @@ class StudentController extends Controller
                                   ->get();
 
         $data = [
-            //'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
-            'adminInfo' => Staff::find(session('LoggedInUser.id')),
-            'schoolinfo' => School_Data::find($sid),
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            //'adminInfo' => Staff::find(session('LoggedInUser.id')),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
             "student" => $student,
             "feepayments" => $feepayments
         ];
@@ -403,6 +406,7 @@ class StudentController extends Controller
                     'messages' => $validator->getMessageBag() 
                 ]);
             } else {
+                //return response()->json(['data' => $req->all()]);
                 // $checkstudent = Student::where('AdmissionNo',$req->seditadmno)
                 //                         ->where('sid',$req->sid)
                 //                         ->get();
@@ -413,6 +417,7 @@ class StudentController extends Controller
                 //             'messages' => 'Sorry! A student with similar Admission Number has already been registered. Admission Number should only be entitled to one student.' 
                 //             ]);
                 // } else {
+
                  $student = Student::find($req->seditid);
                  $scode = $student['StudentId'];
                  $scode2 = explode("@",$scode)[1];
@@ -424,6 +429,7 @@ class StudentController extends Controller
                 $student->Lname = $req->seditlname;
                 $student->UPI = $req->seditupi;
                 $student->schoolsystem = $req->sediteducation;
+                $student->KCPE_marks = $req->seditkcpescore;
 
                 $classinfo = explode(',',$req->seditclass);
 
@@ -454,7 +460,7 @@ class StudentController extends Controller
                     'messages' => 'Student Details updated Successfully'
                 ]);
             
-           // } 
+           //} 
         }
     }
 
@@ -473,7 +479,8 @@ class StudentController extends Controller
                 'messages' => $validator->getMessageBag() 
             ]);
         } else {
-            $student = Student::where('AdmissionNo',$req->searchnumber)
+            $student = Student::where('sid',$req->sid)
+                                ->where('AdmissionNo',$req->searchnumber)
                                 ->orWhere('UPI',$req->searchnumber)
                                 ->get();
 

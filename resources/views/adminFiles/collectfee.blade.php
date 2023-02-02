@@ -275,7 +275,7 @@
                 data: formdata,
                 success: function(res) {
                     //$('#searchnumberbtn').text('SEARCH STUDENT');
-                    console.log(res);
+                    //console.log(res);
                     if (res.status == 400) {
                         showError('searchnumber', res.messages.searchnumber); 
                     } else if (res.status == 401){

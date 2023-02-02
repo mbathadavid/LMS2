@@ -83,12 +83,17 @@
             </div>
             <div class="col-lg-6">
             <div class="form-group mb-2">
+                <label for="">KCPE Score</label>
+                <input class="form-control" type="number" name="seditkcpescore" id="seditkcpescore">
+                <div class="invalid-feedback"></div>
+            </div> 
+            <div class="form-group mb-2">
                 <label for="">Current Class</label>
                 <select class="form-control" name="seditclass" id="seditclass">
-                    <option id="seditclassval"></option>
+                    <!-- <option id="seditclassval"></option> -->
                 </select>
                 <div class="inavalid-feedback"></div>
-                </div>
+            </div>
             <div class="form-group mb-2">
                 <label for="">Date of Birth</label>
                 <input class="form-control" type="date" name="seditdob" id="seditdob">
@@ -238,6 +243,7 @@
              <h5 class="text-center text-info">General Information</h5>
             <h6>Admission Number : <span id="viewadmno" class="text-success"></span></h6>
             <h6>UPI Number : <span id="viewloginid" class="text-success"></span></h6>
+            <h6>KCPE SCORE : <span id="viewkcpescore" class="text-success"></span></h6>
             <h6>Name : <span id="viewfname" class="text-success"></span></h6>
             <!-- <h6>Second Name : <span id="viewsname" class="text-success"></span></h6>
             <h6>Last Name : <span id="viewlname" class="text-success"></span></h6> -->
@@ -383,12 +389,17 @@
 
                 <div class="col-lg-6">
                 <div class="form-group mb-1">
+                    <label for="">KCPE Score</label>
+                    <input placeholder="Enter KCPE Marks here" type="number" name="kcpescore" id="kcpescore" class="form-control">
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="form-group mb-1">
                         <label for="">Current Class</label>
                         <select class="form-control" name="current_class" id="current_class">
                             
-                            </select>
+                        </select>
                         <div class="invalid-feedback"></div>
-                    </div>
+                </div>
                 <div class="form-group mb-1">
                         <label for="">Date of Birth</label>
                         <input placeholder="Date of Birth" type="date" name="dob" id="dob" class="form-control">
@@ -587,6 +598,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     $('#studentimg').html('<img src="images/'+data.profile+'" class="img-fluid"/>');
                     $('#viewadmno').text(data.AdmissionNo)
                     $('#viewloginid').text(data.UPI)
+                    $('#viewkcpescore').text(data.KCPE_marks)
                     $('#viewfname').text(data.Fname+' '+data.Lname)
                     // $('#viewsname').text(data.Sname)
                     // $('#viewlname').text(data.Lname)
@@ -671,8 +683,11 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 $('#seditlname').val(data.Lname);
                 $('#seditdob').val(data.dob);
                 $('#seditcounty').val(data.county);
-                $('#seditclassval').val(data.current_class);
+                $('#seditclass').html('');
+                $('#seditclass').html('<option id="seditclassval"></option>');
+                $('#seditclassval').val(`${data.current_classid},${data.current_class}`);
                 $('#seditclassval').text(data.current_class);
+                $('#seditkcpescore').val(data.KCPE_marks);
                 $('#seditscounty').val(data.subcounty);
                 $('#seditdisabilitydescription').val(data.d_description);
                 $('#editdisabilityval').val(data.disabled);
@@ -710,7 +725,6 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
             })
         }   
 
-
         //fetch classes
         function fecthclasses(){
             var sid = "{{ session()->get('schooldetails.id') }}";
@@ -718,7 +732,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 method: 'GET',
                 url: `/fetchclasses/${sid}`,
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     if (res.classes.length == 0) {
                         $('#current_class').html('');
                         $('#current_class').html('<h5 class="text-danger">There are no classes registered yet</h5>')
@@ -726,7 +740,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                         $('#current_class').html('');
                         $('#current_class').html('<option value="">--Select Class--</option>')
                         $.each(res.classes, function(key,item){
-                            $('#current_class').append('<option value="'+item.id+','+item.class+' '+item.stream+'">'+item.class+' '+(item.stream == null ? "" : item.stream)+'</option>');
+                            $('#current_class').append('<option value="'+item.id+','+item.class+' '+(item.stream == null ? "" : item.stream)+'">'+item.class+' '+(item.stream == null ? "" : item.stream)+'</option>');
                         })
                     }
                 }
@@ -739,16 +753,16 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 method: 'GET',
                 url: `/fetchclasses/${sid}`,
                 success: function(res){
-                    console.log(res)
-                    if (res.classes.length == 0) {
-                        $('#seditclass').html('');
-                        $('#seditclass').html('<h5 class="text-danger">There are no classes registered yet</h5>')
-                    } else {
-                        $('#seditclass').html('');
+                    //console.log(res)
+                    //if (res.classes.length == 0) {
+                        //$('#seditclass').html('');
+                        //$('#seditclass').html('<h5 class="text-danger">There are no classes registered yet</h5>')
+                    //} else {
+                        //$('#seditclass').html('');
                         $.each(res.classes, function(key,item){
-                            $('#seditclass').append('<option value="'+item.id+','+item.class+' '+item.stream+'">'+item.class+' '+(item.stream == null ? "" : item.stream)+'</option>');
+                            $('#seditclass').append('<option value="'+item.id+','+item.class+' '+(item.stream == null ? "" : item.stream)+'">'+item.class+' '+(item.stream == null ? "" : item.stream)+'</option>');
                         })
-                    }
+                    //}
                 }
             });
         }
@@ -767,7 +781,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     } else {
                         $('#nextclass').html('');
                         $.each(res.classes, function(key,item){
-                            $('#nextclass').append('<option value="'+item.id+','+item.class+' '+(item.stream == null ? "" : item.stream)+'">'+item.class+' '+item.stream+'</option>');
+                            $('#nextclass').append('<option value="'+item.id+','+item.class+' '+(item.stream == null ? "" : item.stream)+'">'+item.class+' '+(item.stream == null ? "" : item.stream)+'</option>');
                         })
                     }
                 }
@@ -840,7 +854,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                data: formData,
                //dataType: 'json',
                success: function(res){
-                console.log(res);
+                //console.log(res);
                    if (res.status == 400) {
                     $('#teacheregbtn').val('REGISTER STUDENT');
                     showError('admissionNo', res.messages.admissionNo);
@@ -888,7 +902,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                data: formData,
                //dataType: 'json',
                success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 400) {
                     $('#sedtbtn').val('EDIT STUDENT');
                     showError('sediteducation', res.messages.sediteducation);
@@ -1129,7 +1143,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 data: formData,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     $("#assignpathway").val('ASSIGN PATHWAY TO STUDENT')
                    if (res.status == 200) {
                     $('#studentpathwayModal').modal('hide');  
@@ -1254,7 +1268,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchstudents();
                     fecthclasses()

@@ -11,6 +11,7 @@ use App\Models\ResultThread;
 use App\Models\FinalGrade;
 use App\Models\overallGradeSystem;
 use App\Models\Grade;
+use App\Models\subjectmeans;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,6 +20,7 @@ class FinalGradeController extends Controller
     //Insert Final Grade for Subject In Exam Thread 
    public function insertResults(Request $req){
      $records = FinalGrade::where('tid',$req->examthread)
+                         ->where('sid',$req->sid)
                          ->where('subid',$req->subid)
                          ->where('classid',$req->cid)
                          ->get();
@@ -26,6 +28,7 @@ class FinalGradeController extends Controller
           
         if (count($records) >= 1) {
           $records = FinalGrade::where('tid',$req->examthread)
+                         ->where('sid',$req->sid)
                          ->where('subid',$req->subid)
                          ->where('classid',$req->cid)
                          ->delete();   
@@ -44,6 +47,7 @@ class FinalGradeController extends Controller
                     'messages' => $validator->getMessageBag()
                ]);
           } else {
+               //return response()->json(['data' => $req->all()]);
                $adms = $req->viewadmissionnumber;
                $mark = $req->finalscore;
                $missingadms = [];
@@ -70,6 +74,7 @@ class FinalGradeController extends Controller
                   $pointsum = array_sum($points);
                   $marksavg = $marksum/$markscount;
                   $pointavg = $pointsum/$markscount;
+                  $classes = array_values(array_unique($req->currentclass));
 
 
 
@@ -89,8 +94,9 @@ class FinalGradeController extends Controller
                             $finalgrade->Lname = $lnames[$i];
                             $finalgrade->subid = $req->subid;
                             $finalgrade->classid = $req->cid;
-                            $finalgrade->availablescores = $availablescores[$i];
-                            
+                            $finalgrade->availablescores = $req->examinations;
+                            //$finalgrade->availablescores = $availablescores[$i];examinations
+
                             $avaexams = [];
                             $finalarr = [];
                             if (count($examstocompute) == count(explode(',',$availablescores[$i]))) {
@@ -118,9 +124,56 @@ class FinalGradeController extends Controller
                             $finalgrade->score = $marks[$i];
                             $finalgrade->points = $points[$i];
                             $finalgrade->grade = $grades[$i];
+
+                            $lastscore = FinalGrade::where('tid',($req->tid) - 1)
+                                                ->where('sid',$req->sid)
+                                                ->where('AdmissionNo',$admnos[$i])
+                                                ->where('classid',$req->cid)
+                                                ->where('subid',$req->subid)
+                                                ->get();
+
+                            if (count($lastscore) > 0) {
+                                   $dev = $marks[$i] - $lastscore[0]['score'];
+                                   $finalgrade->Prev_Score = $lastscore[0]['score']; 
+                                   if ($dev < 0) {
+                                        $finalgrade->DEV = $dev;
+                                   } else {
+                                        $finalgrade->DEV = '+'.$dev;
+                                   }
+                              } else {
+                                   $finalgrade->DEV = "N/A";
+                                   $finalgrade->Prev_Score = "N/A";
+                              }
+
                             $finalgrade->Remarks = $remarks[$i];
                             $finalgrade->save();
                     }
+
+                    //Work on subject
+                    $records = subjectmeans::where('tid',$req->examthread)
+                                            ->where('sid',$req->sid)
+                                            ->where('subid',$req->subid)
+                                            ->where('classid',$req->cid)
+                                            ->get();
+
+                    if (count($records) >= 1) {
+                         $records = subjectmeans::where('tid',$req->examthread)
+                                            ->where('sid',$req->sid)
+                                            ->where('subid',$req->subid)
+                                            ->where('classid',$req->cid)
+                                            ->delete();
+                    }
+
+                    $subjectmean = new subjectmeans;
+                    $subjectmean->sid = $req->sid;
+                    $subjectmean->tid = $req->examthread;
+                    $subjectmean->subid = $req->subid;
+                    $subjectmean->classid = $req->cid;
+                    $subjectmean->class = $classes[0];
+                    $subjectmean->mean_marks = round($marksavg,3);
+                    $subjectmean->mean_points = round($pointavg,3);
+                    $subjectmean->student_count = count($admnos);
+                    $subjectmean->save();
 
                     $data = FinalGrade::where('tid',$req->examthread)
                                         ->where('subid',$req->subid)
@@ -131,38 +184,14 @@ class FinalGradeController extends Controller
                     $subject = Subject::select('subject')
                                         ->where('id',$req->subid)
                                         ->first(); 
-                    
-                    // $subject = Subject::where('id',$req->sid)
-                    //                     ->where('sid',$req->sid)
-                    //                     ->first();
-                                        
-                    // $clas = classes::select('class')
-                    //                     ->where('id',$req->cid)
-                    //                     ->first();
 
                     $clas = classes::where('id',$req->cid)
                                     ->where('sid',$req->sid)
                                     ->get();
 
-                    // $stream = classes::select('stream')
-                    //                     ->where('id',$req->cid)
-                    //                     ->first(); 
-                                        
-                    // $thread = ResultThread::select('name')
-                    //                     ->where('id',$req->examthread)
-                    //                     ->first(); 
-
                     $thread = ResultThread::where('id',$req->examthread)
                                         ->where('sid',$req->sid)
-                                        ->get();
-
-                    // $term = ResultThread::select('term')
-                    //                     ->where('id',$req->examthread)
-                    //                     ->first();
-                                        
-                    // $year = ResultThread::select('year')
-                    //                     ->where('id',$req->examthread)
-                    //                     ->first();                    
+                                        ->get();                    
 
                     return response()->json([
                          'filename' => $clas[0]['class'].'_'.$clas[0]['stream'].'_'.$thread[0]['thread'].'_'.$thread[0]['year'].'_'.$thread[0]['term'].'_'.$subject['subject'],
@@ -172,7 +201,8 @@ class FinalGradeController extends Controller
                          'examinations' => $req->examinations,
                          'marksavg' => round($marksavg,3),
                          'pointsavg' => round($pointavg,3),
-                         'gradingavg' => round($marksavg)
+                         'gradingavg' => round($marksavg),
+                         'classes' => $classes
                     ]);
 
                }

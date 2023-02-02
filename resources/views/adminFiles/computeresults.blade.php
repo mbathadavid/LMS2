@@ -16,7 +16,7 @@
 </div>
 <div id="main" class="maincontent">
 @include('adminFiles.topnav')
-<h4 class="text-danger">Marks Computation</h4>
+<h4 class="text-danger">Add Marks</h4>
 @if(count($students) == 0)
 <h6 class="text-center text-success">There are currently no students in <b>{{ $currentclass['class'] }} {{ $currentclass['stream'] }}</b>.Go to <a href="/students"> and promote students to this class.</a></h6>
 @else
@@ -204,6 +204,7 @@
             $('#maxscore').val($(this).val())
             maxscore = JSON.parse($(this).val());
         })
+
        //Submit marks ajax request
       $('#marksform').submit(function(e){
           e.preventDefault();
@@ -222,8 +223,8 @@
               processData: false,
               data: formData,
               success: function(res){
-                $('#subject1').text('');
-                  //console.log(res)
+                //$('#subject1').text('');
+                //  console.log(res)
                 if (res.status == 400) {
                     showError('maxscoreset', res.messages.maxscoreset);
                     showError('subjectdiv', res.messages.subjectno);
@@ -293,7 +294,7 @@
                 processData: false,
                 success: function(res){
                     //$('#subject1').text('');
-                    //console.log(res.students);
+                    //console.log(res);
 
                     var students = res.students.filter(element => {
                         if (element.suborlearningpaths != null) {
@@ -318,7 +319,8 @@
                     var appenddata2 = '';
                     appenddata +='<tr deladm="'+item.AdmissionNo+'">';
                     appenddata2 +='<tr>';
-                    if (res.student.split(',').includes(item.AdmissionNo)) {
+                    // if (res.student.split(',').includes(item.AdmissionNo)) {
+                    if (res.student2.includes(item.AdmissionNo)) {
                         $("#marksviewheading").addClass('d-none');
                         appenddata +='<td><input value="'+item.id+'" type="checkbox" name="enableupdate[]" id="enableupdate"> <span class="text-danger"><b>Edit</b></span></td>';
                         appenddata +='<td><button value="'+item.AdmissionNo+'" class="btn btn-sm w3-red" id="delbtn"><i class="fas fa-trash"></i></button></td>';
@@ -432,7 +434,8 @@
                     var appenddata2 = '';
                     appenddata +='<tr deladm="'+item.AdmissionNo+'">';
                     appenddata2 +='<tr>';
-                    if (res.student.split(',').includes(item.AdmissionNo)) {
+                    // if (res.student.split(',').includes(item.AdmissionNo)) {
+                    if (res.student2.includes(item.AdmissionNo)) {
                         $("#marksviewheading").addClass('d-none');
                         appenddata +='<td><input value="'+item.id+'" type="checkbox" name="enableupdate[]" id="enableupdate"> <span class="text-danger"><b>Edit</b></span></td>';
                         appenddata +='<td><button value="'+item.AdmissionNo+'" class="btn btn-sm w3-red" id="delbtn"><i class="fas fa-trash"></i></button></td>';
@@ -463,6 +466,7 @@
             }) 
          }
      })
+
      //Deal with marks updating
      $(document).on('change','#enableupdate',function(e){
         e.preventDefault();
@@ -510,7 +514,6 @@
                     }
                 }) 
             } 
-        
      })
 
 
@@ -519,8 +522,7 @@
         e.preventDefault();
          $('#marksadd').removeClass('d-none')
 
-          var selectedbox = $(this).val()
-
+          var selectedbox = $(this).val();
 
             $('#withoutmarksadd').find(`input[insid='${selectedbox}']`).each(function(i){
                 $(this).prop("disabled", !$(this).prop("disabled"));
@@ -531,7 +533,6 @@
             $('#withoutmarksadd').find(`input[insid2='${selectedbox}']`).each(function(i){
                 $(this).prop("disabled", !$(this).prop("disabled"));
             })   
-        
      })
 
      //Add missing marks
@@ -566,7 +567,7 @@
               processData: false,
               data: formData,
               success: function(res){
-                $('#subject1').text('');
+                //$('#subject1').text('');
                 $('#marksadd').val('ADD MARKS');
                 if(res.status == 401){
                 $('#response').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><p>'+res.messages+'</p><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
@@ -595,7 +596,6 @@
                 }
               }
               })
-
      })
 
 
@@ -626,7 +626,7 @@
               processData: false,
               data: formData,
               success: function(res){
-                $('#subject1').text('');
+                //$('#subject1').text('');
                 $('#updatemarks').val('UPDATE MARKS');
              if(res.status == 401){
                 $('#response').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><p>'+res.messages+'</p><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');

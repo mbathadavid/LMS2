@@ -17,14 +17,16 @@ class CreateFinalGradesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('sid');
             $table->integer('tid');
-            $table->integer('AdmissionNo');
+            $table->string('AdmissionNo');
             $table->string('FName');
             $table->string('Lname');
             $table->integer('subid');
             $table->integer('classid');
-            $table->string('availablescores');
+            $table->string('availablescores')->nullable();
             $table->string('scores');
             $table->integer('score');
+            $table->integer('Prev_Score')->nullable();
+            $table->integer('DEV')->nullable();
             $table->integer('points')->nullable();
             $table->string('grade')->nullable();
             $table->string('Remarks')->nullable();

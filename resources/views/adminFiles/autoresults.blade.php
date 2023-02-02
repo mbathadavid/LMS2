@@ -273,7 +273,7 @@
               contentType: false,
               processData: false,
               success: function(res){
-                console.log(res.students.length)
+                //console.log(res.students.length)
 
                 if (res.students.length == 0) {
                     $('#termcheck').removeClass('d-none')
@@ -332,9 +332,9 @@
               processData: false,
               data: formData,
               success: function(res){
-                console.log(res);
+                //console.log(res);
                 $('.loader').addClass('d-none')
-                console.log(res)
+                //console.log(res)
                 remarks = [];
                 minmarks = [];
                 maxmarks = [];
@@ -357,16 +357,14 @@
                     $('#examthread').append('<option value="'+item.id+'">'+item.term+' '+item.year+' '+item.name+'</option>')
                 })
 
-                $('#computationheading').text(res.class.class.toUpperCase()+' '+res.stream.stream.toUpperCase()+' '+' '+res.subject.subject.toUpperCase())
+                // $('#computationheading').text(res.class.class.toUpperCase()+' '+(res.stream.stream.toUpperCase())+' '+' '+res.subject.subject.toUpperCase())
+                $('#computationheading').text(res.class.class.toUpperCase()+' '+(res.stream.stream == null ? '' : res.stream.stream.toUpperCase())+' '+' '+res.subject.subject.toUpperCase())
 
                 for (var key in array) {
                 if (array.hasOwnProperty(key)) {
                     if (key.includes('Remarks')) {
                         remarks.push(array[key])
                     }
-
-                    //if (key === ('minE' | 'minD_minus' | 'minC_minus' | 'minB_minus' | 'minA_minus' | 'minD_plus' | 'minC_plus' | 'minB_plus')) {
-                    //if (key === 'minE'  'minD_minus') {
                     
                     if (key.includes('minE')) {
                         minmarks.push(parseInt(array[key]))
@@ -449,7 +447,8 @@
                     var appenddata = '';
                     appenddata +='<tr sval="'+item.id+'">';
                     appenddata +='<td><input value="'+item.id+'" type="checkbox" name="enableupdate[]" id="removestudent"></td>';
-                    appenddata +='<td><input send="send" readonly type="number" value="'+item.AdmissionNo+'" sval2="'+item.id+'" name="viewadmissionnumber[]" id="viewadmissionnumber" class="form-control"></td>';
+                    appenddata +='<td><input send="send" readonly type="text" value="'+(item.AdmissionNo == null ? item.UPI : item.AdmissionNo)+'" sval2="'+item.id+'" name="viewadmissionnumber[]" id="viewadmissionnumber" class="form-control"></td>';
+                    appenddata +='<td><input send="send" readonly type="text" value="'+item.current_class+'" sval2="'+item.id+'" name="currentclass[]" id="currentclass" class="form-control"></td>';
                     appenddata +='<td><input send="send" readonly type="text" value="'+item.Fname+'" sval2="'+item.id+'" name="viewfirstname[]" id="viewfirstname" class="form-control"></td>';
                     appenddata +='<td><input send="send" readonly type="text" value="'+item.Lname+'" sval2="'+item.id+'" name="viewlname[]" id="viewlname" class="form-control"></td>'; 
                     
@@ -550,8 +549,6 @@
                      $('#gradestable').append(appenddata)
                  })
               }
-            
-
               }
             })
         })
@@ -814,7 +811,7 @@
                 data: formData,
                 success: function(res){
                     $('.loader').addClass('d-none')
-                    console.log(res);
+                    //console.log(res);
                     if (res.status == 400) {
                         showError('examthread', res.messages.examthread);
                     } 
@@ -844,6 +841,8 @@
                         theadings +='<th scope="col">Final Score</th>';
                         theadings +='<th scope="col">Points</th>';
                         theadings +='<th scope="col">Grade</th>';
+                        theadings +='<th scope="col">Previous Score</th>';
+                        theadings +='<th scope="col">DEV</th>';
                         theadings +='<th scope="col">Remarks</th>';
                         theadings +='</tr>';
                         $('#theadings').append(theadings);
@@ -868,8 +867,10 @@
                             }
 
                             appenddata +='<td>'+item.score+'</td>';
-                            appenddata +='<td>'+item.points+'</td>'; 
+                            appenddata +='<td>'+item.points+'</td>';
                             appenddata +='<td>'+item.grade+'</td>'; 
+                            appenddata +='<td>'+item.Prev_Score+'</td>';
+                            appenddata +='<td>'+item.DEV+'</td>'; 
                             appenddata +='<td>'+item.Remarks+'</td>'; 
                             appenddata +='</tr>';
 

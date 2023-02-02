@@ -23,6 +23,8 @@ class CreateExpensesTable extends Migration
             $table->string('updatedby')->nullable();
             $table->string('deleted')->default('0');
             $table->timestamps();
+
+            $table->foreign('sid')->references('id')->on('school__data')->onDelete('cascade');
         });
     }
 

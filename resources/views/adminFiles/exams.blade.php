@@ -19,7 +19,7 @@
 <h4>Examination(s)</h4>
 <div class="mb-2">
 <button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#examaddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD NEW EXAM</button>
-<button class="btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#CBCModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD NEW CBC ASSESSMENT</button>
+<!-- <button class="btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#CBCModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD NEW CBC ASSESSMENT</button> -->
 </div>
 <!---Exams modal start-->
 <div id="examaddModal" class="modal w3-animate-left" tabindex="-1">
@@ -208,6 +208,15 @@
     <div class="m-2 p-2 border border-success border-1">
     <div class="table-responsive">
 
+    <div id="response"></div>
+    <div class="row">
+    <div id="actionbtns" class="mb-2">
+        <button id="compresultsbtn" class="btn btn-sm btn-primary float-end m-1">Add Marks</button>
+        <button id="examviewbtn" class="btn btn-sm btn-success float-end m-1"><i class="fas fa-eye"></i>&nbsp;View</button>
+        <button id="exameditbtn" type="button" class="btn btn-sm btn-warning float-end m-1"><i class="fas fa-edit"></i>&nbsp;Edit</button> 
+        <button id="examdeletebtn" class="btn btn-sm btn-danger float-end m-1"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button>
+        </div>
+
         <div class="row d-none resultscomputation">
             <form action="#" id="computeresults">
                 <input type="number" name="examresid" id="examresid" hidden>
@@ -218,21 +227,11 @@
                     </select>
                 </div>
                 <div class="form-group mb-1 d-grid">
-                    <input value="PROCEED TO COMPUTE RESULTS" type="submit" class="btn btn-sm btn-primary"> 
+                    <input value="PROCEED TO ADD MARKS" type="submit" class="btn btn-sm btn-primary"> 
                 </div>
                 <button id="hideresultscompbtn" class="btn btn-sm btn-danger float-end">CANCEL</button>
             </form>
             <hr>
-        </div>
-
-
-    <div id="response"></div>
-    <div class="row">
-    <div id="actionbtns" class="mb-2 d-none">
-        <button id="compresultsbtn" class="btn btn-sm btn-primary float-end m-1">Add Marks</button>
-        <button id="examviewbtn" class="btn btn-sm btn-success float-end m-1"><i class="fas fa-eye"></i>&nbsp;View</button>
-        <button id="exameditbtn" type="button" class="btn btn-sm btn-warning float-end m-1"><i class="fas fa-edit"></i>&nbsp;Edit</button> 
-        <button id="examdeletebtn" class="btn btn-sm btn-danger float-end m-1"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button>
         </div>
 
         <div class="col-lg-6 col-md-6 col-sm-11">
@@ -332,9 +331,9 @@ function preview(){
                 method: 'GET',
                 url: `/fetchexams/${sid}`,
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     if (res.exams.length == 0) {
-                        $('#examstable').html('<h5 class="text-danger">There are no classes registered yet</h5>')
+                        $('#examstable').html('<h5 class="text-danger">There are no Exams registered yet</h5>')
                     } else {
                         $('#examstable').html('')
                         $.each(res.exams, function(key,item){
@@ -388,6 +387,7 @@ function preview(){
                }
             });
         })
+        
         //Navigate to compute exam results
         $("#computeresults").submit(function(e){
             e.preventDefault();
@@ -417,7 +417,7 @@ function preview(){
                data: formData,
                //dataType: 'json',
                success: function(res){
-                   console.log(res)
+                   //console.log(res)
                    if (res.status == 400) {
                     $('#exameditbutton').val('EDIT EXAM');
                     //showError('exameditname', res.messages.exameditname);
@@ -526,7 +526,7 @@ function preview(){
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     exams();
                     $('#response').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');

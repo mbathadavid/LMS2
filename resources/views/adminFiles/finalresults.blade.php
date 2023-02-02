@@ -89,6 +89,7 @@
         <h6 class="text-center text-danger">{{ $schoolinfo->motto }}</h6>
         <hr>
         <h6 class="text-center w3-green p-2" id="pdfheading"></h6>
+        <div class="table-responsive">
         <table class="table" id="computedmarks">
                 <thead id="theadings">
                    
@@ -100,7 +101,7 @@
                 <h6 class="text-center">Mean <b><span id="meanpoints" class="text-danger"></span></b></h6>
                 <h6 class="text-center">Mean Grade <b><span id="meangrade" class="text-danger"></span></b></h6>
             </table>
-            
+            </div> 
             </div>
 </div>
 </div>
@@ -212,14 +213,15 @@
     <tr>
         <th scope="col">Eliminate</th>
         <th scope="col">Adm No</th>
-        <th scope="col">Final Score</th>
-        <th scope="col">Final Grade</th>
-        <th scope="col">Remarks</th>
+        <th scope="col">Class</th>
+        <th scope="col">Final Score <span class="text-danger">(To be Auto-filled)</span></th>
+        <th scope="col">Final Grade <span class="text-danger">(To be Auto-filled)</span></th>
+        <th scope="col">Remarks <span class="text-danger">(To be Auto-filled)</span></th>
         <th scope="col">Scores by Marks</th>
         <th scope="col">Scores by Points</th>
-        <th scope="col">First Name</th>
-        <th scope="col">Last Name</th>
-        <th scope="col">Class</th>
+        <th class="d-none" scope="col">KCPE SCORE</th>
+        <th class="d-none" scope="col">First Name</th>
+        <th class="d-none" scope="col">Last Name</th>
     </tr>
         </thead>
         <tbody id="finalscoresbody">
@@ -297,14 +299,15 @@
                 processData: false,
                 data: formData,
                 success: function(res){
-                    $('.loader').addClass('d-none');
+                //console.log(res);
+                $('.loader').addClass('d-none');
                 if (res.status == 400) {
                     showError('thread',res.thread);
                     showError('class',res.class);
                 } else {
                 $("#allbody").removeClass('d-none');
                 $("#computedresultsdiv").addClass('d-none');
-                console.log(res)
+                //console.log(res)
                 //console.log(res.grades)
                 subnames = [];
                 subids = [];
@@ -344,7 +347,6 @@
                         $('#substucounts').append(`<td>${item}</td>`); 
                     })
 
-                    
                 //     //Update Grading System
                     if (res.grades == null) {
                         $('#overallgradingtable').html('<h6 class="text-danger">The grading System for This class is not yet set.Make sure you set it.</h6>')
@@ -418,7 +420,9 @@
                     var appenddata = '';
                     appenddata +='<tr sval="'+item.id+'">';
                     appenddata +='<td><input value="'+item.id+'" type="checkbox" name="enableupdate[]" id="removestudent"></td>';
-                    appenddata +='<td><input style="width: auto" send="send" readonly type="number" value="'+item.AdmissionNo+'" sval2="'+item.id+'" name="viewadmissionnumber[]" id="viewadmissionnumber" class="form-control"></td>';
+                    appenddata +='<td><input style="width: auto" send="send" readonly type="text" value="'+(item.AdmissionNo == null ? item.UPI : item.AdmissionNo)+'" sval2="'+item.id+'" name="viewadmissionnumber[]" id="viewadmissionnumber" class="form-control"></td>';
+                    appenddata +='<td><input style="width: auto" send="send" readonly type="text" value="'+item.current_class+'" sval2="'+item.id+'" name="viewclass[]" id="viewclass" class="form-control"></td>';
+                    appenddata +='<td class="d-none"><input style="width: auto" send="send" readonly type="text" value="'+item.current_classid+'" sval2="'+item.id+'" name="viewclassid[]" id="viewclassid" class="form-control"></td>';        
 
                     var marks = [];
                     var points = [];
@@ -460,9 +464,9 @@
                     appenddata +='<td class="d-none"><input send="send" readonly type="text" value="'+grades+'" sval2="'+item.id+'" name="viewgrades[]" id="grades" class="form-control"><span class="text-danger" style="font-size: 11px"><b><i>'+subs+'</i></b></span><span class="text-success" style="font-size: 11px"> Respectively</span></td>';
 
                     appenddata +='<td class="d-none"><input style="width: auto" send="send" readonly type="text" value="'+subs+'" sval2="'+item.id+'" name="subjects[]" id="subjects" class="form-control"></td>';
-                    appenddata +='<td><input style="width: auto" send="send" readonly type="text" value="'+item.Fname+'" sval2="'+item.id+'" name="viewfirstname[]" id="viewfirstname" class="form-control"></td>';
-                    appenddata +='<td><input style="width: auto" send="send" readonly type="text" value="'+item.Lname+'" sval2="'+item.id+'" name="viewlname[]" id="viewlname" class="form-control"></td>'; 
-                    appenddata +='<td><input style="width: auto" send="send" readonly type="text" value="'+item.current_class+'" sval2="'+item.id+'" name="viewclass[]" id="viewclass" class="form-control"></td>';        
+                    appenddata +='<td class="d-none"><input style="width: auto" send="send" readonly type="text" value="'+item.KCPE_marks+'" sval2="'+item.id+'" name="kcpemarks[]" id="kcpemarks" class="form-control"></td>';
+                    appenddata +='<td class="d-none"><input style="width: auto" send="send" readonly type="text" value="'+item.Fname+'" sval2="'+item.id+'" name="viewfirstname[]" id="viewfirstname" class="form-control"></td>';
+                    appenddata +='<td class="d-none"><input style="width: auto" send="send" readonly type="text" value="'+item.Lname+'" sval2="'+item.id+'" name="viewlname[]" id="viewlname" class="form-control"></td>'; 
                     appenddata +='</tr>';
 
                     $('#finalscoresbody').append(appenddata)
@@ -622,8 +626,7 @@
             }
          })
 
-
-
+         
          //Calculate scores by points
          $('#finalscorebypoints').click(function(e){
             //console.log(remarks)
@@ -752,8 +755,6 @@
                 $(this).addClass('w3-green') 
             })
         }
-
-
                }
             } 
             }           
@@ -781,17 +782,12 @@
                 processData: false,
                 data: formData,
                 success: function(res){
+                console.log(res);
                  $('.loader').addClass('d-none');
-                    //console.log(res);
 
                     if (res.status == 200) {
                         filename = res.filename;
 
-                        // console.log(minmarks);
-                        // console.log(maxmarks);
-                        // console.log(topgrades);
-
-                        //console.log(typeof(res.average))
                         var avggrade = [];
 
                          for (let k = 0; k < maxmarks.length; k++) {
@@ -811,21 +807,25 @@
                         $("#computedresultstable").html("");
                         var theadings = "";
 
-                        theadings +='<tr>';
+                        theadings +='<tr class="w3-green">';
                         theadings +='<th scope="col">Adm No</th>';
                         theadings +='<th scope="col">Name</th>';
-                        theadings +='<th scope="col" class="text-danger">Class</th>';
+                        theadings +='<th scope="col">Class</th>';
 
                         $.each(res.subjects, function(key,item){
                             theadings +='<th scope="col">'+item.subject+'</th>'
                         })
 
                         theadings +='<th scope="col">Subjects</th>';
-                        theadings +='<th scope="col">DEV</th>';
-                        theadings +='<th scope="col">Points Scored</th>';
+                        theadings +='<th scope="col">Score</th>';
                         theadings +='<th scope="col">Grade</th>';
-                        theadings +='<th scope="col">STR POS</th>';
-                        theadings +='<th scope="col">OVR POS</th>';
+                        theadings +='<th scope="col">Previous Score</th>';
+                        theadings +='<th scope="col">DEV</th>';
+                        theadings +='<th scope="col">KCPE MARKS</th>';
+                        theadings +='<th scope="col">KCPE RANK</th>';
+                        theadings +='<th scope="col">OVERALL POS</th>';
+                        theadings +='<th scope="col">STREAM POS</th>';
+                        theadings +='<th scope="col">Remarks</th>';
 
                         theadings +='</tr>';
                         $('#theadings').append(theadings);
@@ -859,11 +859,15 @@
                         }
 
                         appenddata +='<td>'+item.ScoresByMarks.split(',').length+'</td>';
+                        appenddata +='<td class="w3-green">'+item.Finalscore+'</td>';
+                        appenddata +='<td class="w3-red">'+item.Finalgrade+'</td>';
+                        appenddata +='<td>'+item.Prev_Score+'</td>';
                         appenddata +='<td>'+item.DEV+'</td>';
-                        appenddata +='<td>'+item.Finalscore+'</td>';
-                        appenddata +='<td>'+item.Finalgrade+'</td>';
-                        appenddata +='<td>'+item.STRPOS+'</td>';
+                        appenddata +='<td>'+item.KCPE_marks+'</td>';
+                        appenddata +='<td>'+item.KCPE_rank+'</td>';
                         appenddata +='<td>'+item.OVRPO+'</td>';
+                        appenddata +='<td>'+item.STRPOS+'</td>';
+                        theadings +='<td class="w3-grey">'+item.Remarks+'</td>';
                         appenddata +='</tr>';
                         
                         $("#computedresultstable").append(appenddata);

@@ -30,6 +30,7 @@ class MarkController extends Controller
             'messages' => $validator->getMessageBag()
         ]);
     } else {
+        //return response()->json(['data' => $req->all()]);
        $marks = $req->maxscored;
        $adms = $req->admissionnumber;
        $fnames = $req->firstname;
@@ -139,15 +140,10 @@ class MarkController extends Controller
                ]);
             }
          }
-
-
     }
 
-
     //Function to update marks
-    public function updateMarks(Request $req){
-     /*   print_r($req->all());
-        echo count($req->viewmarks); */ 
+    public function updateMarks(Request $req){ 
         $ids = array_filter($req->enableupdate);
         $adms = array_filter($req->viewadmissionnumber);
         $fnames = array_filter($req->viewfirstname);
@@ -190,9 +186,9 @@ class MarkController extends Controller
                ]); 
             }
             
-        }
-        
+        } 
     }
+
     //Function to fetch marks
     public function fetchMarks($exam,$cid,$sid){
         $marks = Mark::where('classid',$cid)

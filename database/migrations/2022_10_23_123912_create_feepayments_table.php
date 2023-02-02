@@ -27,6 +27,8 @@ class CreateFeepaymentsTable extends Migration
             $table->string('MPESA_Code')->nullable();
             $table->string('Collected_By');
             $table->timestamps();
+
+            $table->foreign('sid')->references('id')->on('school__data')->onDelete('cascade');
         });
     }
 

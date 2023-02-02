@@ -20,7 +20,7 @@
 <div class="row justify-content-center align-item-center">
     <div id="accountupdatedivres"></div>
 
-    <div class="col-lg-6 col-md-8 col-sm-12">
+    <div class="col-lg-8 col-md-8 col-sm-12">
     <table class="table" id="notificationstable">
             <thead>
             <tr class="">
@@ -71,18 +71,18 @@ $(document).ready(function(){
                 url: `/fetchadminotifications/${sid}`,
                 //dataType: 'jsons',
                 success: function(res) {
-                    console.log(res);
+                    //console.log(res);
                     if (res.notifications.length == 0) {
-                        $('#notificationstablebody').html('<h5 class="text-center text-danger">No any parents registered as at now</h5>');
+                        $('#notificationstablebody').html('<h5 class="text-center text-danger">No any notifications yet.</h5>');
                     } else {
                         $('#notificationstablebody').html('');
                          $.each(res.notifications, function(key,item){
-                            $('#notificationstablebody').append('<tr class="'+(item.type == "parentmessage" ? "w3-grey" : "")+'">\
+                            $('#notificationstablebody').append('<tr class="'+(item.type == "parentmessage" ? "w3-green" : "w3-grey")+'">\
                                 <td>'+(item.type == "noticeboard" ? "Notice" : "Parent's Message")+'</td>\
                                 <td>'+item.noficationtxt+'</td>\
                                 <td>'+(item.filename == null ? "No" : "Yes")+'</td>\
                                 <td>'+item.created_at+'</td>\
-                                <td>Action</td>\
+                                <td><a href='+(item.type == "noticeboard" ? "/staff-noticeboard" : "{{ route('admin.parentmessages') }}")+' class="btn btn-sm w3-red"><i class="fas fa-eye"></i>&nbsp; View</a></td>\
                             </tr>')
                     }); 
 
@@ -93,7 +93,6 @@ $(document).ready(function(){
                             paging: false,
                             searching: true
                          });
-
                     }  
                 }
             })          

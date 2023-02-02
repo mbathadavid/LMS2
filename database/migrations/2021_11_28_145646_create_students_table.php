@@ -19,11 +19,12 @@ class CreateStudentsTable extends Migration
             $table->string('Fname');
             $table->string('Sname')->nullable();
             $table->string('Lname')->nullable();
-            $table->string('AdmissionNo')->nullable();
+            $table->integer('AdmissionNo')->nullable();
             $table->string('EduSystem');
-            $table->string('UPI');
+            $table->string('UPI')->nullable();
             $table->string('StudentId')->nullable();
             $table->string('schoolsystem');
+            $table->integer('KCPE_marks')->nullable();
             $table->string('current_class');
             $table->Integer('current_classid');
             $table->string('gender');

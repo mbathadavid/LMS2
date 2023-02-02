@@ -139,9 +139,10 @@ class OverallGradeSystemController extends Controller
         }
     }
     //Function to fetch one Class Grading System
-    public function fetchFinalResult($cid){
+    public function fetchFinalResult($sid,$cid){
         $grades = overallGradeSystem::where('class',explode(',',$cid)[0])
-                                        ->get();
+                                     ->where('sid',$sid)
+                                     ->get();
 
         //$class = classes::find(explode(',',$cid)[0]);
         return response()->json([

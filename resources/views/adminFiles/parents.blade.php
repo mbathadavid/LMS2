@@ -242,7 +242,7 @@
                              <thead>
                              <tr>
                                 <th scope="col">Sel</th>
-                                <th scope="col">UPI</th>
+                                <th scope="col">UPI/Adm No</th>
                                 <th scope="col">Name</th> 
                             </tr>
                              </thead>
@@ -352,13 +352,17 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     success: function(res){
                             $('#filtredstudents').removeClass('d-none');
                             $('#parentsstudent').html('')
+                            if (res.students.length == 0) {
+                                $('#parentsstudent').append('<h6 class="text-center text-danger">No students Found</h6>');
+                            } else {
                             $.each(res.students, function(key,item){
                             $('#parentsstudent').append('<tr>\
-                            <td><input value="'+item.UPI+'" id="childreg" type="checkbox" name="childreg"></td>\
-                            <td>'+item.UPI+'</td>\
+                            <td><input value="'+(item.UPI == null ? item.AdmissionNo : item.UPI)+'" id="childreg" type="checkbox" name="childreg"></td>\
+                            <td>'+(item.UPI == null ? item.AdmissionNo+' <b class="text-danger">(Adm No.)</b>' : item.UPI+' <b class="text-success">(UPI)</b>')+'</td>\
                             <td>'+item.Fname+' '+item.Lname+'</td>\
                             </tr>');
                         })
+                    }
 
                         //$("#studentselecttable").DataTable().fnDestroy()
                         $("#studentselecttable").DataTable().fnDestroy()
@@ -389,8 +393,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                             $('#editparentsstudent').html('')
                             $.each(res.students, function(key,item){
                             $('#editparentsstudent').append('<tr>\
-                            <td><input value="'+item.UPI+'" id="editchildreg" type="checkbox" name="editchildreg"></td>\
-                            <td>'+item.UPI+'</td>\
+                            <td><input value="'+(item.UPI == null ? item.AdmissionNo : item.UPI)+'" id="editchildreg" type="checkbox" name="editchildreg"></td>\
+                            <td>'+(item.UPI == null ? item.AdmissionNo+' <b class="text-danger">(Adm No.)</b>' : item.UPI+' <b class="text-success">(UPI)</b>')+'</td>\
                             <td>'+item.Fname+' '+item.Lname+'</td>\
                             </tr>');
                         })
@@ -563,7 +567,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                data: formData,
                //dataType: 'json',
                success: function(res){
-                   console.log(res)
+                   //console.log(res)
                    if (res.status == 400) {
                     $('#editsubmitbtn').val('EDIT PARENT/GUARDIAN');
                     showError('editfname', res.messages.editfname);
@@ -624,7 +628,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 //dataType: 'jsons',
                 success: function(res) {
                 var data = res.parent;
-                console.log(data)
+                //console.log(data)
                 $('#parentimg').html('<img width="150" id="frame2" height="150" class="img-fluid" src="images/'+data.Profile+'" alt="">');
                 $('#editid').val(data.id);
                 $('#editfname').val(data.Fname)
@@ -702,7 +706,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     $('#regresponse').removeClass('d-none');
                    if (res.status == 200) {
                     fetchparents();
@@ -736,7 +740,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchparents();
                     fecthclasses();

@@ -282,6 +282,9 @@
             <option value="Grade FOUR">Grade 4</option>\
             <option value="Grade FIVE">Grade 5</option>\
             <option value="Grade SIX">Grade 6</option>\
+            <option value="GRADE SEVEN">GRADE 7</option>\
+            <option value="GRADE EIGHT">GRADE 8</option>\
+            <option value="GRADE NINE">GRADE 9</option>\
         </select>\
         <div class="invalid-feedback"></div>';
                 $("#primary844").html(html);
