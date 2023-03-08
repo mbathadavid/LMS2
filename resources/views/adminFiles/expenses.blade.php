@@ -151,7 +151,7 @@ $.ajaxSetup({
         url: `/fecthexpenses/${sid}`,
         //dataType: 'jsons',
         success: function(res) {
-            console.log(res);
+            //console.log(res);
             $("#totalexpenditures").text(res.expensestotal);
 
             if (res.expenses.length == 0) {
@@ -204,7 +204,7 @@ $.ajaxSetup({
                data: formData,
                //dataType: 'json',
                success: function(res){
-                console.log(res);
+                //console.log(res);
                 $('#expenditurebtn').val('RECORD EXPENSE');
 
                    if (res.status == 400) {
@@ -286,7 +286,7 @@ $.ajaxSetup({
          processData: false,
          data: formData,
          success: function(res){
-          console.log(res);
+          //console.log(res);
           $('#editexpenditurebtn').val('RECORD EXPENSE');
             if (res.status == 400) {
                 showError('editdateofexpenditure', res.messages.editdateofexpenditure);

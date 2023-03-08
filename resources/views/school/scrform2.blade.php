@@ -44,8 +44,8 @@
                                         <option value="PrimarySchool">Primary School</option>
                                         <option value="SecondarySchool">Secondary School</option>
                                     </select>
-                                    <input id="county" type="text" name="county" placeholder="Enter the name of the County where the school is located" /> 
-                                    <input id="subcounty" type="text" name="subcounty" placeholder="Enter The subcounty where the school is located" />  
+                                    
+                                    
                                     <input id="motto" type="text" name="motto" placeholder="School Motto" /> 
                                 </div> 
                                 <input type="button" name="next" class="next action-button" value="Next Step" />

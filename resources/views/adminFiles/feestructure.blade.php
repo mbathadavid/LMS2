@@ -1,6 +1,6 @@
 @extends('layouts.layout')
 
-@section('title','DashBoard')
+@section('title','Fee Structure')
 
 @section('content')
 @if($schoolinfo == null)

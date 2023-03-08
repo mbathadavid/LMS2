@@ -21,7 +21,7 @@
 
                                 </div>
                             @csrf
-                            <div class="mb-3">
+                            <!-- <div class="mb-3">
                                 <select name="school" class="form-control" id="school">
                                     <option value="">Select your School</option>
                                     @foreach($schools as $school)
@@ -29,19 +29,26 @@
                                     @endforeach
                                 </select>
                                 <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="mb-3">
+                            </div> -->
+                            <!-- <div class="mb-3">
                                 <input class="form-control" type="text" name="emailorphone" placeholder="Enter your Phone Number" id="emailorphone">
+                                <div class="invalid-feedback"></div>
+                            </div> -->
+
+                            <div class="mb-3">
+                                <label class="text-success"><b>Enter your Username</b></label>
+                                <input class="form-control" type="text" name="username" placeholder="Username, eg., 0758585589@3" id="username">
                                 <div class="invalid-feedback"></div>
                             </div>
                             
                             <div class="mb-3">
+                                <label class="text-success"><b>Enter your Password</b></label>
                                 <input class="form-control" type="password" name="password" placeholder="Enter Password" id="password">
                                 <div class="invalid-feedback"></div>
                             </div>
 
                             <div class="mb-3">
-                                <a class="text-decoration-none text-danger" href="/parentresetpass">Forgot password?</a>
+                                <a class="text-decoration-none text-danger" href="/reset-password">Forgot password?</a>
                             </div>
 
                             <div class="mb-3 d-grid">
@@ -72,8 +79,8 @@
                 dataType: 'json',
                 success: function(res){
                     if (res.status == 400) {
-                        showError('school',res.messages.school);
-                        showError('emailorphone',res.messages.emailorphone);
+                        //showError('school',res.messages.school);
+                        showError('username',res.messages.username);
                         showError('password',res.messages.password);
                         $('#login_btn').val('LOGIN');
                     } else if(res.status == 401){

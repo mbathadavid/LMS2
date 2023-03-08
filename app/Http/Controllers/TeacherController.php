@@ -17,6 +17,8 @@ class TeacherController extends Controller
 {
     //
     public function saveTeacher(Request $request){
+        $maxid = session()->get('schooldetails.id');
+
        $validator = Validator::make($request->all(),[
         'salutation' => 'required',
         'firstname' => 'required',
@@ -45,6 +47,8 @@ class TeacherController extends Controller
            $teacher->Role = $request->role;
            $teacher->Email = $request->email;
            $teacher->Phone = $request->phone;
+           $username = $request->phone.'@'.$maxid;
+           $teacher->username = $username;
            $teacher->password = Hash::make('password123');
                        
            if ($request->hasFile('file')) {
@@ -60,25 +64,37 @@ class TeacherController extends Controller
 
            $schooldetails = School_Data::find($request->sid);
 
-           $client = new Client();
+        //Inform by SMS Start
+            $curl = curl_init();
 
-            $url = 'https://quicksms.advantasms.com/api/services/sendsms/?';
-
-            $params = [
-                "apikey" => "0872c31420f6d597a067e23dd27ba658",
-                "partnerID" => "5031",
-                "message" => "Hello ".$request->firstname." ".$request->lastname. ".You have been registered as one of the Staff Members of ".$schooldetails['name']. ". Use your Email ".$request->email." or phone number and password123 as your Password to access your account. Follow the link https://www.myschool.co.ke/staffportal to log in. Experience the best with us. Contact 07927801096 to access our customer care services.",
-                "shortcode" => "JuaMobile",
-                "mobile" => $request->phone
+            $post_data = [
+                "mobile" => $request->phone,
+                "response_type" => "json",
+                "sender_name" => "23107",
+                "service_id" => 0,
+                "message" => "You have been registered as a staff member for ".$schooldetails['name'].". Username is ".$username.", and password is password123. Click https://www.shuleyetu.co.ke/adminlogin to log in"
             ];
 
-            $response = $client->request('GET', $url, [
-                'json' => $params,
-                'verify'  => false,
-            ]);
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.mobitechtechnologies.com/sms/sendsms',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 15,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($post_data),
+                CURLOPT_HTTPHEADER => array(
+                    'h_api_key: ae42640feb185a424fdce5d4c6bde3ab955f7e332782024b527cda3c4a8d43cc',
+                    'Content-Type: application/json'
+                ),
+                ));
+    
+                $response = curl_exec($curl);
 
-            $responseBody = json_decode($response->getBody());
-
+                curl_close($curl);
+         //    Inform by SMS Start
 
            return response()->json([
                'status' => 200,
@@ -184,6 +200,8 @@ class TeacherController extends Controller
 
     //Function to edit Teachers
     public function editTeacher(Request $request){
+        $maxid = session()->get('schooldetails.id');
+
         $validator = Validator::make($request->all(),[
             'editsalutation' => 'required',
             'editfname' => 'required',
@@ -218,6 +236,7 @@ class TeacherController extends Controller
                $teacher->Position = $request->editposition;
                $teacher->Email = $request->editemail;
                $teacher->Phone = $request->editpno;
+               $teacher->username = $request->editpno.'@'.$maxid;
                //$teacher->password = 'password123';
                            
                if ($request->hasFile('editprofile')) {
@@ -319,6 +338,8 @@ class TeacherController extends Controller
     }
     //Update profile Details 
     public function updateprofileDetails (Request $request) {
+        $maxid = session()->get('schooldetails.id');
+
         $validator = Validator::make($request->all(),[
             'editsalutation' => 'required',
             'fname' => 'required',
@@ -348,6 +369,8 @@ class TeacherController extends Controller
                 $staff->Gender = $request->gender;
                 $staff->Email = $request->email;
                 $staff->Phone = $request->phone;
+                $username = $request->phone.'@'.$maxid;
+                $staff->username = $username;
                 $staff->save();
                 return response()->json([
                     'status' => 200,
@@ -355,6 +378,7 @@ class TeacherController extends Controller
                 ]);
            }
     }
+
     //Change Password
     public function updatePassword(Request $request){
         $validator = Validator::make($request->all(),[
@@ -390,4 +414,18 @@ class TeacherController extends Controller
             }
     }
 
+    //Set new password
+    public function adminsetnewPass(Request $request) {
+        //return ['data' => $request->all()];
+        $staff = Staff::find($request->uid);
+        $staff->password = Hash::make($request->npass);
+        $staff->save();
+
+        return response()->json([
+            'status' => 200,
+            'password' => $request->npass,
+            'username' => $request->username
+        ]);
+
+    }
 }

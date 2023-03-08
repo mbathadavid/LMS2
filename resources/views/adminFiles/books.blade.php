@@ -16,7 +16,7 @@
 </div>
 <div id="main" class="maincontent">
 @include('adminFiles.topnav')
-<h4>Library Resource(s)</h4>
+<h6>Library Resource(s)</h6>
 <!--Issue book modal start--->
 <div id="issueBookModal" class="modal w3-animate-left" tabindex="-1">
   <div class="modal-dialog modal-lg">
@@ -277,10 +277,12 @@
 
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 border border-danger border-2 p-3">
-        <h6 class="text-center text-danger">Library Resources Management</h6>
+        <!-- <h6 class="text-center text-danger">Library Resources Management</h6> -->
+        <h5>Number of Books in Store : <b class="text-success"><span id="booksinstore"></span> Books</b></h5>
+        <h5>Number of Borrowed Books : <b class="text-danger"><span id="borrowedbooks"></span> Books</b></h5>
+        <hr>
         <button data-bs-toggle="modal" data-bs-target="#booksmodal" type="button" class="btn btn-sm btn-danger"><i class="fas fa-plus-circle"></i>&nbsp;ADD A BOOK</button>
-        <a href="/downloadbooks" type="button" class="btn-sm btn-info"><i class="fas fa-file-csv"></i>&nbsp;EXPORT TO EXCEL</a>
-        <a href="/importbooks" type="button" class="btn-sm btn-primary" type="button"><i class="fas fa-file-csv"></i>&nbsp;IMPORT FROM EXCEL</a>
+
         <div id="booksregres" class="text-center d-none"></div>
         <div class="table-responsive">
         <div id="actionbtns" class="mb-2">
@@ -324,7 +326,7 @@ function preview(){
 </script>
 <script>
     $(document).ready(function(){
-        fetchbooks()
+        fetchbooks();
 
         $.ajaxSetup({
         headers: {
@@ -340,6 +342,9 @@ function preview(){
                 url: `/fetchbooks/${sid}`,
                 //dataType: 'jsons',
                 success: function(res) {
+                $("#booksinstore").text(res.booksinstore);
+                $("#borrowedbooks").text(res.borrowedbooks);
+
                 $('#bookstable').html('');
                   $.each(res.books,function(key,item){
                     if (item.Status == 'In Store') {
@@ -360,7 +365,7 @@ function preview(){
                     <td>'+item.Class+'</td>\
                     <td>'+item.Subject+'</button></td>\
                     <td>'+item.Publisher+'</td>\
-                    <td><button class="btn btn-sm btn-success">'+item.Status+' by '+item.borrowed_by+'</button></td>\
+                    <td>'+item.Status+' by <b class="text-danger">'+item.borrowed_by+'</b></td>\
                     </tr>')   
                     }  
                   })
@@ -676,7 +681,7 @@ function preview(){
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchbooks();
                     $('#booksregres').removeClass('d-none');

@@ -8,6 +8,8 @@ use App\Models\Subject;
 use App\Models\Grade;
 use App\Models\exam;
 use App\Models\ResultThread;
+use App\Models\cbcassessment;
+use App\Models\computedfinalresulst;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -281,6 +283,58 @@ class MarkController extends Controller
             'students' => $students
          ]);          
     }
+
+    //Function to fetch student perfomance
+    public function studentPerfomance($stuid) {
+        $student = Student::find($stuid);
+
+        $computedmarks = computedfinalresulst::where('AdmissionNo',$student['AdmissionNo'])
+                                            ->orWhere('AdmissionNo',$student['UPI'])
+                                            ->orderByDesc('created_at')
+                                            ->get();
+
+        $cbcassessments = cbcassessment::where('sid',$student['sid'])
+                                        ->orderByDesc('created_at')
+                                        ->get();
+                                            
+        $scores = [];
+        $ovpositions = [];
+        $strpositions = [];
+        $threads = [];
+        $grades = [];
+        $threadids = [];
+        $terms = [];
+        $years = [];
+
+        foreach ($computedmarks as $key => $computedmark) {
+            array_push($scores,$computedmark->Finalscore);
+            array_push($ovpositions,$computedmark->OVRPO);
+            array_push($strpositions,$computedmark->STRPOS);
+            array_push($grades,$computedmark->Finalgrade);
+
+            $thread = ResultThread::find($computedmark->tid);
+            
+            array_push($threads,$thread['name']);
+            array_push($threadids,$thread['id']);
+            array_push($terms,$thread['term']);
+            array_push($years,$thread['year']);
+        }
+
+        return response()->json([
+            'student' => $student,
+            'scores' => $scores,
+            'ovpositions' => $ovpositions,
+            'strpositions' => $strpositions,
+            'grades' => $grades,
+            'threads' => $threads,
+            'threadids' => $threadids,
+            'terms' => $terms,
+            'years' => $years,
+            'cbcassessments' => $cbcassessments,
+            'schoolsystem' => $student['schoolsystem']
+        ]);
+    }
+
     //FetchMarks
     public function checkMarks(Request $req){
         $cla = classes::where('id',$req->class)
@@ -301,8 +355,14 @@ class MarkController extends Controller
         $threads = ResultThread::where('sid',$req->sid)
                                 ->OrderByDesc('id')
                                 ->get();
-        $students = Student::where('current_classid',$req->class)
-                            ->get();
+        // $students = Student::where('current_classid',$req->class)
+        //                     ->get();
+
+        $students = Student::where('current_classid', $req->class)
+                    ->whereRaw('FIND_IN_SET(?, subids)', [explode(',',$req->subject)[0]])
+                    ->get();
+
+
         $subject = Subject::select('subject')
                     ->where('sid',$req->sid)
                     ->where('id',$req->subject)

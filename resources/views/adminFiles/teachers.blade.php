@@ -18,8 +18,6 @@
 <h4>Teacher(s)</h4>
 <div class="mb-2">
 <button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#teacheraddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD TEACHER</button>
-<a href="/downloadteachers" type="button" class="btn-sm btn-info"><i class="fas fa-file-csv"></i>&nbsp;EXPORT TO EXCEL</a>
-<a href="/teachersexcelimport" type="button" class="btn-sm btn-primary" type="button"><i class="fas fa-file-csv"></i>&nbsp;IMPORT FROM EXCEL</a>
 <div id="regresponse"></div>
 </div>
 <!---Teacher edit modal start--->
@@ -81,7 +79,8 @@
                     <option id="editpositionval"></option>
                     <option value="Principal">Principal</option>
                     <option value="Deputy Principal">Deputy Principal</option>
-                    <option value="Senior Teacher">Senoir Teacher</option>
+                    <option value="Dean of Studies">Dean of Studies</option>
+                    <option value="Senior Teacher">Senior Teacher</option>
                     <option value="Games Captain">Games Captain</option>
                     <option value="HOD">Head of Department</option>
                     <option value="Club Patron">Club Patron</option>
@@ -249,6 +248,7 @@
                             <option value="Head Teacher">Head Teacher</option>
                             <option value="Deputy Head Teacher">Deputy Head Teacher</option>
                             @endif
+                            <option value="Dean of Studies">Dean of Studies</option>
                             <option value="Senior Teacher">Senior Teacher</option>
                             <option value="Games Captain">Games Captain</option>
                             <option value="HOD">Head of Department</option>
@@ -288,7 +288,7 @@
 <div class="row border border-3 border-info p-3">
     
 <div class="table-responsive">
-<div id="actionbtns" class="d-none">
+<div id="actionbtns" class="mb-2">
 <!---
 <button class="btn btn-sm btn-info float-end"><i class="fas fa-envelope"></i>&nbsp;Send Email</button>
 <button class="btn btn-sm btn-success float-end"><i class="fas fa-sms"></i>&nbsp;Send SMS</button>
@@ -399,7 +399,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
 
         $("#teacherregform").submit(function(e){
             e.preventDefault();
-            removeValidationClasses($("#teacherregform"))
+            removeValidationClasses($("#teacherregform"));
             $('#regresponse').addClass('d-none');
             $('#teacheregbtn').val('PLEASE WAIT...');
             var formData = new FormData($('#teacherregform')[0]);
@@ -500,7 +500,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                data: formData,
                //dataType: 'json',
                success: function(res){
-                  console.log(res);
+                  //console.log(res);
                   if (res.status == 400) {
                    // $('#editteachersubmitbtn').val('EDIT TEACHER');
                     $('#priviledgealert').removeClass('d-none')
@@ -534,6 +534,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     $('#teacherdetails').append('<h6>Gender : <span class="text-danger">'+data.Gender+'</span></h6>\
                     <h6>Position : <span class="text-danger">'+data.Position+'</span></h6>\
                     <h6>Email : <span class="text-danger">'+data.Email+'</span></h6>\
+                    <h6>Username : <span class="text-danger">'+data.username+'</span></h6>\
                     <h6>Phone : <span class="text-danger">'+data.Phone+'</span></h6>\
                     ');
                 }                   
@@ -657,7 +658,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchteachers();
                     $('#regresponse').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
@@ -689,7 +690,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchteachers();
                     $('#regresponse').removeClass('d-none');
@@ -722,7 +723,7 @@ $(document).on('click', '#activatebtn',function(e){
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchteachers();
                     $('#regresponse').removeClass('d-none');

@@ -24,6 +24,7 @@ class CreateStaffTable extends Migration
             $table->string('Role')->nullable();
             $table->string('Email')->nullable()->unique();
             $table->string('Phone')->nullable()->unique();
+            $table->string('username')->nullable()->unique();
             $table->longtext('priviledges')->default('Not Yet Assigned');
             $table->string('password')->default('password123');
             $table->string('Profile')->default('avatar.png');

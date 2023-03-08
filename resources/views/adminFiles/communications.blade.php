@@ -1,6 +1,6 @@
 @extends('layouts.layout')
 
-@section('title','DashBoard')
+@section('title','Messaging')
 
 @section('content')
 @if($schoolinfo == null)
@@ -32,6 +32,9 @@
         </div>
         <div class="modal-body">
        <form action="#" method="POST" enctype="multipart/form-data" id="sendmessagefrom">
+        <div id="gatewayauthorize">
+
+        </div>
            <div class="row justify-content-center">
                <div class="col-lg-8 col-md-10 col-sm-12">
                  <div class="form-group mb-2">
@@ -42,8 +45,17 @@
                     <div class="invalid-feedback"></div>
                  </div>
 
+                <div class="form-group mb-2">
+                    <label for=""><h6 class="text-success">Send Through</h6></label>
+                    <select name="sendthrough" id="sendthrough" class="form-control">
+                        <option value="">Select SMS Gateway</option>
+                        <option value="Shuleyetu">Shule yetu Gateway</option>
+                        <option value="Owngateway">{{ session()->get('schooldetails.name') }} Gateway</option>
+                    </select>
+                </div>
+
                 <div class="form-group">
-                    <input type="submit" id="msgsendbtn" class="btn btn-success btn-sm form-control rounded-0" value="SEND MESSAGE">
+                    <input type="submit" id="msgsendbtn" class="btn btn-success btn-sm form-control rounded-0 d-none" value="SEND MESSAGE">
                 </div>
 
                </div> 
@@ -56,10 +68,18 @@
 <!---Message modal End--->
 
 <div class="row justify-content-cente align-items-center">
+<div id="response"></div>
 <div class="col-lg-4 col-md-4 col-sm-12">
+    <div id="apibalance">
+        <h5 class="text-center">SMS Balance <span class="text-danger" id="apibalancetext"></span></h5>
+    </div>
+    <div class="smsbalanceonsite">
+        <h5 class="text-center">SMS Balance on website <span class="text-danger" id="smsbalanceonsitetext"></span></h5>
+    </div>
+<hr>
 <form action="#" method="POST" class="p-3" id="selectgroupform">
     <div class="form-group mb-2">
-        <label for="group"><h5 class="text-success">Select The Group You Want To Communicate To</h5></label>
+        <label for="group"><h6 class="text-success">Select The Group You Want To Communicate To</h6></label>
         <select name="group" id="group" class="form-control">
          <option value="">Select The Group</option>
          <option value="PARENTS">Parents</option>
@@ -112,7 +132,13 @@
 @section('script')
 <script>
 $(document).ready(function(){
-    var numbers = []
+fetchschool();
+
+var numbers = [];
+var apibal = 0;
+var websitebal = 0;
+var smskey = "";
+
 //set csrf
 $.ajaxSetup({
  headers: {
@@ -120,6 +146,21 @@ $.ajaxSetup({
     }
  });
 
+ function fetchschool(){
+    var sid = "{{ session()->get('schooldetails.id') }}";
+        $.ajax({
+            method: 'GET',
+            url: `/getschool/${sid}`,
+            success: function(res) {
+                var data = res.school;
+                $("#smsbalanceonsitetext").text("KSH. "+data.SMSbalanceonwebsite);
+                $("#apibalancetext").text("KSH."+data.SMSbalance);
+                 apibal = data.SMSbalanceonwebsite;
+                 websitebal = data.SMSbalance;
+                 smskey = data.SMS_KEY;                
+                }                   
+        })
+}
  
 //Update the select button field
  $('#group').change(function(){
@@ -132,6 +173,41 @@ $.ajaxSetup({
     $('input:checkbox').not(this).prop('checked', this.checked);
  })
 
+//SMS Gateway Selection
+$("#sendthrough").change(function(e){
+    e.preventDefault();
+    //console.log($(this).val());
+    var gateway = $(this).val();
+
+    if (gateway == "Owngateway") {
+        if (smskey == null) {
+            $("#gatewayauthorize").html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>Sorry! You do not have your own SMS gateway. Try selecting <b>Shule yetu Gateway</b></strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+            $("#msgsendbtn").addClass('d-none');
+        } else {
+            if (parseFloat(apibal) <= 5 || apibal == null) {
+                $("#gatewayauthorize").html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>Sorry! You do not have enough balance in your account. Recharge so as to access this service.</b></strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                $("#msgsendbtn").addClass('d-none');
+            } else {
+                $("#msgsendbtn").removeClass('d-none');
+                $("#gatewayauthorize").html('');
+            }
+        }
+        //$("#gatewayauthorize").html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+apibal+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+    } else if (gateway == "Shuleyetu") {
+        if (parseFloat(websitebal) <=5 || websitebal == null) {
+            $("#gatewayauthorize").html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>Sorry! You do not have enough balance to send messages. Recharge your account to access the messaging service.</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+            $("#msgsendbtn").addClass('d-none');
+        } else {
+            $("#msgsendbtn").removeClass('d-none');
+            $("#gatewayauthorize").html('');
+        }
+        
+    } else if (gateway == ""){
+        $("#gatewayauthorize").html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>Please Select the SMS Gatway</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+        $("#msgsendbtn").addClass('d-none');
+    }
+})
+
  //Show the modal for Typing a message
  $(document).on('click', '#writemsgbtn',function(e){
         e.preventDefault();
@@ -139,12 +215,6 @@ $.ajaxSetup({
          $('#phonecheckbox:checked').each(function(i){
             numbers[i] = $(this).val()
         })
-
-        // $('#phonecheckbox').each(function(i){
-        //     if ($(this).is(':checked')) {
-        //         numbers[i] = $(this).val(); 
-        //     }
-        // })
 
         if (numbers.length < 1) {
             alert('Please select the individuals who will receive the text message. You can do so by checking the checkboxes on the table'); 
@@ -183,15 +253,13 @@ $("#sendmessagefrom").submit(function(e){
         data: formData,
         //dataType: 'json',
         success: function(res){
-            console.log(res);
-
+            //console.log(res);
             $('#msgsendbtn').val('SEND MESSAGE');
-
-            if (res.status == 400) {
-                showError('message', res.messages); 
-            } else if(res.status == 200) {
-                console.log(res);
-            }
+            $("#writemsgModal").modal('hide');
+            $("#response").html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>Message Successfully Send to '+res.successfullysendmessages+' contacts. Messaging costs is <span class="text-danger">KSH. '+res.costs+'</span>. Click <a href="/sms-messaging-history">this link</a> to see your send messages</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+            $('#sendmessagefrom')[0].reset();
+            numbers = [];
+            fetchschool();
         }
     })
 })
@@ -205,7 +273,6 @@ $("#sendmessagefrom").submit(function(e){
 
     $('#fetchingtxt').removeClass('d-none');
     //$('#groupsection').html('');
-
     
     var sid = "{{ session()->get('schooldetails.id') }}";
     var uid = "{{ session()->get('LoggedInUser.id') }}";

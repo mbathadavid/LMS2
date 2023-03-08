@@ -322,4 +322,62 @@ class CbcmarksController extends Controller
             'class' => $class[0]['class'].' '.$class[0]['stream']
         ]);
     }
+
+    //Fetch Marks for viewing
+    public function viewMarks(Request $req) {
+        $admupis = [];
+        $admmarks = [];
+        $admsubs = [];
+        $admmaxscores = [];
+        $admgrades = [];
+        $admremarks = [];
+
+        $students = Student::where('sid',$req->sid)
+                            ->where('current_classid',$req->stream)
+                            ->get();
+                            
+        $marks = cbcmarks::where('sid',$req->sid)
+                        ->where('classid',$req->stream)
+                        ->where('examid',$req->subexamthread)
+                        ->get();
+
+        foreach ($students as $key => $student) {
+            if ($student->AdmissionNo === NULL) {
+                array_push($admupis,$student->UPI);
+            } else {
+                array_push($admupis,$student->AdmissionNo);
+            }   
+        }
+
+        foreach ($admupis as $key) {
+            $admmarks[$key] = [];
+            $admsubs[$key] = [];
+            $admgrades[$key] = [];
+            $admremarks[$key] = [];
+            $admmaxscores[$key] = [];
+        }
+
+        foreach ($admmarks as $key => $admmark) {
+            foreach ($marks as $mark) {
+                if ($key == $mark->AdmissionNo) {
+                    array_push($admmarks[$key],$mark->marks);
+                    array_push($admsubs[$key],$mark->subject);
+                    array_push($admgrades[$key],$mark->Grade);
+                    array_push($admremarks[$key],$mark->Remarks);
+                    array_push($admmaxscores[$key],$mark->maxscore);
+                }
+            }
+        }
+
+        return response()->json([
+            'students' => $students,
+            'marks' => $marks,
+            'admupis' => $admupis,
+            'admgrades' => $admgrades,
+            'admsubs' => $admsubs,
+            'admmarks' => $admmarks,
+            'admremarks' => $admremarks,
+            'admmaxscores' => $admmaxscores
+        ]);
+    } 
 }

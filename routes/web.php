@@ -2,6 +2,8 @@
 use App\Http\Controllers\{StudentController,AdminController,};
 use App\Http\Controllers\SchoolDataController;
 use App\Http\Controllers\ClassesController;
+use App\Http\Controllers\SubjectreportsController;
+use App\Http\Controllers\GeneralreportsController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\GradeController;
@@ -28,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web 
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
@@ -50,6 +52,8 @@ Route::get('/',[AdminController::class, 'landingpage']);
  Route::get('/admindashboard',[AdminController::class, 'dashboard'])->name('admindashboard');
  Route::get('/adminprofile',[AdminController::class, 'profile'])->name('adminprofile');
  Route::get('/performance-analysis',[AdminController::class, 'performanceAnalysis']);
+ Route::get('/cbc-assessment-analysis',[AdminController::class, 'cbcperformanceAnalysis']);
+ Route::get('//student-reviews',[AdminController::class, 'studentreviewsAnalysis']);
  Route::get('/analysis/{class}/{tid}',[AdminController::class, 'classperformanceAnalysis']);
 //  Route::get('/analyze-subject-performance',[AdminController::class, 'analyzeSubjects']);
  Route::get('/analyzesubject/{class}/{sid}/{subid}/{tid}',[AdminController::class, 'analyzeSubjects']);
@@ -74,10 +78,12 @@ Route::get('/',[AdminController::class, 'landingpage']);
  Route::get('/currentterm',[AdminController::class, 'currentTerm']);
  Route::post('/register',[AdminController::class, 'saveAdmin'])->name('admin.register');
  Route::post('/adminlogin',[AdminController::class, 'loginAdmin'])->name('admin.login');
+ Route::post('/adminresetpassword',[AdminController::class, 'adminresetPassword']);
  Route::get('/adminlogout',[AdminController::class, 'logoutAdmin'])->name('admin.logout');
  Route::get('/examinations',[AdminController::class, 'examinations']);
  Route::get('/cbc-assessments',[AdminController::class, 'cbcAssessments']);
  Route::get('/finalresults',[AdminController::class, 'finalresults']);
+ Route::get('/student-report',[AdminController::class, 'studentReport']);
  Route::get('/gradingsystem',[AdminController::class, 'gradingsystem']);
  Route::get('/classresults/{examid}/{classid}/{sid}',[AdminController::class,'getClassCompResults']);
  Route::get('/addcbcmarks/{assessmentid}/{classid}/{sid}',[AdminController::class,'getCBCAddmarksView']);
@@ -90,7 +96,9 @@ Route::get('/staff-noticeboard',[AdminController::class, 'adminnoticeboardView']
 Route::get('/staff-notifications',[AdminController::class, 'notificationsView']);
 Route::get('/parent-messages',[AdminController::class, 'adminparentmessagesView'])->name('admin.parentmessages');
 Route::get('/my-messages',[AdminController::class, 'adminmymessagesView'])->name('admin.mymessages');
+Route::get('/sms-messaging-history',[AdminController::class, 'messagingHistory']);
 Route::post('/sendmessage',[CommunicationsController::class, 'sendMessage'])->name('admin.sendmessage');
+Route::get('/fetchmessaginghistory/{sid}',[CommunicationsController::class, 'fetchsendMessages']);
 // communications routes end
 
 /*Fee structure modelling start*/
@@ -108,9 +116,17 @@ Route::post('/resultanalysis',[ComputedfinalresulstController::class, 'resultAna
 Route::post('/subjectanalysis',[ComputedfinalresulstController::class, 'subjectAnalysis']);
 /*computefinalresults routes end*/
 
- /*School Details start*/
+ /*School Details start*/ 
+Route::get('/schools',[SchoolDataController::class, 'Schools']);
+Route::get('/fetchschools',[SchoolDataController::class, 'fetchSchools']);
 Route::get('/schoolreg',[SchoolDataController::class, 'index']);
+Route::get('/getschool/{sid}',[SchoolDataController::class, 'getSchool']);
+Route::get('/deactivateschool/{sid}',[SchoolDataController::class, 'deactivateSchool']);
+Route::get('/activateschool/{sid}',[SchoolDataController::class, 'activateSchool']);
 Route::post('/schoolreg',[SchoolDataController::class, 'saveSchool'])->name('school.register');
+Route::post('/editschool',[SchoolDataController::class, 'editSchool']);
+Route::post('/addalert',[SchoolDataController::class, 'addAlert']);
+Route::get('/removeschoolalert/{sids}',[SchoolDataController::class, 'removeAlert']);
 /*School Details end*/
 
 /* Messages and Register Request Start */
@@ -141,13 +157,14 @@ Route::post('/assignpriviledges',[TeacherController::class,'assignpriviledges'])
 Route::post('/updateteacherprofilepic',[TeacherController::class,'updateprofilepic']);
 Route::post('/updateteacheraccountDetails',[TeacherController::class,'updateprofileDetails'])->name('staff.accountdeatails');
 Route::post('/updatestaffpassword',[TeacherController::class,'updatePassword'])->name('staff.updatepassword');
+Route::post('/adminsetnewpass',[TeacherController::class,'adminsetnewPass']);
 Route::get('/downloadteachers',[TeacherController::class,'exportTeachers']);
 Route::get('/getteacher/{id}',[TeacherController::class,'getTeacher']);
 Route::get('/deleteteacher/{id}',[TeacherController::class,'deleteTeacher']);
 Route::get('/deactivateteacher/{id}',[TeacherController::class,'deactivateTeacher']);
 Route::get('/activateteacher/{id}',[TeacherController::class,'activateTeacher']);
 Route::get('/downloadteacherstemplate',[TeacherController::class,'teachersImportTemplate']);
-/*Teacher routes */
+/*Teacher routes  */
 
 /***Student Routes */
 //Route::get('/',[StudentController::class, 'index']);
@@ -157,6 +174,7 @@ Route::post('/enrollsubjects',[StudentController::class, 'enrollSubjects']);
 Route::post('/assignpathway',[StudentController::class, 'assignPathway']);
 Route::post('/searchstudent',[StudentController::class, 'searchStudent']);
 Route::post('/updateFeeStructure',[StudentController::class, 'updateFeeStructure']);
+Route::post('/fetchstudentreviews',[StudentController::class, 'fetchstudentReviews']);
 Route::post('/payfees',[StudentController::class, 'payFees']);
 Route::get('/fetchstudents/{sid}',[StudentController::class, 'fetchStudents']);
 Route::get('/feeinformation/{sid}/{stuid}',[StudentController::class, 'feeInformation']);
@@ -164,6 +182,7 @@ Route::get('/filterStudents/{filter}/{sid}',[StudentController::class, 'filterSt
 Route::get('/excelstudents',[StudentController::class, 'excelStudents']);
 Route::get('/deletestudent/{id}',[StudentController::class, 'deleteStudents']);
 Route::get('/clearstudent/{id}',[StudentController::class, 'clearStudents']);
+Route::get('/getstudents/{cid}',[StudentController::class, 'getStudents']);
 Route::get('/deactivatestudent/{id}',[StudentController::class, 'deactivateStudents']);
 Route::get('/activatestudent/{id}',[StudentController::class, 'activateStudents']);
 Route::get('/getstudent/{id}',[StudentController::class, 'getStudent']);
@@ -196,6 +215,9 @@ Route::get('/activateparent/{id}',[GuardianController::class, 'activateParent'])
 Route::get('/deleteparent/{id}',[GuardianController::class, 'deleteParent']);
 Route::get('/getparentspdf',[GuardianController::class, 'parentsPDF']);
 Route::get('/downloadtranscript',[GuardianController::class, 'downloadTranscript']);
+Route::get('/reset-password',[GuardianController::class, 'resetPasswordview']);
+Route::post('/parentresetpassword',[GuardianController::class, 'parentresetPassword']);
+Route::post('/parentsetnewpass',[GuardianController::class,'parentsetnewPass']);
 /**Parents management routes end */  
 
 /**Library management */
@@ -240,6 +262,7 @@ Route::post('/addmissingmarks',[MarkController::class, 'addmissingMarks']);
 Route::post('/checkmarks',[MarkController::class, 'checkMarks']);
 Route::get('/checkcurrentterm/{classval}',[MarkController::class, 'checkTerm']);
 Route::get('/fetchmarks/{exam}/{classid}/{sub}',[MarkController::class, 'fetchMarks']);
+Route::get('/fetchstudentperfomance/{stuid}',[MarkController::class, 'studentPerfomance']);
 Route::get('/deletemarks/{stuid}/{exam}/{classid}/{sub}',[MarkController::class, 'deleteMarks']);
 /**Marks handling routes end*/
 
@@ -249,6 +272,7 @@ Route::post('/updatecbcmarks',[CbcmarksController::class, 'updateMarks']);
 Route::post('/addcbcmissingmarks',[CbcmarksController::class, 'addmissingMarks']);
 Route::get('/fetchcbcmarks/{exam}/{classid}/{sub}',[CbcmarksController::class, 'fetchMarks']);
 Route::get('/deletecbcmarks/{stuid}/{exam}/{classid}/{sub}',[CbcmarksController::class, 'deleteMarks']);
+Route::post('/cbcresultanalysis',[CbcmarksController::class, 'viewMarks']);
 /**CBC Marks handling routes */
 
 /**Auto Results Computation */
@@ -294,13 +318,38 @@ Route::get('/feestructures',[GuardianController::class, 'feeStructure'])->name('
 Route::post('/parentlogin',[GuardianController::class, 'loginParent'])->name('parent.login');
 Route::get('/profile',[GuardianController::class, 'parentProfile'])->name('parent.profile');
 Route::get('/messaging',[GuardianController::class, 'messaging'])->name('parent.messaging');
+Route::get('/fee-payment',[GuardianController::class, 'feePayment']);
+Route::get('/studentdetails/{stuid}',[GuardianController::class, 'studentDetails']);
+Route::get('/fee-history/{stuid}',[GuardianController::class, 'feeHistory']);
 Route::get('/my-messaging',[GuardianController::class, 'myMessages'])->name('parent.mymessages');
 Route::get('/noticeboard',[GuardianController::class, 'noticeBoard'])->name('parent.noticeboard');
 Route::get('/notifications',[GuardianController::class, 'notifications'])->name('parent.notifications');
+Route::get('/cbc-student-perfomance/{stuid}/{aid}',[GuardianController::class, 'cbcstudentPerfomance']);
+Route::get('/student-perfomance/{stuid}/{eid}',[GuardianController::class, 'studentPerfomance']);
+Route::get('/subject-perfomance/{stuid}/{subid}',[GuardianController::class, 'subjectPerfomance']);
 Route::post('/updateprofilepic',[GuardianController::class,'updateprofilepic'])->name('parent.updatepic');
 Route::post('/updatestaffaccountDetails',[GuardianController::class,'updateprofileDetails'])->name('parent.accountdeatails');
 Route::post('/updatepassword',[GuardianController::class,'updatePassword'])->name('parent.updatepassword');
 /*Parent Account Routes end*/
+
+/*Student Account Routes start*/
+Route::get('/studentlogin',[StudentController::class, 'loginview']);
+Route::get('/studentdashboard',[StudentController::class, 'studentDashboard'])->name('studentdashboard');
+Route::get('/profile',[StudentController::class, 'studentProfile'])->name('student.profile');
+Route::get('/notifications',[StudentController::class, 'notifications'])->name('student.notifications');
+Route::get('/noticeboard',[StudentController::class, 'noticeBoard'])->name('student.noticeboard');
+Route::get('/my-subjects',[StudentController::class, 'mySubjects']);
+Route::get('/school-resources',[StudentController::class, 'schoolResources']);
+Route::get('/my-perfomance',[StudentController::class, 'myPerfomance']);
+Route::get('/my-subject-perfomance/{stuid}/{subid}',[StudentController::class, 'subjectPerfomance']);
+Route::post('/studentlogin',[StudentController::class, 'loginStudent'])->name('student.login');
+Route::post('/studentresetpassword',[StudentController::class, 'studentresetPassword']);
+Route::post('/studentsetnewpass',[StudentController::class,'studentsetnewPass']);
+Route::post('/updatepassword',[StudentController::class,'updatePassword'])->name('student.updatepassword');
+Route::post('/updateprofilepic',[StudentController::class,'updateprofilepic'])->name('student.updatepic');
+Route::get('/reset-password',[StudentController::class, 'resetPasswordview'])->name('student.resetpass');
+Route::get('/fee-statement/{stuid}',[StudentController::class, 'feeHistory']);
+/*Student Account Routes end*/
 
 /*Notifications Routes start*/
 Route::post('/sendparentmessage',[NotificationsController::class,'receiveParentmessage'])->name('parent.message');
@@ -310,3 +359,8 @@ Route::get('/fetchadminotifications/{sid}',[NotificationsController::class,'fetc
 Route::get('/fetchreplies/{mid}',[NotificationsController::class,'fetchmsgReplies']);
 Route::get('/deletemsg/{mid}',[NotificationsController::class,'delMessage']);
 /*Notif8cfations Routes End*/
+
+/*Reporting Routes start*/
+Route::post('/savesubjectreport',[SubjectreportsController::class,'addsubjectReport']);
+Route::post('/savegeneralreport',[GeneralreportsController::class,'addgeneralReport']);
+/*Reporting Routes end*/

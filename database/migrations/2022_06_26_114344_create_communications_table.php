@@ -15,11 +15,18 @@ class CreateCommunicationsTable extends Migration
     {
         Schema::create('communications', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('sid');
             $table->string('message');
             $table->string('number');
-            $table->string('status');
-            $table->string('Description');
+            $table->string('status_code')->nullable();
+            $table->string('network_id')->nullable();
+            $table->string('message_cost')->nullable();
+            $table->string('credit_balance')->nullable();
+            $table->string('API_used')->nullable();
+            $table->string('Description')->nullable();
             $table->timestamps();
+
+            $table->foreign('sid')->references('id')->on('school__data')->onDelete('cascade');
         });
     }
 

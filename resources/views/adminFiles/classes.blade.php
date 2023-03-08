@@ -168,7 +168,7 @@
     </div>
 
     <div class="col-lg-9 col-md-9 border border-dark p-3">
-        <div id="actionbtns" class="d-none">
+        <div id="actionbtns" class="mb-2">
             <a href="/students" class="btn-sm btn-warning text-decoration-none" type="button"><i class="fas fa-users"></i>&nbsp;View Students</a>
             <button id="classdeletebtn" class="btn-sm btn-danger float-end" type="button"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button>
             <button id="classcurrenttermbtn" class="btn-sm btn-info float-end" type="button"><i class="fas fa-edit"></i>&nbsp;Set Current Term</button>

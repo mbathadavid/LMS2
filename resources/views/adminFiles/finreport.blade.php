@@ -279,7 +279,7 @@ $("#feepaymentform").submit(function(e){
             dataType: 'json',
             data: formdata,
             success: function(res) {
-                console.log(res);
+                //console.log(res);
                 if (res.status == 400) {
                     showError('feereportselect',res.messages.feereportselect);
                 } else if (res.status == 401) {
@@ -331,7 +331,7 @@ $("#expenseform").submit(function(e){
             dataType: 'json',
             data: formdata,
             success: function(res) {
-                console.log(res);
+                //console.log(res);
                 if (res.status == 400) {
                     showError('expensereportselect',res.messages.expensereportselect);
                 } else if (res.status == 401) {

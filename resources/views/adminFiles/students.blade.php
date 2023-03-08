@@ -18,8 +18,6 @@
 <h4>Student(s)</h4>
 <div class="mb-2">
 <button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#teacheraddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD STUDENT</button>
-<a href="/downloadstudents" class="btn btn-sm btn-info" type="button">EXPORT TO EXCEL</a>
-<button class="btn-sm btn-primary" type="button">IMPORT FROM EXCEL</button>
 <!--
 <h6 id="regresponse" class="bg-info text-center text-success d-none text-success p-1 mt-1 mb-1"></h6>
 --->
@@ -254,6 +252,7 @@
             <h6>Account Active? : <span id="viewstatus" class="text-success"></span></h6>
             <h6>County of Origin : <span id="viewcounty" class="text-success"></span></h6>
             <h6>Sub County of Origin : <span id="viewscounty" class="text-success"></span></h6>
+            <h6>Username : <span id="viewusername" class="text-success"></span></h6>
          </div>
          <div class="col-lg-3 p-2">
             <h5 class="text-center text-info">Disability Issues</h5>
@@ -339,7 +338,7 @@
                     <div class="form-group mb-1">
                     <label for="">Education System</label>
                         <select class="form-control" name="educationsystem" id="educationsystem">
-                        <option value="">--Select Education</option>
+                        <option value="">--Select Education--</option>
                         <option value="8-4-4">8-4-4 System</option>
                         <option value="CBC">CBC System</option>
                         </select>
@@ -506,7 +505,6 @@
             
         </tbody>
         </table>
-
 </div>
  </div>
     
@@ -638,6 +636,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     $('#viewstatus').text(data.Active)
                     $('#viewcounty').text(data.county)
                     $('#viewscounty').text(data.subcounty)
+                    $('#viewusername').text(data.StudentId)
                     $('#viewdisabled').text(data.disabled)
                     if (data.disabled == 'No') {
                     $('#viewdis').addClass('d-none')
@@ -845,7 +844,9 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
             $('#teacheregbtn').val('PLEASE WAIT...');
             var formData = new FormData($('#studentregform')[0]);
 
-            //var system = $("#educationsystem").val();
+            if ($("#upi").val() == "" && $("#admissionNo").val() == "") {
+                alert('You must include either the Admission or UPI number or both');
+            } else {
                 $.ajax({
                 method: 'POST',
                 url: '{{ route('student.register') }}',
@@ -884,7 +885,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                    }    
                } 
             });  
-            
+            }
         })
 
     //Edit Student ajax Request
@@ -1071,7 +1072,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchstudents();
                     fecthclasses()

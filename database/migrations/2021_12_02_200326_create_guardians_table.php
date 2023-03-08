@@ -23,6 +23,7 @@ class CreateGuardiansTable extends Migration
             $table->string('Parent_Guardian')->nullable();
             $table->string('Students');
             $table->string('Phone');
+            $table->string('username')->nullable()->unique();
             $table->string('AltPhone')->nullable();
             $table->string('Email')->nullable();
             $table->string('Gender')->nullable();

@@ -18,8 +18,6 @@
 <h4>Support Staff</h4>
 <div class="mb-2">
 <button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#teacheraddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD SUPPORT STUFF</button>
-<a href="/downloadteachers" type="button" class="btn-sm btn-info"><i class="fas fa-file-csv"></i>&nbsp;EXPORT TO EXCEL</a>
-<a href="/teachersexcelimport" type="button" class="btn-sm btn-primary" type="button"><i class="fas fa-file-csv"></i>&nbsp;IMPORT FROM EXCEL</a>
 <div id="regresponse"></div>
 </div>
 <!---Teacher edit modal start--->
@@ -285,7 +283,7 @@
 <div class="row border border-3 border-info p-3">
     
 <div class="table-responsive">
-<div id="actionbtns" class="d-none">
+<div id="actionbtns" class="mb-2">
 <!---
 <button class="btn btn-sm btn-info float-end"><i class="fas fa-envelope"></i>&nbsp;Send Email</button>
 <button class="btn btn-sm btn-success float-end"><i class="fas fa-sms"></i>&nbsp;Send SMS</button>

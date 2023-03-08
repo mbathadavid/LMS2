@@ -9,10 +9,17 @@ use Illuminate\Http\Request;
 use App\Models\classes;
 use App\Models\School_Data;
 use App\Models\Subject;
+use App\Models\Guardian;
 use App\Models\Feestructure;
 use App\Models\Book;
+use App\Models\cbcmarks;
+use App\Models\FinalGrade;
+use App\Models\ResultThread;
 use App\Models\feepayment;
 use App\Models\Staff;
+use App\Models\generalreports;
+use App\Models\subjectreports;
+use App\Models\notifications;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
@@ -62,20 +69,33 @@ class StudentController extends Controller
                     ]);
                 } else {
                 $student = new Student;
-                $student->AdmissionNo = $req->admissionNo;
-
                 $school = School_Data::find($req->sid); 
                 $schoolname = $school['name'];
                 $words = explode(' ',$schoolname);
                 $word1 = $words[0];
                 $word2 = $words[1];
-                $student->StudentId = $req->admissionNo.'@'.$word1.$word2;
 
+                if ($req->admissionNo) {
+                    //$username = $req->admissionNo.'@'.$word1.$word2;
+                    $username = $req->admissionNo.'@'.$req->sid;
+                } else {
+                    //$username = $req->upi.'@'.$word1.$word2;
+                    $username = $req->upi.'@'.$req->sid;
+                }
+
+                if ($req->admissionNo) {
+                    $student->AdmissionNo = $req->admissionNo;
+                }
+
+                if ($req->upi) {
+                    $student->UPI = $req->upi;
+                }
+                
+                $student->StudentId = $username;
                 $student->sid = $req->sid; 
                 $student->Fname = $req->firstname;
                 $student->Sname = $req->secondname;
                 $student->Lname = $req->lastname;
-                $student->UPI = $req->upi;
                 $student->EduSystem = $req->educationsystem;
 
                 $classinfo = explode(',',$req->current_class);
@@ -104,6 +124,8 @@ class StudentController extends Controller
                     $file->move('images/', $filename);
                     $student->profile = $filename;
                 }
+
+                //return ['username' => $username];
                 $student->save();
                 return response()->json([
                     'status' => 200,
@@ -363,24 +385,119 @@ class StudentController extends Controller
                                   ->OrderByDesc('created_at')
                                   ->get();
 
+        $payments = [];
+
+        foreach ($feepayments as $feepayment) {
+            array_push($payments,$feepayment['amount']);
+        }
+
         $data = [
             'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
             //'adminInfo' => Staff::find(session('LoggedInUser.id')),
             'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
             "student" => $student,
+            "totalpayments" => array_sum($payments),
             "feepayments" => $feepayments
         ];
 
         return view('adminFiles.feeinformation',$data);
     }
 
+    //Function to return subject perfomance view
+public function subjectPerfomance($stuid,$subid) {
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+        $uid = session()->get('LoggedInUser.id');
+        $student = Student::find($stuid);
+        $reports = subjectreports::where('studentid',$student['id'])
+                                 ->where('subjectid',$subid)
+                                 ->orderByDesc('created_at')
+                                 ->get();
+    
+        $cbcscores = cbcmarks::where('subid',$subid)
+                            ->where('AdmissionNo',$student['AdmissionNo']) 
+                            ->orWhere('AdmissionNo',$student['UPI'])
+                            ->orderByDesc('created_at')
+                            ->get();
+    
+        $marks = FinalGrade::where('subid',$subid)
+                           ->where('AdmissionNo',$student['AdmissionNo'])
+                           ->orWhere('AdmissionNo',$student['UPI'])
+                           ->orderByDesc('created_at')
+                           ->get();
+    
+        $subject = Subject::find($subid);
+    
+        $cbcthreads = [];
+        $examthreads = [];
+        $cbcmarks = [];
+        $regmarks = [];
+        $cbcgrades = [];
+        $reggrades = [];
+        $cbcremarks = [];
+        $regremarks = [];
+        $availablescores = [];
+        $thescores = [];
+        $maxscores = [];
+    
+        foreach ($cbcscores as $key => $cbcscore) {
+            array_push($cbcmarks,$cbcscore->marks);
+            array_push($cbcremarks,$cbcscore->Remarks);
+            array_push($cbcgrades,$cbcscore->Grade);
+            array_push($maxscores,$cbcscore->maxscore);
+    
+            $cbcassessment = cbcassessment::find($cbcscore->examid);
+            array_push($cbcthreads,$cbcassessment['Assessment']);
+        }
+    
+        foreach ($marks as $key => $mark) {
+            array_push($regmarks,$mark->score);
+            array_push($reggrades,$mark->grade);
+            array_push($regremarks,$mark->Remarks);
+            array_push($availablescores,$mark->availablescores);
+            array_push($thescores,$mark->scores);
+    
+            $resultthreads = ResultThread::find($mark->tid);
+            array_push($examthreads,$resultthreads['name'].','.$resultthreads['term'].','.$resultthreads['year']);
+        }
+        
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            //'notices' => $notices,
+            //'fnames' => $fnames,
+            //'mymessages' => $mymessages,
+            //'notifications' => $notifications,
+            'cbcthreads' => $cbcthreads,
+            'examthreads' => $examthreads,
+            'cbcmarks' => $cbcmarks,
+            'regmarks' => $regmarks,
+            'cbcgrades' => $cbcgrades,
+            'reggrades' => $reggrades,
+            'cbcremarks' => $cbcremarks,
+            'regremarks' => $regremarks,
+            'availablescores' => $availablescores,
+            'thescores' => $thescores,
+            'maxscores' => $maxscores,
+            'student' => $student,
+            'reports' => $reports,
+            'subject' => $subject['subject']
+        ];
+    
+        return view('Students.subjectperfomance',$data);
+    } else {
+        return redirect('/studentlogin');
+    } 
+}
 
     //Function to update student
     public function editStudent(Request $req){
+        $sid = session()->get('schooldetails.id');
+
         $validator = Validator::make($req->all(),[
-            'seditadmno' => 'required',
+            //'seditadmno' => 'required',
             'sediteducation' => 'required',
-            'seditupi' => 'required',
+            //'seditupi' => 'required',
             'seditfname' => 'required',
             'seditlname' => 'required',
             'seditgender' => 'required',
@@ -423,7 +540,14 @@ class StudentController extends Controller
                  $scode2 = explode("@",$scode)[1];
 
                 $student->AdmissionNo = $req->seditadmno; 
-                $student->StudentId = $req->seditadmno."@".$scode2;
+
+                if ($req->seditadmno) {
+                    $username = $req->seditadmno."@".$sid;
+                } else {
+                    $username = $req->seditupi."@".$sid;
+                }
+                
+                $student->StudentId = $username;
                 $student->Fname = $req->seditfname;
                 $student->Sname = $req->seditsname;
                 $student->Lname = $req->seditlname;
@@ -479,10 +603,18 @@ class StudentController extends Controller
                 'messages' => $validator->getMessageBag() 
             ]);
         } else {
-            $student = Student::where('sid',$req->sid)
-                                ->where('AdmissionNo',$req->searchnumber)
-                                ->orWhere('UPI',$req->searchnumber)
+            // $student = Student::where('sid',$req->sid)
+            //                     ->where('UPI',$req->searchnumber)
+            //                     ->orWhere('AdmissionNo',$req->searchnumber)
+            //                     ->get();
+
+            $student = Student::where('sid', $req->sid)
+                                ->where(function ($query) use ($req) {
+                                    $query->where('UPI', $req->searchnumber)
+                                            ->orWhere('AdmissionNo', $req->searchnumber);
+                                })
                                 ->get();
+
 
             if (count($student) == 0) {
                 return response()->json([
@@ -495,6 +627,8 @@ class StudentController extends Controller
             if ($class['current_term'] == "Not Set") {
                 return response()->json([
                     'status' => 401,
+                    'student' => $student,
+                    'sid' => $req->sid,
                     'messages' => 'The Current Term for the Student has not been set. Please Set it so as to be able to Collect Fee for the student'
                 ]);
             } else {
@@ -506,12 +640,15 @@ class StudentController extends Controller
             if (count($feestructrure) == 0) {
                 return response()->json([
                     'status' => 401,
+                    'student' => $student,
+                    'sid' => $req->sid,
                     'messages' => 'The Fee Structure for the students Class has not been set. Make sure you create it so as to be able to collect fees'
                 ]);
             } else {
             return response()->json([
                 'status' => 200,
                 'student' => $student,
+                'sid' => $req->sid,
                 'class' => $class,
                 'feestructure' => $feestructrure,
                 'upiadm' => $req->searchnumber
@@ -520,6 +657,16 @@ class StudentController extends Controller
         }
         } 
         }
+    }
+
+    //Fetch Students for Reporting
+    public function getStudents($cid) {
+        $students = Student::where('current_classid',$cid)
+                            ->get();
+
+        return response()->json([
+            'students' => $students
+        ]);
     }
 
     //Update Fee Structure
@@ -555,9 +702,43 @@ class StudentController extends Controller
             } 
     }
 
+    //Function to fetch student reviews
+    public function fetchstudentReviews(Request $req) {
+        $student = Student::where('sid',$req->sid)
+                            ->where('AdmissionNo',$req->admupi)
+                            ->orWhere('UPI',$req->admupi)
+                            ->get();
+
+        if (count($student) == 0) {
+            return response()->json([
+                'status' => 401,
+                'messages' => 'No student with this Admission or UPI number found'
+            ]);
+        } else {
+            $subjectreports = subjectreports::where('studentid',$student[0]['id'])
+                                            ->orderByDesc('id')
+                                            ->get();
+
+            $generalreports = generalreports::where('studentid',$student[0]['id'])
+                                            ->orderByDesc('id')
+                                            ->get();
+
+            return response()->json([
+                'status' => 200,
+                'student' => $student,
+                'subjectreports' => $subjectreports,
+                'generalreports' => $generalreports
+            ]);
+        }
+        
+    }
+
     //Pay Fees
     public function payFees(Request $req) {
         date_default_timezone_set("Africa/Nairobi");
+
+        $paymentdate = date('d-m-Y');
+
         $validator = Validator::make($req->all(),[
                 'paymentmethod' => 'required',
                 //'payedfor' => 'required',
@@ -654,6 +835,7 @@ class StudentController extends Controller
 
                     $feepayment = new feepayment;
                     $feepayment->sid = $req->sid;
+                    //$feepayment->paymentdate = $paymentdate;
                     $feepayment->AdmorUPI = $req->studentadmupi;
                     $feepayment->amountpayed = $amountpayed;
                     $feepayment->academicyear = $req->studentacayear;
@@ -699,6 +881,7 @@ class StudentController extends Controller
 
                     $feepayment = new feepayment;
                     $feepayment->sid = $req->sid;
+                    //$feepayment->paymentdate = $paymentdate;
                     $feepayment->AdmorUPI = $req->studentadmupi;
                     $feepayment->amountpayed = $amountpayed;
                     $feepayment->academicyear = $req->studentacayear;
@@ -745,6 +928,7 @@ class StudentController extends Controller
 
                     $feepayment = new feepayment;
                     $feepayment->sid = $req->sid;
+                    //$feepayment->paymentdate = $paymentdate;
                     $feepayment->AdmorUPI = $req->studentadmupi;
                     $feepayment->amountpayed = $amountpayed;
                     $feepayment->academicyear = $req->studentacayear;
@@ -790,6 +974,7 @@ class StudentController extends Controller
 
                     $feepayment = new feepayment;
                     $feepayment->sid = $req->sid;
+                    //$feepayment->paymentdate = $paymentdate;
                     $feepayment->AdmorUPI = $req->studentadmupi;
                     $feepayment->amountpayed = $amountpayed;
                     $feepayment->academicyear = $req->studentacayear;
@@ -840,6 +1025,7 @@ class StudentController extends Controller
     
                         $feepayment = new feepayment;
                         $feepayment->sid = $req->sid;
+                        //$feepayment->paymentdate = $paymentdate;
                         $feepayment->AdmorUPI = $req->studentadmupi;
                         $feepayment->amountpayed = $amountpayed;
                         $feepayment->academicyear = $req->studentacayear;
@@ -885,6 +1071,7 @@ class StudentController extends Controller
     
                         $feepayment = new feepayment;
                         $feepayment->sid = $req->sid;
+                        //$feepayment->paymentdate = $paymentdate;
                         $feepayment->AdmorUPI = $req->studentadmupi;
                         $feepayment->amountpayed = $amountpayed;
                         $feepayment->academicyear = $req->studentacayear;
@@ -930,6 +1117,7 @@ class StudentController extends Controller
     
                         $feepayment = new feepayment;
                         $feepayment->sid = $req->sid;
+                        //$feepayment->paymentdate = $paymentdate;
                         $feepayment->AdmorUPI = $req->studentadmupi;
                         $feepayment->amountpayed = $amountpayed;
                         $feepayment->academicyear = $req->studentacayear;
@@ -977,6 +1165,7 @@ class StudentController extends Controller
     
                         $feepayment = new feepayment;
                         $feepayment->sid = $req->sid;
+                        //$feepayment->paymentdate = $paymentdate;
                         $feepayment->AdmorUPI = $req->studentadmupi;
                         $feepayment->amountpayed = $amountpayed;
                         $feepayment->academicyear = $req->studentacayear;
@@ -1022,6 +1211,7 @@ class StudentController extends Controller
     
                         $feepayment = new feepayment;
                         $feepayment->sid = $req->sid;
+                        //$feepayment->paymentdate = $paymentdate;
                         $feepayment->AdmorUPI = $req->studentadmupi;
                         $feepayment->amountpayed = $amountpayed;
                         $feepayment->academicyear = $req->studentacayear;
@@ -1067,6 +1257,7 @@ class StudentController extends Controller
     
                         $feepayment = new feepayment;
                         $feepayment->sid = $req->sid;
+                        //$feepayment->paymentdate = $paymentdate;
                         $feepayment->AdmorUPI = $req->studentadmupi;
                         $feepayment->amountpayed = $amountpayed;
                         $feepayment->academicyear = $req->studentacayear;
@@ -1112,6 +1303,7 @@ class StudentController extends Controller
 
                         $feepayment = new feepayment;
                         $feepayment->sid = $req->sid;
+                        //$feepayment->paymentdate = $paymentdate;
                         $feepayment->AdmorUPI = $req->studentadmupi;
                         $feepayment->amountpayed = $amountpayed;
                         $feepayment->academicyear = $req->studentacayear;
@@ -1148,5 +1340,442 @@ class StudentController extends Controller
                }
             }
     }
+
+    //Function to return student login view
+    public function loginview() {
+        $data = [
+            'schools' => School_Data::all()
+        ];
+
+        return view('Students.studentlogin',$data);
+    }
+
+    //Function to return reset pass div
+    public function resetPasswordview() {
+        return view('Students.studentforgotpass');
+    }
+
+     //Student Login
+     public function loginStudent(Request $request){
+        $validator = Validator::make($request->all(),[
+            //'school' => 'required',
+            'username' => 'required|max:100',
+            'password' => 'required'
+        ],
+        [
+            //'school.required' => 'You must Select your School To Login',
+            'username.required' => 'You must Enter your Username to Log In',
+            'password.required' => 'You must Enter Password to Log In'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'messages' => $validator->getMessageBag()
+            ]);
+        } else {
+            //$school = School_Data::where('id',$request->school)->first();
+            $student = Student::where('StudentId',$request->username)
+                            //->where('sid',$request->school)
+                            ->first();
+
+         if ($student) {
+            if (Hash::check($request->password, $student->password)) {
+                // $currentuserschool = [
+                //     'schooldetails' => $school,
+                //     'LoggedInUser' => $parent
+                // ];
+                if ($student['Active'] === "No") {
+                    return response()->json([
+                        'status' => 401,
+                        'messages' => 'Sorry! Your account has been disabled and therefore you cannot log in to system. Please contact your system administrator.'
+                    ]);
+                } else {
+                    $sid = explode("@",$request->username)[1];
+                    $school = School_Data::find($sid);
+                    $request->session()->put('LoggedInUser',$student);
+                    $request->session()->put('schooldetails',$school);
+                    return response()->json([
+                        'status' => 200,
+                        'messages' => 'success'
+                    ]);
+                }
+            } else{
+                return response()->json([
+                    'status' => 401,
+                    'messages' => 'The password you entered is incorrect'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'status' => 401,
+                    'messages' => 'No Student with such Username Registered'
+            ]);
+            }           
+            
+        }
+    }
+
+    //Student Dashboard
+    public function studentDashboard(){
+        if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+            $uid = session()->get('LoggedInUser.id');
+            $maxid = session()->get('schooldetails.id');
+
+            $data = [
+                "uid" => $uid,
+                "maxid" => $maxid
+            ];
+
+            return view('Students.dashboard',$data);
+        } else {
+            return redirect('/studentlogin');
+        }
+    }
+
+//Function to reset password
+public function studentresetPassword(Request $request) {
+    $validator = Validator::make($request->all(),[
+        'username' => 'required',
+    ],
+    [
+        'username.required' => 'You must Enter your Username',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 400,
+            'messages' => $validator->getMessageBag()
+        ]);
+    } else {
+        
+        $student = Student::where('StudentId',$request->username)
+                        //->orWhere('AltPhone',$request->phoneno)
+                        ->get();
+
+        //return ['data' => $parent];
+        
+        if (count($student) == 0) {
+            return response()->json([
+                'status' => 401,
+                'messages' => "Sorry! No student account with this username"
+            ]);
+        } else {
+            return [
+                'status' => 200,
+                'username' => $student[0]['StudentId'],
+                'password' => $student[0]['password'],
+                'id' => $student[0]['id'] 
+            ];
+        }
+        
+    } 
+}
+
+ //Set new password
+ public function studentsetnewPass(Request $request) {
+    //return ['data' => $request->all()];
+    $student = Student::find($request->uid);
+    $student->password = Hash::make($request->npass);
+    $student->save();
+
+    return response()->json([
+        'status' => 200,
+        'password' => $request->npass,
+        'username' => $request->username1
+    ]);
+}
+
+//Function to return profile page
+public function studentProfile(){
+    //$maxid = DB::table('school__data')->max('id');
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+        $uid = session()->get('LoggedInUser.id');
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+        ];
+
+        return view('Students.profile',$data);
+    } else {
+        return redirect('/studentlogin');
+    }
+}
+
+//Update Password 
+public function updatePassword(Request $request){
+    $validator = Validator::make($request->all(),[
+        'cpass' => 'required',
+        'npass' => 'required',
+        'cnpass' => 'required',
+       ],[
+        'cpass.required' => 'Current Password is Required',
+        'npass.required' => 'Your New Password is Required',
+        'cnpass.required' => 'You Must Confirm Your New Password'
+       ]);
+       
+       if ($validator->fails()) {
+        return response()->json([
+            'status' => 400,
+            'messages' => $validator->getMessageBag()
+        ]);
+        } else {
+           $student = Student::find($request->uid);
+           if (Hash::check($request->cpass, $student->password)) {
+            $student->password = Hash::make($request->npass);
+            $student->save();
+            return response()->json([
+                'status' => 200,
+                'messages' => 'You have Successfully Updated your Password'
+            ]);
+           } else {
+            return response()->json([
+                'status' => 401,
+                'messages' => 'Sorry. This is not your current password.'
+            ]);
+           }  
+        }
+}
+
+    //Function to update Profile pic
+    public function updateprofilepic(Request $request) {
+        if ($request->hasFile('profilepic')) {
+            $file = $request->file('profilepic');
+
+                $validator = Validator::make($request->all(),[
+                    'profilepic' => 'required',
+                    'profilepic' => 'image'
+                ],
+                [
+                    'profilepic.required' => 'You must select an image to upload',
+                    'profilepic.image' => 'The file you are using for profile must be an image'
+                ]);
+            
+                if ($validator->fails()) {
+                    return response()->json([
+                        'status' => 400,
+                        'messages' => $validator->getMessageBag()
+                    ]);
+                } else {
+                    $student = Student::find($request->uid); 
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = time().'pro'.'.'.$extension;
+                    $file->move('images/', $filename);
+                    $student->profile = $filename;
+
+                    $student->save();
+                    
+                    return response()->json([
+                        'status' => 200,
+                        'messages' => "You have Successfully updated your profile picture"
+                    ]);
+
+                    }
+                } else {
+                        return response()->json([
+                            'status' => 401,
+                            'messages' => 'You must select an image to upload'
+                        ]);
+                }
+    
+}
+
+//Function to return notifications 
+public function notifications(){
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+        $uid = session()->get('LoggedInUser.id');
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+        ];
+
+        return view('Students.notifications',$data);
+    } else {
+        return redirect('/studentlogin');
+    }     
+}
+
+//Function to return notice board view
+public function noticeBoard(){
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+        $uid = session()->get('LoggedInUser.id');
+
+        $notices = notifications::where('sid',$maxid)
+                        ->where('type','noticeboard')
+                        ->where('group','Students')
+                        ->where('deleted',0)
+                        ->orderByDesc('id')
+                        ->get();
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'notices' => $notices
+        ];
+
+        return view('Students.noticeboard',$data); 
+    } else {
+        return redirect('/studentlogin');
+    } 
+}
+
+//Function to return notice board view
+public function mySubjects(){
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+        $uid = session()->get('LoggedInUser.id');
+
+        $data = [
+            'adminInfo' => DB::table('staff')->where('id', session('LoggedInUser.id'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+        ];
+
+        return view('Students.mysubjects',$data);
+    } else {
+         return redirect('/studentlogin');
+    }    
+}
+
+//Function to return notice board view
+public function schoolResources(){
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+        $uid = session()->get('LoggedInUser.id');
+
+        $student = Student::find($uid);
+        $books = Book::where('borrowed_by',$student['AdmissionNo'])
+                    ->orWhere('borrowed_by',$student['UPI'])
+                    ->get();
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'books' => $books
+        ];
+
+        return view('Students.schoolresources',$data);
+    } else {
+        return redirect('/studentlogin');
+    } 
+}
+
+//Function to return notice board view
+public function myPerfomance(){
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+
+    $notices = notifications::where('sid',$maxid)
+                    ->where('type','noticeboard')
+                    ->where('group','Parents')
+                    ->where('deleted',0)
+                    ->orderByDesc('id')
+                    ->get();
+
+    $uid = session()->get('LoggedInUser.id');
+
+    $notifications = notifications::where('sid',$maxid)
+                    ->where('type','noticeboard')
+                    ->orWhere('toberecievedby',$uid)
+                    ->where('deleted',0)
+                    ->orderByDesc('id')
+                    ->get();
+
+    $mymessages = notifications::where('sid',$maxid)
+                                ->where('type','parentmessage')
+                                ->where('uid',$uid)
+                                ->where('deleted',0)
+                                ->orderByDesc('id')
+                                ->get();
+                    
+    
+            
+    $fnames = [];
+    $lnames = [];
+    $profiles = [];
+    $classes = [];
+    $ids = [];
+
+    $student = Student::find(session()->get('LoggedInUser.id'));
+    $books = Book::where('borrowed_by',$student['AdmissionNo'])
+                      ->orWhere('borrowed_by',$student['UPI'])
+                      ->get();
+
+    $payedfees = feepayment::where('AdmorUPI',$student['AdmissionNo'])
+                            ->orWhere('AdmorUPI',$student['UPI'])
+                            ->get();
+
+    $generalreports = generalreports::where('studentid',$student['id'])
+                                    ->orderByDesc('created_at')
+                                    ->get();
+
+    //$computedresults = computedfinalresulst::where() 
+
+    $issuedbooks = [];
+    $fees = [];
+
+    foreach ($payedfees as $key => $payedfee) {
+        array_push($fees,$payedfee->amount);
+    }
+
+    foreach ($books as $key => $book) {
+        array_push($issuedbooks,$book->BookNumber);
+    }
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'notices' => $notices,
+            'fnames' => $fnames,
+            'mymessages' => $mymessages,
+            'notifications' => $notifications,
+            'student' => $student,
+            'books' => $issuedbooks,
+            'totalfees' => array_sum($fees),
+            'generalreports' => $generalreports
+        ];
+
+        return view('Students.myperfomance',$data);
+    } else {
+        return redirect('/studentlogin');
+    }  
+}
+
+//Function to return fee payment history
+public function feeHistory($stuid) {
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+        $uid = session()->get('LoggedInUser.id');
+
+        $student = Student::find($stuid);
+        $feepayments = feepayment::where('AdmorUPI',$student['AdmissionNo'])
+                                //->where('sid',$sid)
+                                ->orWhere('AdmorUPI',$student['UPI'])
+                                ->OrderByDesc('created_at')
+                                ->get();
+
+        $payments = [];
+
+        foreach ($feepayments as $feepayment) {
+            array_push($payments,$feepayment['amount']);
+        }
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'feepayments' => $feepayments,
+            'student' => $student,
+            'totalpayments' => array_sum($payments)
+        ];
+
+        return view('Students.feestatement',$data);
+    } else {
+        return redirect('/studentlogin');
+    }
+}
 
 }

@@ -32,6 +32,8 @@
     <main>
     @yield('content')
     </main>
+
+    <div class="scrolling-text"><h6 class="text-danger">For Technical Support or Queries Call/SMS/WhatsApp <b class="w3-green p-1">0748269865/0792801096</b> or Send an Email to <b class="w3-green p-1">info@shuleyetu.co.ke</b></h6></div>
     <!--
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -52,6 +54,7 @@
 
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.3/datatables.min.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <!---
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 --->
@@ -88,6 +91,12 @@
             $('#finicon').toggleClass('d-none');
             $('#finiconup').toggleClass('d-none');
         })
+        $('.perfomancebtn').click(function(e){
+            e.preventDefault();
+            $('#perfomancedropdown').toggleClass('d-none');
+            $('#perfomanceicon').toggleClass('d-none');
+            $('#perfomanceiconup').toggleClass('d-none');
+        })
         $('.peoplebtn').click(function(e){
             e.preventDefault();
             $('#peopledropdown').toggleClass('d-none');
@@ -113,7 +122,7 @@
                 } else if(hour >= 15) {
                     document.getElementById('greetuser').innerHTML = 'Good Evening'; 
                 }
-                document.getElementById('month').innerHTML = datetime.getMonth();
+                document.getElementById('month').innerHTML = datetime.getMonth()+1;
                 document.getElementById('date').innerHTML = datetime.getDate();
                 document.getElementById('year').innerHTML = datetime.getFullYear();
                 if (datetime.getHours() < 10) {

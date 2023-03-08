@@ -21,12 +21,13 @@
 <h6 class="text-center text-danger">ADM NO: {{ $student['AdmissionNo'] }}</h6>
 <h6 class="text-center text-danger">UPI NO: {{ $student['UPI'] }}</h6>
 <h6 class="text-center text-danger">CURRENT CLASS: {{ $student['current_class'] }}</h6>
-
+<h5 class="text-center text-success">Total Fee Payed: <span class="text-danger"><b>{{ $totalpayments }} /=</b></span></h5>
 <hr>
 
 @if(count($feepayments) == 0)
     <h6 class="text-center text-danger">{{ $student['Fname'] }} {{ $student['Lname'] }}</span> Does not have any Fee Payment yet</h6>
     @else
+<div class="table-responsive">
 <table class="table">
             <thead>
             <tr>
@@ -59,6 +60,7 @@
             @endforeach
         </tbody>
         </table>
+        </div>
         @endif
         </div>
 

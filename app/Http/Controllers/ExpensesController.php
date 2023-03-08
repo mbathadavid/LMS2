@@ -163,7 +163,7 @@ class ExpensesController extends Controller
                 ]);
             } else {
                 $expenses = expenses::where('sid',$req->sid)
-                                          ->whereBetween('created_at',[$req->expensestartdate,$req->expensetodate])
+                                          ->whereBetween('dateofexpenditure',[$req->expensestartdate,$req->expensetodate])
                                           ->OrderByDesc('id')
                                           ->get();
 

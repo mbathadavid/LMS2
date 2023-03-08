@@ -183,6 +183,7 @@
                     <tr>
                         <th scope="col">Eliminate</th>
                         <th scope="col">Adm No</th>
+                        <th scope="col">Class</th>
                         <th scope="col">First Name</th>
                         <th scope="col">Last Name</th>
                         <th scope="col">
@@ -335,11 +336,16 @@
                 //console.log(res);
                 $('.loader').addClass('d-none')
                 //console.log(res)
-                remarks = [];
-                minmarks = [];
-                maxmarks = [];
-                grades = [];
-                points = [];
+                // remarks = [];
+                // minmarks = [];
+                // maxmarks = [];
+                // grades = [];
+                // points = [];
+                remarks.splice(0, remarks.length);
+                minmarks.splice(0, minmarks.length);
+                maxmarks.splice(0, maxmarks.length);
+                grades.splice(0, grades.length);
+                points.splice(0, points.length);
 
                 var array = res.grades[0];
                 $('#cid').val(res.cid);

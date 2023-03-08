@@ -38,7 +38,7 @@
          
         @else
         <div id="portalslinks">
-            <a href="#">Student Portal</a>
+            <a href="/studentlogin">Student Portal</a>
             <a href="/parentlogin">Parent Portal</a>
             <a href="/adminlogin">Staff Portal</a>
         </div>

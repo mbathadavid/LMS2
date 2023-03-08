@@ -60,8 +60,22 @@ class BookController extends Controller
                     ->where('sid',$sid)
                     ->OrderByDesc('id')
                     ->get();
+
+        $booksinstore = [];
+        $borrowedbooks = [];
+
+        foreach ($books as $key => $book) {
+            if ($book->Status === "In Store") {
+                array_push($booksinstore,$book->BookNumber);
+            } else if ($book->Status === "Borrowed") {
+                array_push($borrowedbooks,$book->BookNumber);
+            }  
+        }
+
         return response()->json([
-            'books' => $books
+            'books' => $books,
+            'booksinstore' => count($booksinstore),
+            'borrowedbooks' => count($borrowedbooks)
         ]);
     }
     //get Book Details
@@ -96,6 +110,10 @@ class BookController extends Controller
             $book->borrowed_by = $req->admnos;
             $book->fine = $req->fine;
             $book->save();
+
+            // $student = Student::where('AdmissionNo',$req->admnos)
+            //                     ->orWhere('')
+            //                     ->get();
 
 
             // if ($req->upiadm == "UPI") {

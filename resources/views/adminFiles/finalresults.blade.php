@@ -757,7 +757,15 @@
         }
                }
             } 
-            }           
+            }  
+            
+            swal({
+                className: 'green-bg',
+                icon: "success",
+                text: "Marks, Grades, and Remarks have been successfully computed.",
+                button: "Close",
+            });  
+        
          })
 
     //Submit overall computation form
@@ -782,7 +790,7 @@
                 processData: false,
                 data: formData,
                 success: function(res){
-                console.log(res);
+                //console.log(res);
                  $('.loader').addClass('d-none');
 
                     if (res.status == 200) {

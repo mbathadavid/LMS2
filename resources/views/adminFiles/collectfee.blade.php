@@ -275,7 +275,7 @@
                 data: formdata,
                 success: function(res) {
                     //$('#searchnumberbtn').text('SEARCH STUDENT');
-                    //console.log(res);
+                    // console.log(res);
                     if (res.status == 400) {
                         showError('searchnumber', res.messages.searchnumber); 
                     } else if (res.status == 401){
@@ -378,7 +378,7 @@
                 dataType: 'json',
                 data: formdata,
                 success: function(res) {
-                    console.log(res);
+                    //console.log(res);
                     if (res.status == 400) {
                         showError('pendingbalancefield',res.messages.pendingbalancefield);
                         showError('ctermbalancefield',res.messages.ctermbalancefield);
@@ -444,7 +444,7 @@
                 dataType: 'json',
                 data: formdata,
                 success: function(res) {
-                    console.log(res);
+                    //console.log(res);
                     if (res.status == 400) {
                        showError('paymentmethod',res.messages.paymentmethod);
                        showError('payedfor',res.messages.payedfor);

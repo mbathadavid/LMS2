@@ -21,8 +21,6 @@
 <h4>Parents(s)/Guardian(s)</h4>
 <div class="mb-2">
 <button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#teacheraddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD PARENT</button>
-<button class="btn-sm btn-info" type="button"><i class="fas fa-file-csv"></i>&nbsp;EXPORT TO EXCEL</button>
-<button class="btn-sm btn-primary" type="button"><i class="fas fa-file-csv"></i>&nbsp;IMPORT FROM EXCEL</button>
 <div id="regresponse" class="text-center d-none mb-1"></div>
 </div>
 <!---parent view Modal--->
@@ -279,7 +277,7 @@
 <div class="row border border-3 border-info p-3">
     
 <div class="table-responsive">
-<div id="actionbtns" class="d-none mb-2">
+<div id="actionbtns" class="mb-2">
 <button id="deactivatebtn" class="btn btn-sm btn-primary float-end m-1">Deactivate</button>
 <button id="activatebtn" class="btn btn-sm btn-success float-end m-1">Activate</button>
 <button id="viewbtn" class="btn btn-sm btn-info float-end m-1"><i class="fas fa-eye"></i>&nbsp;View</button>
@@ -475,7 +473,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                             <td>'+item.Gender+'</td>\
                             <td>'+item.Phone+'</td>\
                             <td>'+(item.AltPhone == null ? "No Alternative Number" : item.AltPhone)+'</td>\
-                            <td>'+item.Email+'</td>\
+                            <td>'+(item.Email == null ? "No Email" : item.Email)+'</td>\
                             <td>'+item.Students+'</td>\
                             </tr>')
                     }); 
@@ -615,6 +613,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     <h6>Phone Number : <span class="text-danger">'+data.Phone+'</span></h6>\
                     <h6>Alternative Phone : <span class="text-danger">'+data.AltPhone+'</span></h6>\
                     <h6>Email address : <span class="text-danger">'+data.Email+'</span></h6>\
+                    <h6>Username : <span class="text-danger">'+data.username+'</span></h6>\
                     <h6>Admission Number(s) of Child/Children : <span class="text-danger">'+data.Students+'</span></h6>\
                 </div>');
                 }

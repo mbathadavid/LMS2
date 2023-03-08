@@ -4,7 +4,8 @@
         <a href="" class="text-decoration-none text-danger fs-4 navtoggler"><i class="fas fa-bars"></i></a>
         <a href="#" class="text-decoration-none text-info" id="user">Parent's Portal</a>
         <a href="#" class="text-decoration-none logouticon link-success">
-         <img id="navprofile" src="images/{{ session()->get('LoggedInUser.Profile') }}" class="img-rounded" alt="">
+        <!-- <img src="{{ asset('images/' . session()->get('LoggedInUser.Profile')) }}" class="img-rounded" alt=""> -->
+         <img id="navprofile" src="{{ asset('images/' . session()->get('LoggedInUser.Profile')) }}" class="img-rounded" alt="">
         </a>  
 
 
