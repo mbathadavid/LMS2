@@ -10,11 +10,13 @@ use App\Models\classes;
 use App\Models\School_Data;
 use App\Models\Subject;
 use App\Models\Guardian;
+use App\Models\cbcassessment;
 use App\Models\Feestructure;
 use App\Models\Book;
 use App\Models\cbcmarks;
 use App\Models\FinalGrade;
 use App\Models\ResultThread;
+use App\Models\computedfinalresulst;
 use App\Models\feepayment;
 use App\Models\Staff;
 use App\Models\generalreports;
@@ -29,7 +31,7 @@ class StudentController extends Controller
     public function registerStudent(Request $req){
         $validator = Validator::make($req->all(),[
             //'upi' => 'required|unique:students',
-            'upi' => 'unique:students',
+            //'upi' => 'unique:students',
             'firstname' => 'required',
             'lastname' => 'required',
             'gender' => 'required',
@@ -38,10 +40,11 @@ class StudentController extends Controller
             'current_class' => 'required',
             'county' => 'required',
             'subcounty' => 'required',
+            'schoolingtype' => 'required',
             'file' => 'image'
         ],[
             //'upi.required' => 'You Must Enter the UPI Number',
-            'upi.unique' => 'Sorry! This UPI Number has already registered another student',
+            //'upi.unique' => 'Sorry! This UPI Number has already registered another student',
             'firstname.required' => 'You must state the first name of the student',
             'lastname.required' => 'You must specify the last name of the student',
             'gender.required' => 'You must speficy the gender of the student',
@@ -50,6 +53,7 @@ class StudentController extends Controller
             'current_class.required' => 'You must select a class to enroll the student in',
             'county.required' => 'You must specify the county',
             'subcounty.required' => 'You must specify the student subcounty',
+            'schoolingtype.required' => 'You must indicate whether the student is a Day-Scholar or Boarder',
             'file.image' => 'You can only upload an image as a profile',
         ]);
 
@@ -59,6 +63,20 @@ class StudentController extends Controller
                     'messages' => $validator->getMessageBag() 
                 ]);
             } else {
+                $checkstudentcount = 0;
+                if ($req->upi) {
+                    $checkstudentupi = Student::where('UPI',$req->upi)
+                                        ->get();
+
+                    $checkstudentcount = count($req->upi);
+                } 
+        
+                if ($checkstudentcount > 0) {
+                    return response()->json([
+                        'status' => 402,
+                        'messages' => 'This upi number is already taken' 
+                    ]);
+                } else {
                 $checkstudent = Student::where('AdmissionNo',$req->admissionNo)
                                         ->where('sid',$req->sid)
                                         ->get();
@@ -83,6 +101,10 @@ class StudentController extends Controller
                     $username = $req->upi.'@'.$req->sid;
                 }
 
+                if ($req->assignedhostel) {
+                    $student->assignedhostel = $req->assignedhostel;
+                }
+
                 if ($req->admissionNo) {
                     $student->AdmissionNo = $req->admissionNo;
                 }
@@ -97,6 +119,7 @@ class StudentController extends Controller
                 $student->Sname = $req->secondname;
                 $student->Lname = $req->lastname;
                 $student->EduSystem = $req->educationsystem;
+                $student->schoolingtype = $req->schoolingtype;
 
                 $classinfo = explode(',',$req->current_class);
 
@@ -133,6 +156,7 @@ class StudentController extends Controller
                 ]);
             }
         }
+    }
     }
     //fetch students
     public function fetchStudents($sid){
@@ -305,10 +329,9 @@ class StudentController extends Controller
         // $sid = $class[0]['sid'];
         $sid = session()->get('schooldetails.id');
 
-        
         if ($educationsystem == "8-4-4") {
-            $subjects = Subject::where('educationsystem','8-4-4')
-                                ->where('sid',$sid)
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','8-4-4')
                                 ->get();
 
             return response()->json([
@@ -325,8 +348,8 @@ class StudentController extends Controller
                     'missingpathway' => "Please Assign a pathway to the student so as to be able to enroll them in Learning Areas",
                     ]); 
             } else {
-                $subjects = Subject::where('educationsystem','CBC')
-                                    ->where('sid',$sid)
+                $subjects = Subject::where('sid',$sid)
+                                    ->where('educationsystem','CBC')
                                     ->where('pathway',$pathway)
                                     ->get();
 
@@ -336,9 +359,9 @@ class StudentController extends Controller
                     ]);
             }
             
-        } else{
-            $subjects = Subject::where('educationsystem','CBC')
-                                ->where('sid',$sid)
+        } else if($class == "GRADE SEVEN" || $class == "GRADE EIGHT" || $class == "GRADE NINE"){
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','CBC')
                                 ->where('level','Junior Secondary')
                                 ->get();
 
@@ -346,9 +369,108 @@ class StudentController extends Controller
                 'availstatus' => 'Available',
                 'subjects' => $subjects,
                 ]);
+        } else if ($class == "GRADE FOUR" || $class == "GRADE FIVE" || $class == "GRADE SIX") {
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','CBC')
+                                ->where('level','Upper-Primary')
+                                ->get();
+
+            return response()->json([
+                'availstatus' => 'Available',
+                'subjects' => $subjects,
+                ]);
+        } else if ($class == "GRADE ONE" || $class == "GRADE TWO" || $class == "GRADE THREE") {
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','CBC')
+                                ->where('level','Lower-Primary')
+                                ->get();
+
+            return response()->json([
+                'availstatus' => 'Available',
+                'subjects' => $subjects,
+                ]);
+        } else if ($class == "PP 1" || $class == "PP 2") {
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','CBC')
+                                ->where('level','Pre-Primary')
+                                ->get();
+
+            return response()->json([
+                'availstatus' => 'Available',
+                'subjects' => $subjects,
+                ]);
+        }
+    }
+
+    //Function to return notice board view
+    public function mySubjects(){
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+        $uid = session()->get('LoggedInUser.id');
+        $sid = session()->get('schooldetails.id');
+
+        $student = Student::find($uid);
+        $class = classes::where('id', $student['current_classid'])
+                            ->get();
+        $pathway1 = $student['pathway'];
+        $subjects1 = $student['suborlearningpaths'];
+
+        $educationsystem = $class[0]['educationsystem'];
+        $class = $class[0]['class'];
+
+        if ($educationsystem == "8-4-4") {
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','8-4-4')
+                                ->get();
+
+        } else if($class == "GRADE TEN" || $class == "GRADE ELEVEN" || $class == "GRADE TWELVE") {
+            $pathway = $student['pathway']; 
+
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','CBC')
+                                ->where('level','Senior Secondary')
+                                ->where('pathway',$pathway)
+                                ->get();
+            
+        } else if($class == "GRADE SEVEN" || $class == "GRADE EIGHT" || $class == "GRADE NINE"){
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','CBC')
+                                ->where('level','Junior Secondary')
+                                ->get();
+
+        } else if ($class == "GRADE FOUR" || $class == "GRADE FIVE" || $class == "GRADE SIX") {
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','CBC')
+                                ->where('level','Upper-Primary')
+                                ->get();
+
+        } else if ($class == "GRADE ONE" || $class == "GRADE TWO" || $class == "GRADE THREE") {
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','CBC')
+                                ->where('level','Lower-Primary')
+                                ->get();
+
+        } else if ($class == "PP 1" || $class == "PP 2") {
+            $subjects = Subject::where('sid',$sid)
+                                ->where('educationsystem','CBC')
+                                ->where('level','Pre-Primary')
+                                ->get();
+
         }
 
-        
+        $data = [
+            'adminInfo' => DB::table('staff')->where('id', session('LoggedInUser.id'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'class' => $class,
+            'subjects' => $subjects,
+            'pathway1' => $pathway1,
+            'subjects1' => $subjects1
+        ];
+
+        return view('Students.mysubjects',$data);
+    } else {
+         return redirect('/studentlogin');
+    }    
     }
 
     //Function to Enroll Subjects
@@ -506,16 +628,16 @@ public function subjectPerfomance($stuid,$subid) {
             'seditscounty' => 'required',
             'seditprofile' => 'image'
         ],
-    [
-       'seditprofile.image' => 'File selected for profile photo must be an image',
-       'seditlname.required' => 'Last name is required',
-       'sediteducation.required' => 'Education System',
-       'seditupi.required' => 'UPI is required',
-       'seditfname.required' => 'First name is required',
-       'seditgender.required' => 'Gender field is required',
-       'seditcounty.required' => 'The county field is required',
-       'seditscounty.required' => 'Sub County field is required' 
-    ]);
+        [
+        'seditprofile.image' => 'File selected for profile photo must be an image',
+        'seditlname.required' => 'Last name is required',
+        'sediteducation.required' => 'Education System',
+        'seditupi.required' => 'UPI is required',
+        'seditfname.required' => 'First name is required',
+        'seditgender.required' => 'Gender field is required',
+        'seditcounty.required' => 'The county field is required',
+        'seditscounty.required' => 'Sub County field is required' 
+        ]);
 
             if ($validator->fails()) {
                 return response()->json([
@@ -553,6 +675,14 @@ public function subjectPerfomance($stuid,$subid) {
                 $student->Lname = $req->seditlname;
                 $student->UPI = $req->seditupi;
                 $student->schoolsystem = $req->sediteducation;
+                $student->schoolingtype = $req->editschoolingtype;
+
+                if ($req->editschoolingtype === "Day-scholar") {
+                    $student->assignedhostel = NULL;
+                } else if ($req->editschoolingtype === "Boarder"){
+                    $student->assignedhostel = $req->editassignedhostel;
+                }
+                
                 $student->KCPE_marks = $req->seditkcpescore;
 
                 $classinfo = explode(',',$req->seditclass);
@@ -632,10 +762,19 @@ public function subjectPerfomance($stuid,$subid) {
                     'messages' => 'The Current Term for the Student has not been set. Please Set it so as to be able to Collect Fee for the student'
                 ]);
             } else {
-            $feestructrure = Feestructure::where('sid',$req->sid)
+                if ($student[0]["schoolingtype"] === "Boarder") {
+                    $feestructrure = Feestructure::where('sid',$req->sid)
                                         ->where('Term',$class['current_term'])
+                                        ->where('Category','Boarding')
                                         ->where('classes',$class['id'])
                                         ->get();
+                } else if ($student[0]["schoolingtype"] === "Day-scholar") {
+                    $feestructrure = Feestructure::where('sid',$req->sid)
+                                        ->where('Term',$class['current_term'])
+                                        ->where('Category','Day Schooling')
+                                        ->where('classes',$class['id'])
+                                        ->get();
+                }
 
             if (count($feestructrure) == 0) {
                 return response()->json([
@@ -1625,23 +1764,6 @@ public function noticeBoard(){
 }
 
 //Function to return notice board view
-public function mySubjects(){
-    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
-        $maxid = session()->get('schooldetails.id');
-        $uid = session()->get('LoggedInUser.id');
-
-        $data = [
-            'adminInfo' => DB::table('staff')->where('id', session('LoggedInUser.id'))->first(),
-            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
-        ];
-
-        return view('Students.mysubjects',$data);
-    } else {
-         return redirect('/studentlogin');
-    }    
-}
-
-//Function to return notice board view
 public function schoolResources(){
     if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
         $maxid = session()->get('schooldetails.id');
@@ -1776,6 +1898,140 @@ public function feeHistory($stuid) {
     } else {
         return redirect('/studentlogin');
     }
+}
+
+//Function to return CBC Analysis View
+public function cbcstudentPerfomance($stuid,$aid) {
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+
+        $notices = notifications::where('sid',$maxid)
+                        ->where('type','noticeboard')
+                        ->where('group','Parents')
+                        ->where('deleted',0)
+                        ->orderByDesc('id')
+                        ->get();
+    
+        $uid = session()->get('LoggedInUser.id');
+    
+        $notifications = notifications::where('sid',$maxid)
+                        ->where('type','noticeboard')
+                        ->orWhere('toberecievedby',$uid)
+                        ->where('deleted',0)
+                        ->orderByDesc('id')
+                        ->get();
+    
+        $mymessages = notifications::where('sid',$maxid)
+                                    ->where('type','parentmessage')
+                                    ->where('uid',$uid)
+                                    ->where('deleted',0)
+                                    ->orderByDesc('id')
+                                    ->get();
+                        
+        $parentstudents = Guardian::find($uid);
+                
+        $fnames = [];
+        $lnames = [];
+        $profiles = [];
+        $classes = [];
+        $ids = [];
+                
+        for ($i=0; $i < count(explode(",",$parentstudents['Students'])); $i++) { 
+            $student = Student::where('UPI',explode(",",$parentstudents['Students'])[$i])
+                              ->orwhere('AdmissionNo',explode(",",$parentstudents['Students'])[$i])
+                                ->get();
+            array_push($fnames,$student[0]['Fname']);
+            array_push($lnames,$student[0]['Lname']);
+            array_push($profiles,$student[0]['profile']);
+            array_push($classes,$student[0]['current_class']);
+            array_push($ids,$student[0]['id']);
+            }
+    
+        $student = Student::find($stuid);
+        $cbcassessment = cbcassessment::find($aid);
+        $studentmarks = cbcmarks::where('examid',$aid)
+                                ->where('AdmissionNo',$student['AdmissionNo'])
+                                ->orWhere('AdmissionNo',$student['UPI'])
+                                ->get();
+    
+            $data = [
+                'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+                'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+                'notices' => $notices,
+                'fnames' => $fnames,
+                'mymessages' => $mymessages,
+                'notifications' => $notifications,
+                'cbcassessment' => $cbcassessment,
+                'studentmarks' => $studentmarks,
+                'student' => $student
+            ];
+    
+            return view('Students.cbcstudentperfomance',$data);
+    } else {
+        return redirect('/studentlogin');
+    } 
+}
+
+//Function to return student perfomance view
+public function studentPerfomance($stuid,$aid) {
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+
+    $notices = notifications::where('sid',$maxid)
+                    ->where('type','noticeboard')
+                    ->where('group','Parents')
+                    ->where('deleted',0)
+                    ->orderByDesc('id')
+                    ->get();
+
+    $uid = session()->get('LoggedInUser.id');
+
+    $notifications = notifications::where('sid',$maxid)
+                    ->where('type','noticeboard')
+                    ->orWhere('toberecievedby',$uid)
+                    ->where('deleted',0)
+                    ->orderByDesc('id')
+                    ->get();
+
+    $mymessages = notifications::where('sid',$maxid)
+                                ->where('type','parentmessage')
+                                ->where('uid',$uid)
+                                ->where('deleted',0)
+                                ->orderByDesc('id')
+                                ->get();
+                    
+    $parentstudents = Guardian::find($uid);
+            
+    $fnames = [];
+    $lnames = [];
+    $profiles = [];
+    $classes = [];
+    $ids = [];
+
+    $student = Student::find($stuid);
+    $resultthread = ResultThread::find($aid);
+
+    $examscores = computedfinalresulst::where('tid',$aid)
+                                      ->where('AdmissionNo',$student['AdmissionNo'])
+                                      ->orWhere('AdmissionNo',$student['UPI'])
+                                      ->get();
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'notices' => $notices,
+            'fnames' => $fnames,
+            'mymessages' => $mymessages,
+            'notifications' => $notifications,
+            'student' => $student,
+            'examscores' => $examscores[0],
+            'resultthread' => $resultthread
+        ];
+
+        return view('Students.studentperfomance',$data);
+    } else {
+        return redirect('/studentlogin');
+    } 
 }
 
 }

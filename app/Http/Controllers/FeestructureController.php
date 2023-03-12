@@ -17,13 +17,15 @@ class FeestructureController extends Controller
             'term' => 'required',
             'classes' => 'required',
             'modules' => 'required',
-            'amounts' => 'required'
+            'amounts' => 'required',
+            'category' => 'required'
         ],
         [
             'term.required' => 'You must select term',
             'classes.required' => 'You must select classes from the table above for which the fee structure shall apply',
             'modules.required' => 'The Module field cannot be empty',
-            'amounts.required' => 'The Amount field cannot be empty'
+            'amounts.required' => 'The Amount field cannot be empty',
+            'category.required' => 'You must select the Category of the Fee structure'
         ]);
 
         if ($validator->fails()) {
@@ -42,6 +44,7 @@ class FeestructureController extends Controller
                 ]);
             } else {
                 $checkpriorreg = Feestructure::where('Term',$req->term)
+                                            ->where('Category',$req->category)
                                             ->where('sid',$req->sid)
                                             ->where('deleted',0)
                                             ->get();
@@ -88,6 +91,7 @@ class FeestructureController extends Controller
                         $createdby = Staff::find($req->uid);
                         $fee = new Feestructure;
                         $fee->sid = $req->sid;
+                        $fee->Category = $req->category;
                         $fee->Term = $req->term;
                         $fee->classes = $classids[$i];
                         $fee->classnames = $classnames[$i];
@@ -126,6 +130,7 @@ class FeestructureController extends Controller
         } else {
             $feestructure = Feestructure::find($req->fid);
             $feestructure->Term = $req->term;
+            $feestructure->Category = $req->editcategory;
             $feestructure->modules = implode(",",$modules);
             $feestructure->amounts = implode(",",$amount);
             $feestructure->totalamount = array_sum($amount);
@@ -187,10 +192,12 @@ class FeestructureController extends Controller
         $validator = Validator::make($req->all(),[
             'term' => 'required',
             'class' => 'required',
+            'category' => 'required'
         ],
         [
             'term.required' => 'You must select term',
             'class.required' => 'You must select class',
+            'category.required' => 'You must indicate the category'
         ]);
 
         if ($validator->fails()) {
@@ -200,6 +207,7 @@ class FeestructureController extends Controller
             ]);
         } else {
             $feestructure = Feestructure::where('classes',$req->class)
+                                          ->where('Category',$req->category)
                                           ->where('term',$req->term)
                                           ->get();
 

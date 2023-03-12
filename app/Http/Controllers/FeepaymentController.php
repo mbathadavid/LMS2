@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\feepayment;
+use App\Models\expenses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -73,7 +74,51 @@ class FeepaymentController extends Controller
             }
             
         }
-        
+    }
 
+    public function feeexpenseCompare(Request $req) {
+        $validator = Validator::make($req->all(),[
+            'expensefeestartdate' => 'required',
+            'expensefeetodate' => 'required',
+        ],[
+            'expensefeestartdate.required' => 'You Must Select the Start Period for Retrieving the Fee Payment Report',
+            'expensefeetodate.required' => 'You Must Select the End Period for Retrieving the Fee Payment Report',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'messages' => $validator->getMessageBag() 
+            ]);
+        } else {
+            $feepayments = feepayment::where('sid',$req->sid)
+                                          ->whereBetween('created_at',[$req->expensefeestartdate,$req->expensefeetodate])
+                                          ->OrderByDesc('id')
+                                          ->get();
+
+            $expenses = expenses::where('sid',$req->sid)
+                                          ->whereBetween('dateofexpenditure',[$req->expensefeestartdate,$req->expensefeetodate])
+                                          ->OrderByDesc('id')
+                                          ->get();
+
+            $actualpayments = [];
+            $actualexpenses = [];
+
+            foreach ($feepayments as $key => $feepayment) {
+                array_push($actualpayments,$feepayment->amountpayed);
+            }
+
+            foreach ($expenses as $key => $expense) {
+                array_push($actualexpenses,$expense->amount);
+            }
+
+            return response()->json([
+                "status" => 200,
+                "from" => $req->expensefeestartdate,
+                "to" => $req->expensefeetodate,
+                "totalfeepayed" => array_sum($actualpayments),
+                "totalexpenses" => array_sum($actualexpenses)
+            ]);   
+        }
     }
 }

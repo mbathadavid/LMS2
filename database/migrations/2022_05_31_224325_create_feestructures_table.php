@@ -16,6 +16,7 @@ class CreateFeestructuresTable extends Migration
         Schema::create('feestructures', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sid');
+            $table->string('Category');
             $table->string('Term');
             $table->string('classes');
             $table->string('classnames');

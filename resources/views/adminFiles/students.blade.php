@@ -77,9 +77,24 @@
                 </div>
                 <div class="invalid-feedback"></div>
                 </div>
-                
+                <div class="form-group mb-1">
+                    <label for="">Type of Schooling</label>
+                    <select name="editschoolingtype" id="editschoolingtype" class="form-control">
+                        <option id="schoolingtypeval"></option>
+                        <option value="Boarder">Boarding</option>
+                        <option value="Day-scholar">Day Schooling</option>
+                    </select>
+                    <div class="invalid-feedback"></div>
+                    </div>
             </div>
+
             <div class="col-lg-6">
+            <div id="edithostelassigning" class="form-group mb-1 d-none">
+                <label for="">Assign Hostel/Domitory</label>
+                <select name="editassignedhostel" id="edithostel" class="form-control">
+
+                </select>
+            </div>
             <div class="form-group mb-2">
                 <label for="">KCPE Score</label>
                 <input class="form-control" type="number" name="seditkcpescore" id="seditkcpescore">
@@ -252,7 +267,10 @@
             <h6>Account Active? : <span id="viewstatus" class="text-success"></span></h6>
             <h6>County of Origin : <span id="viewcounty" class="text-success"></span></h6>
             <h6>Sub County of Origin : <span id="viewscounty" class="text-success"></span></h6>
+            <h6>Schooling Type : <span id="viewschoolingtype" class="text-success"></span></h6>
+            <h6 id="viewassignedhostelh6">Assigned Hostel/Domitory : <span id="viewassignedhostel" class="text-success"></span></h6>
             <h6>Username : <span id="viewusername" class="text-success"></span></h6>
+            <!-- <h6>Username : <span id="viewusername" class="text-success"></span></h6> -->
          </div>
          <div class="col-lg-3 p-2">
             <h5 class="text-center text-info">Disability Issues</h5>
@@ -377,6 +395,15 @@
                         <input type="radio" name="gender" id="gender" value="female">&nbsp;Female
                         <div class="invalid-feedback"></div>
                     </div>
+                    <div class="form-group mb-1">
+                        <label for="">Type of Schooling</label>
+                        <select name="schoolingtype" id="schoolingtype" class="form-control">
+                            <option value="">Select Type of Schooling</option>
+                            <option value="Boarder">Boarding</option>
+                            <option value="Day-scholar">Day Schooling</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
                     <!--
                     <div class="form-group mb-1">
                         <input type="checkbox" value="active" name="active" id="active">&nbsp; Active
@@ -387,6 +414,12 @@
                 
 
                 <div class="col-lg-6">
+                <div id="hostelassigning" class="form-group mb-1 d-none">
+                    <label for="">Assign Hostel/Domitory</label>
+                    <select name="assignedhostel" id="hostel" class="form-control">
+
+                    </select>
+                </div>
                 <div class="form-group mb-1">
                     <label for="">KCPE Score</label>
                     <input placeholder="Enter KCPE Marks here" type="number" name="kcpescore" id="kcpescore" class="form-control">
@@ -528,7 +561,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
 <script>
     $(document).ready(function(){
         fetchstudents();
-        fecthclasses()
+        fecthclasses();
+        fecthhostels();
 
         //set csrf
         $.ajaxSetup({
@@ -536,6 +570,50 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
         });
+
+        function fecthhostels(){
+            var sid = {{ session()->get('schooldetails.id') }}
+            $.ajax({
+                method: 'GET',
+                url: `/fetchhostels/${sid}`,
+                success: function(res){
+                    //console.log(res)
+                    $('#hostel').html('');
+                    $('#hostel').append('<option value="">Select Domitory/Hostel</option>');
+                    $.each(res.hostels, function(key,item){
+                        $('#hostel').append('<option value="'+item.id+','+item.Name+'">'+item.Name+'</option>');
+                    })
+
+                    $('#edithostel').html('');
+                    $('#edithostel').append('<option id="edithostelval"></option>');
+                    $.each(res.hostels, function(key,item){
+                        $('#edithostel').append('<option value="'+item.id+','+item.Name+'">'+item.Name+'</option>');
+                    })
+                }
+            });
+        }
+
+        //Selecting hostel
+        $('#schoolingtype').change(function(e){
+            e.preventDefault();
+            var schoolingtype = $(this).val();
+            if (schoolingtype == 'Boarder') {
+                $('#hostelassigning').removeClass('d-none');
+            } else if (schoolingtype == 'Day-scholar') {
+                $('#hostelassigning').addClass('d-none');
+            }
+        })
+
+        //Selecting hostel
+        $('#editschoolingtype').change(function(e){
+            e.preventDefault();
+            var schoolingtype = $(this).val();
+            if (schoolingtype == 'Boarder') {
+                $('#edithostelassigning').removeClass('d-none');
+            } else if (schoolingtype == 'Day-scholar') {
+                $('#edithostelassigning').addClass('d-none');
+            }
+        })
 
         //selecting disability type
         $('#disabled').change(function(e){
@@ -636,6 +714,16 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     $('#viewstatus').text(data.Active)
                     $('#viewcounty').text(data.county)
                     $('#viewscounty').text(data.subcounty)
+
+                    if (data.schoolingtype == 'Boarder') {
+                        $('#viewschoolingtype').text('Boarding Student');
+                        $('#viewassignedhostel').removeClass('d-none');
+                        $('#viewassignedhostel').text(data.assignedhostel.split(',')[1]);
+                    } else if (data.schoolingtype == 'Day-scholar') {
+                        $('#viewschoolingtype').text('Day Schooling Student');
+                        $('#viewassignedhostelh6').addClass('d-none');
+                    }
+
                     $('#viewusername').text(data.StudentId)
                     $('#viewdisabled').text(data.disabled)
                     if (data.disabled == 'No') {
@@ -680,6 +768,20 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 $('#seditfname').val(data.Fname);
                 $('#seditsname').val(data.Sname);
                 $('#seditlname').val(data.Lname);
+
+                if (data.schoolingtype == 'Boarder') {
+                    $('#schoolingtypeval').text('Boarding');
+                    $('#edithostelassigning').removeClass('d-none');
+                    $('#edithostelval').val(data.assignedhostel);
+                    $('#edithostelval').text(data.assignedhostel.split(',')[1]);  
+                } else if (data.schoolingtype == 'Day-scholar') {
+                    $('#schoolingtypeval').text('Day Schooling');
+                    $('#edithostelassigning').addClass('d-none');
+                    $('#edithostelval').val('');
+                    $('#edithostelval').text('Select Type of Schooling');  
+                }
+
+                $('#schoolingtypeval').val(data.schoolingtype);
                 $('#seditdob').val(data.dob);
                 $('#seditcounty').val(data.county);
                 $('#seditclass').html('');
@@ -803,8 +905,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                         $('tbody').append('<tr>\
                         <td><input value="'+item.id+'" type="checkbox" class="checkboxid" name="studentcheckbox" id="studentcheckbox"></td>\
                         <td><img  width="50" height="50" class="img-fluid" src="images/'+item.profile+'" alt=""></td>\
-                        <td>'+item.AdmissionNo+'</td>\
-                        <td>'+item.UPI+'</td>\
+                        <td>'+(item.AdmissionNo == null ? 'No Admission No' : item.AdmissionNo)+'</td>\
+                        <td>'+(item.UPI == null ? 'No UPI Assigned' : item.UPI)+'</td>\
                         <td>'+item.Fname+' '+item.Lname+'</td>\
                         <td><button class="btn btn-success btn-sm">'+item.Active+'</button></td>\
                         <td>'+item.gender+'</td>\
@@ -870,8 +972,11 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     showError('county', res.messages.county);
                     showError('subcounty', res.messages.subcounty);
                     showError('file', res.messages.file);
+                    showError('schoolingtype', res.messages.schoolingtype);
                    } else if(res.status == 401){
                     showError('admissionNo', res.messages);
+                   } else if (res.status == 402) {
+                    showError('upi', res.messages);
                    } else if(res.status == 200) {
                     removeValidationClasses($('#studentregform'))
                     fetchstudents();
@@ -1133,9 +1238,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
         e.preventDefault();
         removeValidationClasses($("#studentassignpathwayform"))
         var formData = new FormData($('#studentassignpathwayform')[0]);
-    
         $("#assignpathway").val('PLEASE WAIT...')
-
             $.ajax({
                 method: 'POST',
                 url: '/assignpathway',
@@ -1295,7 +1398,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
         } else if(ids.length > 1){
             alert('You can only view one student at a Time.Select only one student');
         } else {
-            fetchstudent(ids)
+            fetchstudent(ids);
            $('#studentviewModal').modal('show'); 
         }
      })

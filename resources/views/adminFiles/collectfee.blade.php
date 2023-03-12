@@ -16,6 +16,27 @@
 </div>
 <div id="main" class="maincontent">
 @include('adminFiles.topnav')
+<div class="row justify-content-center mb-2">
+<div class="col-lg-4 col-md-4 col-sm-4">
+<div class="w3-green p-2">
+<h6 class="text-center">Pending Fee Arrears</h6>
+<h6 class="text-center">KSH. <b class="">{{ $pendingbalances }}</b></h6>
+</div>
+</div>
+<div class="col-lg-4 col-md-4 col-sm-4">
+<div class="w3-green p-2">
+<h6 class="text-center">Current Term Balance</h6>
+<h6 class="text-center">KSH. <b class="">{{ $currenttermbalances }}</b></h6>  
+</div>   
+</div>
+<div class="col-lg-4 col-md-4 col-sm-4">
+<div class="w3-green p-2">
+<h6 class="text-center">Overall Balance</h6>
+<h6 class="text-center">KSH. <b class="">{{ $pendingbalances+$currenttermbalances }}</b></h6>  
+</div>   
+</div>
+<hr>
+
 <!--Collect Fee modal start--->
 <div id="collectFeeModal" class="modal w3-animate-left" tabindex="-1">
   <div class="modal-dialog modal-lg">
@@ -172,6 +193,7 @@
         <h6 class="text-center">UPI No: <b><span id="upinumber"></span></b></h6>
         <h6 class="text-center">Class: <b><span id="cclass"></span></b></h6>
         <h6 class="text-center">Term: <b><span id="term"></span></b></h6>
+        <h6 class="text-center">Type of Schooling: <b><span id="schoolingtype"></span></b></h6>
         <h6 class="text-center mb-1">Pending Fee Arrears: <b><span class="text-danger p-2" id="pendingarrears"></span>/=</b></h6>
         <h6 class="text-center mb-1">Current Term Balance: <b><span class="text-danger p-2" id="ctermbalance"></span>/=</b></h6>
         <h6 class="text-center mb-1">Total Fee Debt: <b><span class="text-danger p-2" id="feedebt"></span>/=</b></h6>
@@ -287,6 +309,7 @@
                         $("#feepaymentdiv").removeClass("d-none");
                         $("#studentname").text(`${res.student[0].Fname} ${res.student[0].Lname}`);
                         $("#admnumber").text(res.student[0].AdmissionNo);
+                        $("#schoolingtype").text(res.student[0].schoolingtype);
                         $("#upinumber").text(res.student[0].UPI);
                         $("#cclass").text(res.student[0].current_class);
                         $("#term").text(res.class.current_term);
@@ -311,7 +334,7 @@
                         $("#termpayed").val(res.class.current_term);
 
 
-                        $("#feestrutureheading").text(`${res.feestructure[0].classnames} ${res.feestructure[0].Term}`)
+                        $("#feestrutureheading").text(`${res.feestructure[0].classnames} ${res.feestructure[0].Term} (${res.feestructure[0].Category})`)
                         $("#ctermlable").text(`${res.feestructure[0].classnames} ${res.feestructure[0].Term}`)
                         
                         $("#feestructure").removeClass("d-none");

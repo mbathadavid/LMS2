@@ -295,7 +295,7 @@ $(document).ready(function(){
                 data: formData,
                //dataType: 'json',
                 success: function(res){
-                console.log(res);
+                //console.log(res);
                 $('#editaccountbtn').val('UPDATE ACCOUNT DETAILS');
                    if (res.status == 400) {
                     showError('editsalutation', res.messages.editsalutation);

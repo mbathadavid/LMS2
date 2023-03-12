@@ -259,7 +259,7 @@
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     fetchthreads()
                    if (res.status == 200) {
                     $('#response').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');

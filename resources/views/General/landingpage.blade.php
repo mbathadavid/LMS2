@@ -5,94 +5,143 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/w3.css') }}" rel="stylesheet">
     <link href="{{ asset('css/fontcss/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>DigiSchool LMS</title>
+    <title>Shuleyetu</title>
 </head>
 <body id="landipgagebody">
-<div id="landlogo" class="d-flex p-1">
-    <a class="logoimg" href="/"><img class="img-fluid logo" src="images/logo2.jpg"></a>
+<button class="btn btn-rounded-10 btn-sm w3-red" data-bs-toggle="modal" data-bs-target="#loginmodal" id="shake-btn"><i class="fas fa-sign-in-alt" aria-hidden="true"></i>&nbsp;Access your portal</button>
+<div id="navbardiv">
+<div id="brand">
+    <a href="/"><span id="thelogo"><i>S</i></span><i>Shuleyetu</i></a>
 </div>
-<div class="landingpagenav">
-    <a href="#aboutdigischool" id="aboutnav">About DigiSchool</a>
+<div id="landingpagenav" class="landingpagenav">
+    <a href="#about" id="aboutnav">About Us</a>
     <a href="#contactsdiv2" id="contactsnav">Contacts</a>
-    <a href="" id="loginnav">Login</a>
-    <a href="" data-bs-toggle="modal" data-bs-target="#schoolregmodal" id="regnav">Register School</a>
+    <a data-bs-toggle="modal" data-bs-target="#loginmodal" href="" id="loginnav">Login</a>
+    <!-- <a href="" data-bs-toggle="modal" data-bs-target="#schoolregmodal" id="regnav">Register School</a> -->
     <a href="#modules" id="modulesnav">Modules & Services</a>
     <a href="#" id="learnonlinenav">Learn Online</a>
     <a href="#" id="markertplacenav">Market Place</a>
-    <a href="" id="plansnav">Pricing Plans</a>
+    <a href="" id="plansnav">Teaching Vacancies</a>
 </div>
-<hr>
-
-<div class="row">
-    <div id="somediv" class="col-lg-6 col-md-6 col-sm-12 border border-success p-5">
-      @if(count($schools) == 0)
-      <div class="alert alert-info">
-        <strong>
-          DigiSchool Has Not Yet Registered a School. Take This Opportunity and Send Us a Request to Have Your School Registered. Click the button below to Send a Request for registering your school.
-        </strong><br>
-        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#schoolregmodal" type="button">Request for School Registration</button>
-       </div>
-         
-        @else
-        <div id="portalslinks">
-            <a href="/studentlogin">Student Portal</a>
-            <a href="/parentlogin">Parent Portal</a>
-            <a href="/adminlogin">Staff Portal</a>
-        </div>
-        <!-- <form action="#" class="bg-success p-3" id="login" method="post">
-         <h5 class="text-center">LOGIN</h5>
-              <div class="form-group mb-2">
-                  <label for=""><h6 class="text-info">Select Your School</h6></label>
-                  <select name="schoolselect" id="schoolselect" class="form-control">
-                      <option value="">Select School</option>
-                      @foreach($schools as $school)
-                        <option value="{{ $school->id }}">{{ $school->name }}</option>
-                      @endforeach
-                  </select>
-              </div>
-
-              <div class="form-group mb-2">
-                  <label for=""><h6 class="text-info">Select Your Role</h6></label>
-                  <select name="roleselect" id="roleselect" class="form-control">
-                    <option value="">Select Role</option>
-                    <option value="Student">Student</option>
-                    <option value="Teacher">Staff</option>
-                    <option value="Parent">Parent</option>
-                  </select>
-              </div>
-
-            <div class="form-group">
-              <input type="submit" value="PROCEED TO LOGIN" class="btn btn-sm btn-info form-control">
-              </div>
-          </form>  -->
-        @endif
-    </div>
-
-    <div id="somediv2" class="col-lg-6 col-md-6 col-sm-12 border border-success p-5">
-       <p>Need to automate the way activities run in your school? Then DigiShool LMS is the paltform you are looking for. With DigiSchool LMS there is no more need for
-           paper work. Everything will run by th touch of a button. Teachers will no longer to struggle to compute results, the system will automate the proceess. 
-           Parents can keep track of there kids progress without visiting the school. All they need to do is to log into the system and access the information regarding
-            there kids such examination results, fee balance and any other key information they may require. Fee payment can be done through M-PESA and the system do the 
-            necessary billing. Request for your School Enrollment to the platform and experience the best with us.  
-       </p>
-       <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#schoolregmodal" type="button">Request for School Registration</button>
-       
-    </div>
+<div class="closeopennav">
+<a id="openbar" class="openbar" href=""><i class="fas fa-bars"></i></a>
+<a id="closebar" class="closebar" href=""><i class="fas fa-times"></i></a>
+</div>
 </div>
 
-<div class="row justify-content-center align-items-center mt-3">
+<div id="smslandingpagenav" class="smslandingpagenav">
+    <a href="#about" id="aboutnav">About Us</a>
+    <a href="#contactsdiv2" id="contactsnav">Contacts</a>
+    <a data-bs-toggle="modal" data-bs-target="#loginmodal" href="" id="loginnav">Login</a>
+    <!-- <a href="" data-bs-toggle="modal" data-bs-target="#schoolregmodal" id="regnav">Register School</a> -->
+    <a href="#modules" id="modulesnav">Modules & Services</a>
+    <a href="#" id="learnonlinenav">Learn Online</a>
+    <a href="#" id="markertplacenav">Market Place</a>
+    <a href="#" id="plansnav">Teaching Vacancies</a>
+</div>
+
+<!-- Slider Start-->
+<div class="row justify-content-center" style="background-color: white; padding: 10px;">
+<div class="col-lg-12 col-md-12 col-sm-12">
+<div class="w3-content w3-display-container">
+
+<div class="w3-display-container mySlides w3-animate-left">
+  <img src="{{ asset('slides/studentportal.PNG') }}" class="img-fluid img-thumbnail" alt="" style="width:100%">
+  <div class="w3-display-bottomleft w3-indigo w3-padding-15 w3-large w3-container">
+    Student Portal
+  </div>
+</div>
+
+<div class="w3-display-container mySlides w3-animate-top">
+<img src="{{ asset('slides/staffportal.PNG') }}" class="img-fluid img-thumbnail" alt="" style="width:100%">
+  <div class="w3-display-bottomleft w3-indigo w3-padding-15 w3-large w3-container">
+    Staff Portal
+  </div>
+</div>
+
+<div class="w3-display-container mySlides w3-animate-right">
+<img src="{{ asset('slides/parentportal.PNG') }}" class="img-fluid img-thumbnail" alt="" style="width:100%">
+  <div class="w3-display-bottomleft w3-indigo w3-padding-15 w3-large w3-container">
+    Parent Portal
+  </div>
+</div>
+
+<div class="w3-display-container mySlides w3-animate-bottom">
+<img src="{{ asset('slides/studentperfoamncevisualiztion.PNG') }}" class="img-fluid img-thumbnail" alt="" style="width:100%">
+  <div class="w3-display-bottomleft w3-indigo w3-padding-15 w3-large w3-container">
+    Perfomance Analysis and Visualization
+  </div>
+</div>
+
+<div class="w3-display-container mySlides w3-animate-zoom">
+<img src="{{ asset('slides/periodicreporting.PNG') }}" class="img-fluid img-thumbnail" alt="" style="width:100%">
+  <div class="w3-display-bottomleft w3-indigo w3-padding-15 w3-large w3-container">
+    Periodic Reports for Students
+  </div>
+</div>
+
+<div class="w3-display-container mySlides w3-animate-left">
+<img src="{{ asset('slides/expensetracking.PNG') }}" class="img-fluid img-thumbnail" alt="" style="width:100%">
+  <div class="w3-display-bottomleft w3-indigo w3-padding-15 w3-large w3-container">
+    Expense Tracking
+  </div>
+</div>
+
+<div class="w3-display-container mySlides w3-animate-left">
+<img src="{{ asset('slides/finreportsgen.PNG') }}" class="img-fluid img-thumbnail" alt="" style="width:100%">
+  <div class="w3-display-bottomleft w3-indigo w3-padding-15 w3-large w3-container">
+    Financial Reporting
+  </div>
+</div>
+
+<div class="w3-display-container mySlides w3-animate-top">
+<img src="{{ asset('slides/librarymanagement.PNG') }}" class="img-fluid img-thumbnail" alt="" style="width:100%">
+  <div class="w3-display-bottomleft w3-indigo w3-padding-15 w3-large w3-container">
+    Library Management
+  </div>
+</div>
+
+<div class="w3-display-container mySlides w3-animate-bottom">
+<img src="{{ asset('slides/bulksmsmessaging.PNG') }}" class="img-fluid img-thumbnail" alt="" style="width:100%">
+  <div class="w3-display-bottomleft w3-indigo w3-padding-15 w3-large w3-container">
+    Bulk SMS Messaging
+  </div>
+</div>
+
+<div class="w3-display-container mySlides w3-animate-bottom">
+<img src="{{ asset('slides/resultanalytics.PNG') }}" class="img-fluid img-thumbnail" alt="" style="width:100%">
+  <div class="w3-display-bottomleft w3-indigo w3-padding-15 w3-large w3-container">
+    Perfomance Analysis
+  </div>
+</div>
+
+<div class="mySlides w3-display-container w3-animate-zoom w3-xlarge w3-green w3-card-4">
+    <p class="text-center">Thank you! Choose us today and achieve digital tranformation for your school.</p>
+    <p class="text-center">We are your number one partner in school management</p>
+</div>
+
+<button class="w3-button w3-display-left w3-indigo" onclick="plusDivs(-1)">&#10094;</button>
+<button class="w3-button w3-display-right w3-indigo" onclick="plusDivs(1)">&#10095;</button>
+
+</div>
+</div>
+</div>
+<!-- Slider Start-->
+
+<div id="about" class="row justify-content-center align-items-center mt-3">
     <div class="col-lg-8 col-md-10 col-sm-12 p-2" id="explanation">
     <h5 class="text-center text-info"><b>Who are we?</b></h5>
-    <div class="realexplanation" id="aboutdigischool">
-        <p>Digischool LMS is an online web based school management system. Digischool was developed with one main objective, that is,
-        to ease the management of a school through technology. When you Join DigiSchool, there is no any more need for paper work.
-        Everything becomes automated. All you do is register all the students,parents and staff members. With DigiSchool, Parents do not
-        have to come to school to see the progress of their children. DigiSchool allows parents to log into the system and monitor the progress
-        of thier kids. From the dashboard, they are able to see their childrens scores and fee balance. Teachers do not have to get tired computing
-        results, Digischool automates the whole process. DigiSchool is the techology that each school needs to absorb.</p>
+    <div class="realexplanation" id="aboutshuleyetu">
+        <p>Shuleyetu is an online web based school management system. Shuleyetu was developed with one main objective, that is,
+        to integrate modern technology in management of schools. Through Shuleyetu, everything becomes automated. The system is designed to accomodate both CBC and the ending 8-4-4 curriculums. It provides staff, student, and parent portals where
+         the users can have a view of what pertains to them. With Shuleyetu, Parents do not
+        have to come to school to see the progress of their children. Through the parents portal, a parent is able to monitor the progress, perfomance, fee balance and many more data
+        of thier kids. The carefully designed staff portal enables perfomance automated perfomance of all the staff activities. Through the student Portal
+        , students can monitor their perfomance, teacher reports and many other. With Shuleyetu everything is digitized.</p>
     </div>
     </div>
 </div>
@@ -100,8 +149,7 @@
 
 <div class="row justify-content-center align-items-center mt-3 mb-3">
     <div class="col-lg-8 col-md-10 col-sm-12" id="modulesservices">
-        <h5 class="text-center text-danger"><b>Modules & Services</b></h5>
-        <h6 class="text-center">Ever wondered what DigiSchool can achieve you achieve? Well, DigiSchool offers the following broad categories of services for school management</h6>
+        <!-- <h6 class="text-center">Ever wondered what Shuleyetu can achieve you achieve? Well, Shuleyetu offers the following broad categories of services for school management</h6> -->
         <div id="modules" class="row justify-content-center align-items-center">
             <div id="modulesmgmt" class="col-lg-5 col-md-6 col-sm-12">
              <h6><a href="" id="studentmgmt">Students Management <i class="fa fa-angle-down" id="icon1"></i></a></h6>
@@ -127,13 +175,11 @@
              <h6><a href="" id="academicmgmt">Academics Management <i class="fa fa-angle-down" id="icon3"></i></a></h6>
                 <ol type="i" id="academicmgmtol">
                     <li>Register Subjects</li>
-                    <li>Manage Subjects</li>
-                    <li>Manage Timetabling</li>
-                    <li>Manage Subjects grading System</li>
-                    <li>Manage overall Class grading system</li>
-                    <li>Register Exams</li>
-                    <li>Manage Terms</li>
-                    <li>Manage Term Dates</li>
+                    <li>Manage CBC Assessments</li>
+                    <li>Manage 8-4-4 Examinations</li>
+                    <li>Manage grading System</li>
+                    <li>Give and review student periodic Reports</li>
+                    <li>Analyze Class and Student Perfomance</li>
                     <li>Auto-Grade Subjects</li>
                     <li>Auto-Compute Results</li>
                     <li>Print Results</li>
@@ -153,11 +199,12 @@
                 </ol>
              <h6><a href="" id="financesmgmt">Finances Management <i class="fa fa-angle-down" id="icon5"></i></a></h6>
                <ol type="i" id="financemgmtol">
-                    <li>Set Fee for term for each Class</li>
+                    <li>Manage fee for each class and term</li>
                     <li>Generate fee structure.</li>
                     <li>Collect Fees</li>
-                    <li>Auto-generate fee Statement</li>
-                    <li>M-PESA fee payment intergration</li>
+                    <li>Track and Record Expenses</li>
+                    <li>Auto-generate financial reports</li>
+                    <li>M-PESA fee payment intergration (Advanced)</li>
                 </ol>
              <h6><a href="" id="communicationmgmt">Communication Management <i class="fa fa-angle-down" id="icon6"></i></a></h6>
              <ol type="i" id="communicationmgmtol">
@@ -165,6 +212,7 @@
                 <li>Contact Parents through Bulk text SMS</li>
                 <li>Contact Staff through Bulk text SMS</li>
                 <li>Send Emails to Parents/Staff</li>
+                <li>Send System Notifications to staff, parents and students</li>
              </ol>
             </div>
            
@@ -180,10 +228,10 @@
         <div id="contactlinks">
             <a href="tel:+254792801096"><i class="fas fa-phone"></i> Phone:&nbsp; 0792801096</a></br>
             <a href="https://api.whatsapp.com/send?phone=+254748269865&text=Hello, Need assistance to register my school">WhatsApp:&nbsp; 0792801096</a><br>
-            <a href="mailto:digischoollms@gmail.com?Subject=Hello DigiSchool">Email:&nbsp; digischoollms@gmail.com</a>
+            <a href="mailto:info@shuleyetu.co.ke?Subject=Hello Shuleyetu">Email:&nbsp; info@shuleyetu.co.ke</a>
          </div>
-         <p>Contact DigiSchool LMS today and get enrolled to the best Learning Management ERP.</p>
-         <p>DigiSchoolLMS is the best of the best</p>
+         <p>Contact Shuleyetu LMS today and get enrolled to the best Learning Management ERP.</p>
+         <p>Shuleyetu is the best of the best</p>
     </div>
 
     <div id="quicklinks">
@@ -239,7 +287,7 @@
     </div>
 
     </div>
-    <p class="text-center">&copy; Copyright 2022 DigiSchoolLMS | All Rights Reserved.</p>
+    <p class="text-center">&copy; Copyright 2023 Shuleyetu | All Rights Reserved.</p>
     <!-- <div class="col-lg-10 col-md-10 col-sm-12">
         <div id="contacts" class="row justify-content-center">
             <div class="col-lg-4 col-md-4 col-sm-12">
@@ -322,6 +370,24 @@
 </div>
 <!-- School add request modal end -->
 
+<!-- School add request modal end -->
+<div class="modal w3-animate-left" id="loginmodal" tabindex="-1" aria-labelledby="promoteStudentModal">
+    <div class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="modal-header w3-white">
+            <h6 class="modal-title text-success text-center"><b>Access your portal</b></h6>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <h6><a class="btn btn-sm rounded-0 btn-success" href="/studentlogin"><i class="fas fa-sign-in-alt" aria-hidden="true"></i>&nbsp;Student Portal</a></h6>
+            <h6><a class="btn btn-sm rounded-0 btn-success" href="/parentlogin"><i class="fas fa-sign-in-alt" aria-hidden="true"></i>&nbsp;Parent Portal</a></h6>
+            <h6><a class="btn btn-sm rounded-0 btn-success" href="/adminlogin"><i class="fas fa-sign-in-alt" aria-hidden="true"></i>&nbsp;Staff Portal</a></h6>
+        </div>
+        </div>
+        </div>
+</div>
+<!-- School add request modal end -->
+
   
 <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('js/jquery.min.js') }}"></script>
@@ -329,6 +395,10 @@
 <script src="{{ asset('js/fontjs/all.min.js') }}"></script>
 <script>
     $(document).ready(function(){
+        $('.nav-toggle').click(function() {
+            $('.nav-links').toggleClass('show');
+        });
+
        $('#studentmgmt').click(function(e){
         e.preventDefault();
         //$('#studentmgmtol').toggleClass('d-none');
@@ -440,6 +510,13 @@
          })
      })
 
+    //Work with opening and closing navabar
+    $('#openbar').click(function(e){
+        e.preventDefault();
+        $('#smslandingpagenav').toggleClass('openedlandingpagenav smslandingpagenav')
+        $('#smslandingpagenav').addClass('w3-animate-right');
+    })
+
     })
 </script>
 <script type="text/javascript">
@@ -452,6 +529,48 @@
         s1.setAttribute('crossorigin','*');
         s0.parentNode.insertBefore(s1,s0);
         })();
+</script>
+<script>
+    // const navbarToggle = navbar.querySelector("#navbar-toggle");
+    // const navbarMenu = document.querySelector("#navbar-menu");
+    // const navbarLinksContainer = navbarMenu.querySelector(".navbar-links");
+    // let isNavbarExpanded = navbarToggle.getAttribute("aria-expanded") === "true";
+
+    // const toggleNavbarVisibility = () => {
+    // isNavbarExpanded = !isNavbarExpanded;
+    // navbarToggle.setAttribute("aria-expanded", isNavbarExpanded);
+    // };
+
+    // navbarToggle.addEventListener("click", toggleNavbarVisibility);
+
+    // navbarLinksContainer.addEventListener("click", (e) => e.stopPropagation());
+    // navbarMenu.addEventListener("click", toggleNavbarVisibility);
+
+    //Work on animated btn
+    const shakeBtn = document.querySelector('#shake-btn');
+    setInterval(() => {
+    shakeBtn.classList.add('shaking');
+    setTimeout(() => {
+        shakeBtn.classList.remove('shaking');
+    }, 500);
+    }, 2000);
+
+</script>
+<script>
+var slideIndex = 0;
+carousel();
+
+function carousel() {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none"; 
+  }
+  slideIndex++;
+  if (slideIndex > x.length) {slideIndex = 1} 
+  x[slideIndex-1].style.display = "block"; 
+  setTimeout(carousel, 5000); 
+}
 </script>
 </body>
 </html>

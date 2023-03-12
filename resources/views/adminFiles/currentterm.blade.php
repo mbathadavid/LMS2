@@ -99,7 +99,7 @@ function preview(){
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                   $('#currenttermtable').html('');
                   $.each(res.classes, function(key,item){
                       if (item.current_term == null) {

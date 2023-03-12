@@ -79,6 +79,16 @@
                 <div class="invalid-feedback"></div>
             </div>
 
+            <div class="form-group mb-2">
+            <label for=""><b>Select Category</b></label>
+                <select name="category" id="category" class="form-control">
+                    <option value="">Select Category</option>
+                    <option value="Boarding">Boarding</option>
+                    <option value="Day Schooling">Day Schooling</option> 
+                </select>
+                <div class="invalid-feedback"></div>
+            </div>
+
             <input type="submit" id="viewfeestrbtn" value="VIEW FEE STRUCTURE" class="form-control btn-sm btn btn-rounded-0 w3-green">
         </form>
     </div>
@@ -116,10 +126,11 @@
                 data: $(this).serialize(),
                 dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     if (res.status == 400) {
                         showError('term',res.messages.term);
                         showError('class',res.messages.class);
+                        showError('category',res.messages.category);
                         $('#viewfeestrbtn').val('VIEW FEE STRUCTURE');
                     } else if (res.status == 200) {
                         $('#viewfeestrbtn').val('VIEW FEE STRUCTURE');

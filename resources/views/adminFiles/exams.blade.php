@@ -18,7 +18,10 @@
 @include('adminFiles.topnav')
 <h4>Examination(s)</h4>
 <div class="mb-2">
+@if(in_array(8,explode(',',session()->get('schooldetails.privildeges'))))
 <button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#examaddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD NEW EXAM</button>
+@endif
+
 <!-- <button class="btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#CBCModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD NEW CBC ASSESSMENT</button> -->
 </div>
 <!---Exams modal start-->
@@ -312,7 +315,7 @@ function preview(){
                 method: 'GET',
                 url: `/fetchclasses2/${sid}/${etype}`,
                 success: function(res){
-                    console.log(res.exams)
+                    //console.log(res.exams)
                    $("#classsesedittable").html('')
                     $.each(res.classes, function(key,item){
                     $("#classsesedittable").append('<tr>\
@@ -493,7 +496,7 @@ function preview(){
                 method: 'GET',
                 url: `/fetchclasses2/${sid}/${etype}`,
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     if (res.classes.length == 0) {
                         $('#classtocompre').text('Sorry!There are no classes added recently')
                     } else {

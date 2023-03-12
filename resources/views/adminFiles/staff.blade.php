@@ -17,7 +17,9 @@
 @include('adminFiles.topnav')
 <h4>Support Staff</h4>
 <div class="mb-2">
+@if(in_array(5,explode(',',session()->get('LoggedInUser.priviledges'))))
 <button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#teacheraddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD SUPPORT STUFF</button>
+@endif
 <div id="regresponse"></div>
 </div>
 <!---Teacher edit modal start--->
@@ -135,20 +137,19 @@
 
             <div class="col-lg-6">
                 <h6>Please Tick Where Appropriate</h6>
-                <input type="checkbox" value="Collect Fees" name="priviledge" id="priviledge">&nbsp; Collect Fees <br>
-                <input type="checkbox" value="Manage Expenses" name="priviledge" id="priviledge">&nbsp; Manage Expenses <br>
-                <input type="checkbox" value="Fee Structure Manipulation" name="priviledge" id="priviledge">&nbsp; Manipulate Fee Structure<br>
-                <input type="checkbox" value="Manage Teachers" name="priviledge" id="priviledge">&nbsp; Manage Teachers <br>
-                <input type="checkbox" value="Manage Students" name="priviledge" id="priviledge">&nbsp; Manage Students <br>
-                <input type="checkbox" value="Manage Parents" name="priviledge" id="priviledge">&nbsp; Manage Parents <br>
-                <input type="checkbox" value="Manage Support Staff" name="priviledge" id="priviledge">&nbsp; Manage Support Staff  <br>
-                <input type="checkbox" value="Manage Library" name="priviledge" id="priviledge">&nbsp; Manage Library<br>
-                <input type="checkbox" value="Manage Classes" name="priviledge" id="priviledge">&nbsp; Manage Classes<br>
-                <input type="checkbox" value="Manage Subjects" name="priviledge" id="priviledge">&nbsp; Manage  Subjects<br>
-                <input type="checkbox" value="Manipulate Grading System" name="priviledge" id="priviledge">&nbsp; Manipulate Grading System <br>
-                <input type="checkbox" value="Create Result Thread" name="priviledge" id="priviledge">&nbsp; Create Result Thread  <br>
-                <input type="checkbox" value="Compute Final Results For Class" name="priviledge" id="priviledge">&nbsp; Compute Final Result For Class  <br>
-                <input type="checkbox" value="Manage Communications" name="priviledge" id="priviledge">&nbsp; Manage Communications<br>
+                <input hidden checked type="checkbox" value="1" name="priviledge[]" id="priviledge"><br>
+                <input type="checkbox" value="2" name="priviledge[]" id="priviledge">&nbsp; Finance Management <br>
+                <input type="checkbox" value="3" name="priviledge[]" id="priviledge">&nbsp; Manage Teachers <br>
+                <input type="checkbox" value="4" name="priviledge[]" id="priviledge">&nbsp; Manage Students <br>
+                <input type="checkbox" value="4" name="priviledge[]" id="priviledge">&nbsp; Manage Parents <br>
+                <input type="checkbox" value="5" name="priviledge[]" id="priviledge">&nbsp; Manage Support Staff  <br>
+                <input type="checkbox" value="6" name="priviledge[]" id="priviledge">&nbsp; Manage Library<br>
+                <input type="checkbox" value="8" name="priviledge[]" id="priviledge">&nbsp; Register Assessments<br>
+                <input type="checkbox" value="9" name="priviledge[]" id="priviledge">&nbsp; Register Examinations<br>
+                <input type="checkbox" value="10" name="priviledge[]" id="priviledge">&nbsp; Register Examination Threads<br>
+                <input type="checkbox" value="11" name="priviledge[]" id="priviledge">&nbsp; Register Streams<br>
+                <input type="checkbox" value="12" name="priviledge[]" id="priviledge">&nbsp; Register Domitories<br>
+                <input type="checkbox" value="13" name="priviledge[]" id="priviledge">&nbsp; Send SMS messages<br>
             
                 <h6 class="text-danger m-2 d-none" id="priviledgealert"></h6>
             </div>
@@ -283,11 +284,8 @@
 <div class="row border border-3 border-info p-3">
     
 <div class="table-responsive">
+@if(in_array(5,explode(',',session()->get('LoggedInUser.priviledges'))))
 <div id="actionbtns" class="mb-2">
-<!---
-<button class="btn btn-sm btn-info float-end"><i class="fas fa-envelope"></i>&nbsp;Send Email</button>
-<button class="btn btn-sm btn-success float-end"><i class="fas fa-sms"></i>&nbsp;Send SMS</button>
---->
 <button id="deactivatebtn" class="btn btn-sm btn-primary float-end m-1">Deactivate</button>
 <button id="activatebtn" class="btn btn-sm btn-success float-end m-1">Activate</button>
 <button id="viewbtn" class="btn btn-sm btn-info float-end m-1"><i class="fas fa-eye"></i>&nbsp;View</button>
@@ -295,6 +293,7 @@
 <button id="priviledgesbtn" class="btn btn-sm btn-warning float-end m-1"><i class="fas fa-edit"></i>&nbsp;Assign Priviledges</button> 
 <button id="teacherdelbtn" class="btn btn-sm btn-danger float-end m-1"><i class="fas fa-trash-alt"></i>&nbsp;Delete</button> 
 </div> 
+@endif
 <table class="table" id="teacherstable">
             <thead>
             <tr>
@@ -495,7 +494,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                data: formData,
                //dataType: 'json',
                success: function(res){
-                  console.log(res);
+                  //console.log(res);
                   if (res.status == 400) {
                    // $('#editteachersubmitbtn').val('EDIT TEACHER');
                     $('#priviledgealert').removeClass('d-none')
@@ -652,7 +651,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchteachers();
                     $('#regresponse').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
@@ -684,7 +683,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchteachers();
                     $('#regresponse').removeClass('d-none');
@@ -717,7 +716,7 @@ $(document).on('click', '#activatebtn',function(e){
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchteachers();
                     $('#regresponse').removeClass('d-none');

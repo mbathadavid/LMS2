@@ -256,13 +256,13 @@ $(document).ready(function(){
 
             $.ajax({
                 method: 'POST',
-                url: '{{ route('parent.updatepic') }}',
+                url: '/parentupdateprofilepic',
                 contentType: false,
                 processData: false,
                 data: formData,
                //dataType: 'json',
                 success: function(res){
-                console.log(res);
+                //console.log(res);
                 $('#submitprofupdate').val('UPDATE PROFILE');
                    if (res.status == 401) {
                     showError('profilepic', res.messages);
@@ -292,7 +292,7 @@ $(document).ready(function(){
                 data: formData,
                //dataType: 'json',
                 success: function(res){
-                console.log(res);
+                //console.log(res);
                 $('#editaccountbtn').val('UPDATE ACCOUNT DETAILS');
                    if (res.status == 400) {
                     showError('editsalutation', res.messages.editsalutation);
@@ -321,13 +321,13 @@ $(document).ready(function(){
             } else {
             $.ajax({
                 method: 'POST',
-                url: '{{ route('parent.updatepassword') }}',
+                url: '/parentupdatepassword',
                 contentType: false,
                 processData: false,
                 data: formData,
                //dataType: 'json',
                 success: function(res){
-                console.log(res);
+                //console.log(res);
                 $('#changepass').val('CHANGE PASSWORD');
                    if (res.status == 400) {
                     showError('cpass', res.messages.cpass);

@@ -1,6 +1,48 @@
 #landipgagebody {
     background-image: url('../images/R (1).jpeg');
 }
+#shake-btn {
+    position: fixed;
+    left: 0;
+    top: 90%;
+    transform: translate(0, -50%);
+    padding: 10px 20px;
+    border: none;
+    background-color: #2196f3;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    animation-name: shake;
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(.36,.07,.19,.97);
+    animation-iteration-count: infinite;
+    animation-play-state: paused;
+  }
+  
+  @keyframes shake {
+    0% {
+      transform: translate(0, -50%) rotate(0deg);
+    }
+    25% {
+      transform: translate(0, -50%) rotate(10deg);
+    }
+    50% {
+      transform: translate(0, -50%) rotate(0deg);
+    }
+    75% {
+      transform: translate(0, -50%) rotate(-10deg);
+    }
+    100% {
+      transform: translate(0, -50%) rotate(0deg);
+    }
+  }
+  
+  #shake-btn.shaking {
+    animation-play-state: running;
+  }
+  
+  
 .main {
     display: flex;
 }
@@ -9,6 +51,9 @@
 }
 .logocontainer {
     height: 100px;
+}
+.mySlides {
+    height: auto;
 }
 #studentdiv {
     border-bottom: 3px black solid;
@@ -99,10 +144,22 @@
 .landingpagenav {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 3px;
-    background-color: white;
+    justify-content: flex-end;
     flex-direction: row;
+    padding: 3px;
+    background-color: rgb(235, 234, 234);
+    margin-right: auto;
+    flex: 1;
+}
+.smslandingpagenav {
+    display: none;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
+    padding: 3px;
+    background-color: whitesmoke;
+    margin-right: auto;
+    flex: 1;
 }
 .landingpagenav a {
     text-decoration: none;
@@ -112,25 +169,25 @@
     margin: 3px;
     border-right: 3px solid black;
 }
-.landingpagenav #aboutnav {
+.landingpagenav #aboutnav,.smslandingpagenav #aboutnav {
     color:  black;
 }
-.landingpagenav #contactsnav {
+.landingpagenav #contactsnav,.smslandingpagenav #contactsnav {
     color: #ff4d4d;
 }
-.landingpagenav #loginnav {
+.landingpagenav #loginnav,.smslandingpagenav #loginnav {
     color: #00cc99;
 }
-.landingpagenav #regnav {
+.landingpagenav #regnav,.smslandingpagenav #regnav {
     color:  #ffa500;
 }
-.landingpagenav #modulesnav {
+.landingpagenav #modulesnav,.smslandingpagenav #modulesnav {
     color:  #e60000;
 }
-.landingpagenav #plansnav {
+.landingpagenav #plansnav,.smslandingpagenav #plansnav {
     color:  #ff3399;
 }
-.landingpagenav #learnonlinenav {
+.landingpagenav #learnonlinenav,.smslandingpagenav #learnonlinenav {
     color:  #009933;
 }
 .landingpagenav #learnonlinenav:hover,#plansnav:hover,#modulesnav:hover,#regnav:hover,#loginnav:hover,#contactsnav:hover,#aboutnav:hover,#markertplacenav:hover {
@@ -311,23 +368,6 @@
     background-color: #993333;
     color: white;
 } */
-@media (max-width: 650px){
-    .landingpagenav {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 3px;
-        background-color: white;
-        flex-direction: column;
-    } 
-    .landingpagenav a {
-        text-decoration: none;
-        font-weight: bold;
-        padding: 2px;
-        margin: 3px;
-        border: 0;
-    }
-}
 .navigation {
     margin: 10px;
 }
@@ -344,7 +384,7 @@
     text-align: center;
     margin: 20px;
 }
-.sidenavlinks a, .librarybtn, .academicbtn, .financesbtn, .peoplebtn,.communicatebtn,.perfomancebtn{
+.sidenavlinks a, .librarybtn, .academicbtn, .financesbtn, .peoplebtn,.communicatebtn,.perfomancebtn,.facilitiesbtn{
     padding: 3px 4px 3px 8px;
     display: block;
     color: white;
@@ -359,15 +399,15 @@
     float: right;
     margin-top: 5px;
 }
-.sidenav a:hover, .librarybtn:hover, .academicbtn:hover, .financesbtn:hover, .peoplebtn:hover, .communicatebtn:hover, .perfomancebtn:hover {
+.sidenav a:hover, .librarybtn:hover, .academicbtn:hover, .financesbtn:hover, .peoplebtn:hover, .communicatebtn:hover, .perfomancebtn:hover, .facilitiesbtn:hover {
     color: #f1f1f1;
     background-color: #47d147;
   }
-.library-dropdown,.academics-dropdown,.finances-dropdown,.people-dropdown,.commsdropdown, .perfomance-dropdown {
+.library-dropdown,.academics-dropdown,.finances-dropdown,.people-dropdown,.commsdropdown, .perfomance-dropdown, .facilities-dropdown {
     background-color: whitesmoke;
     padding-left: 20px;
 }
-.library-dropdown a,.academics-dropdown a,.finances-dropdown a,.people-dropdown a,.commsdropdown a,.perfomance-dropdown a{
+.library-dropdown a,.academics-dropdown a,.finances-dropdown a,.people-dropdown a,.commsdropdown a,.perfomance-dropdown a,.facilities-dropdown a{
     text-decoration: none;
     color: black;
 
@@ -656,14 +696,18 @@
 }
 .scrolling-text {
     white-space: nowrap; /* Prevent text from wrapping */
-     /* Hide text outside of container */
-    animation: marquee 60s linear infinite; /* Apply animation */
+     /* Hide text outside of container */ /* Apply animation */
+    /*   */
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
     /* background-color: rgba(255,255,255,0.5); */
   }
+
+#actaulscrolltext {
+    animation: marquee 60s linear infinite;
+}
   
   @keyframes marquee {
     0% { transform: translateX(100%); } /* Move element to the right */
@@ -672,19 +716,128 @@
   @media screen and (max-width: 514px){
     .scrolling-text {
         white-space: nowrap; /* Prevent text from wrapping */
-         /* Hide text outside of container */
-        animation: marquee 30s linear infinite; /* Apply animation */
+         /* Hide text outside of container */ /* Apply animation */
+        /* animation: marquee 30s linear infinite;  */
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
         /* background-color: rgba(255,255,255,0.5); */
       }
+
+    #actaulscrolltext {
+        animation: marquee 30s linear infinite;
+    }
       
       @keyframes marquee {
         0% { transform: translateX(100%); } /* Move element to the right */
         100% { transform: translateX(-100%); } /* Move element to the left */
       }
   }
-  
+  #thelogo {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Replace with your desired font */
+    font-size: 30px; /* Adjust as needed */
+    color: #ff0000; /* Replace with your desired color */
+    text-shadow: 1px 1px 0px #000000; /* Replace with your desired text shadow */
+    display: inline-block;
+    width: 40px; /* Adjust as needed */
+    height: 40px; /* Adjust as needed */
+    border-radius: 50%; /* This creates a circle */
+    background-color: rgb(148, 204, 148); /* This sets the background color to white */
+    text-align: center;
+    line-height: 40px; /* This centers the letter vertically */
+    font-weight: bolder;
+  }
+#brand a {
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 0;
+}
+#navbardiv {
+    background-color: rgb(235, 234, 234);
+    display: flex; 
+    padding: 2px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+.closeopennav {
+   display: none; 
+}
+.openbar,.closebar {
+    font-weight: bold;
+    text-decoration: none;
+    color: #000000;
+    font-size: 30px;
+    display: none;
+}
+.openbarshidden,.closebarhidden {
+    font-weight: bold;
+    text-decoration: none;
+    color: #000000;
+    font-size: 30px;
+    /* display: none; */
+}
+@media (max-width: 901px){
+    .landingpagenav {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 3px;
+        background-color: white;
+        flex-direction: column;
+    } 
+    .landingpagenav a {
+        text-decoration: none;
+        font-weight: bold;
+        padding: 2px;
+        margin: 3px;
+        border: 0;
+    }
+    .closeopennav {
+        display: block; 
+     }
+     .closeopennav, .openbar {
+        display: block; 
+     }
+     .openedlandingpagenav {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-direction: column;
+        padding: 3px;
+        background-color: whitesmoke;
+        margin-right: auto;
+        flex: 1;
+     }
+     .openedlandingpagenav a {
+        text-decoration: none;
+        font-weight: bold;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        padding: 3px;
+        margin: 1px;
+    }
+    .openedlandingpagenav #aboutnav {
+        color:  black;
+    }
+    .openedlandingpagenav #contactsnav {
+        color: #ff4d4d;
+    }
+    .openedlandingpagenav #loginnav {
+        color: #00cc99;
+    }
+    .openedlandingpagenav #regnav {
+        color:  #ffa500;
+    }
+    .openedlandingpagenav #modulesnav {
+        color:  #e60000;
+    }
+    .openedlandingpagenav #plansnav {
+        color:  #ff3399;
+    }
+    .openedlandingpagenav #learnonlinenav {
+        color:  #009933;
+    }
+}
   

@@ -26,6 +26,7 @@ use App\Http\Controllers\CommunicationsController;
 use App\Http\Controllers\ComputedfinalresulstController;
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\NotificationsController;
+use App\Http\Controllers\HostelsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -65,6 +66,7 @@ Route::get('/',[AdminController::class, 'landingpage']);
  Route::get('/subjects',[AdminController::class, 'subjects'])->name('subjects');
  Route::get('/clubs',[AdminController::class, 'clubs'])->name('clubs');
  Route::get('/classes',[AdminController::class, 'classes'])->name('classes');
+ Route::get('/hostels',[AdminController::class, 'hostels'])->name('hostels');
  Route::get('/departments',[AdminController::class, 'departments'])->name('departments');
  Route::get('/expenses',[AdminController::class, 'expenses'])->name('expenses');
  Route::get('/feestructure',[AdminController::class, 'feeStructure']);
@@ -144,6 +146,14 @@ Route::get('/deleteclass/{id}',[ClassesController::class,'deleteClasses']);
 Route::get('/getclass/{id}',[ClassesController::class,'getClass']);
 //Route::get('/classresults/{id}',[ClassesController::class,'getClass']);
 /**class routes end */
+
+/**class routes start*/
+Route::post('/registerhostel',[HostelsController::class,'saveHostel'])->name('hostel.register');
+Route::post('/edithostel',[HostelsController::class,'editHostel'])->name('hostel.edit');
+Route::get('/fetchhostels/{sid}/',[HostelsController::class,'fetchHostels'])->name('hostel.fetch');
+Route::get('/gethostel/{id}',[HostelsController::class,'getHostel']);
+Route::get('/deletehostel/{id}',[HostelsController::class,'deleteHostels']);
+/**class routes start */
 
 /*Teacher routes */
 Route::post('/registerteacher',[TeacherController::class,'saveTeacher'])->name('teacher.register');
@@ -308,6 +318,7 @@ Route::get('/deleteexpense/{eid}',[ExpensesController::class, 'deleteExpense']);
 
 /**Reports Generation Start */
 Route::post('/feepaymentreport',[FeepaymentController::class, 'feepaymentReport']);
+Route::post('/comparefeetoexpenses',[FeepaymentController::class, 'feeexpenseCompare']);
 Route::post('/expenditurereport',[ExpensesController::class, 'expenditureReport']);
 /**Reports Generation End*/
 
@@ -316,20 +327,20 @@ Route::get('/parentlogin',[GuardianController::class, 'loginview']);
 Route::get('/parentdashboard',[GuardianController::class, 'parentDashboard'])->name('parentdashboard'); 
 Route::get('/feestructures',[GuardianController::class, 'feeStructure'])->name('parent.feestructure');
 Route::post('/parentlogin',[GuardianController::class, 'loginParent'])->name('parent.login');
-Route::get('/profile',[GuardianController::class, 'parentProfile'])->name('parent.profile');
+Route::get('/parentprofile',[GuardianController::class, 'parentProfile'])->name('parent.profile');
 Route::get('/messaging',[GuardianController::class, 'messaging'])->name('parent.messaging');
 Route::get('/fee-payment',[GuardianController::class, 'feePayment']);
 Route::get('/studentdetails/{stuid}',[GuardianController::class, 'studentDetails']);
 Route::get('/fee-history/{stuid}',[GuardianController::class, 'feeHistory']);
 Route::get('/my-messaging',[GuardianController::class, 'myMessages'])->name('parent.mymessages');
-Route::get('/noticeboard',[GuardianController::class, 'noticeBoard'])->name('parent.noticeboard');
-Route::get('/notifications',[GuardianController::class, 'notifications'])->name('parent.notifications');
+Route::get('/parentnoticeboard',[GuardianController::class, 'noticeBoard'])->name('parent.noticeboard');
+Route::get('/parentnotifications',[GuardianController::class, 'notifications'])->name('parent.notifications');
 Route::get('/cbc-student-perfomance/{stuid}/{aid}',[GuardianController::class, 'cbcstudentPerfomance']);
 Route::get('/student-perfomance/{stuid}/{eid}',[GuardianController::class, 'studentPerfomance']);
 Route::get('/subject-perfomance/{stuid}/{subid}',[GuardianController::class, 'subjectPerfomance']);
-Route::post('/updateprofilepic',[GuardianController::class,'updateprofilepic'])->name('parent.updatepic');
+Route::post('/parentupdateprofilepic',[GuardianController::class,'updateprofilepic'])->name('parent.updatepic');
 Route::post('/updatestaffaccountDetails',[GuardianController::class,'updateprofileDetails'])->name('parent.accountdeatails');
-Route::post('/updatepassword',[GuardianController::class,'updatePassword'])->name('parent.updatepassword');
+Route::post('/parentupdatepassword',[GuardianController::class,'updatePassword'])->name('parent.updatepassword');
 /*Parent Account Routes end*/
 
 /*Student Account Routes start*/
@@ -341,6 +352,8 @@ Route::get('/noticeboard',[StudentController::class, 'noticeBoard'])->name('stud
 Route::get('/my-subjects',[StudentController::class, 'mySubjects']);
 Route::get('/school-resources',[StudentController::class, 'schoolResources']);
 Route::get('/my-perfomance',[StudentController::class, 'myPerfomance']);
+Route::get('/my-assessment-perfomance/{stuid}/{aid}',[StudentController::class, 'cbcstudentPerfomance']);
+Route::get('/my-examination-perfomance/{stuid}/{eid}',[StudentController::class, 'studentPerfomance']);
 Route::get('/my-subject-perfomance/{stuid}/{subid}',[StudentController::class, 'subjectPerfomance']);
 Route::post('/studentlogin',[StudentController::class, 'loginStudent'])->name('student.login');
 Route::post('/studentresetpassword',[StudentController::class, 'studentresetPassword']);

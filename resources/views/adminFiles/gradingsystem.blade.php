@@ -1502,7 +1502,7 @@
                 method: 'GET',
                 url: `/fetchclasses2/${sid}/${etype}`,
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     if (res.classes.length == 0) {
                         $('#class').text('Sorry!There are no classes added recently')
                     } else {
@@ -1587,7 +1587,7 @@
                 processData: false,
                //dataType: 'json',
                success: function(res){
-                console.log(res.grades)
+                //console.log(res.grades)
                 $.each(res.grades, function(key,item){
                    $('#upminA').val(item.minA)
                    $('#upminA_minus').val(item.minA_minus)
@@ -1646,7 +1646,7 @@
                //dataType: 'json',
                success: function(res){
                 $('.loader').addClass('d-none');
-                console.log(res)
+                //console.log(res)
                   if (res.status == 400) {
                     showError('subject1', res.messages.subject);
                     showError('class', res.messages.class);
@@ -1969,7 +1969,7 @@
                //dataType: 'json',
                success: function(res){
                 $('.loader').addClass('d-none');
-                console.log(res)
+                //console.log(res)
                   if (res.status == 400) {
                     showError('class', res.messages.class);
                     showError('gradingtype', res.messages.gradingtype);
@@ -2051,7 +2051,7 @@
                //dataType: 'json',
                success: function(res){
                 $('.loader').addClass('d-none');
-                console.log(res)
+                //console.log(res)
                   if (res.status == 400) {
                     showError('overallclass', res.messages.class);
                     showError('gradingtype2', res.messages.gradingtype);
@@ -2148,7 +2148,7 @@
                //dataType: 'json',
                success: function(res){
                 $('.loader').addClass('d-none');
-                console.log(res)
+                //console.log(res)
                   if (res.status == 400) {
                     showError('subject1', res.messages.subject);
                     showError('class', res.messages.class);

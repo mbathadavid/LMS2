@@ -1255,7 +1255,7 @@
                 processData: false,
                //dataType: 'json',
                success: function(res){
-                console.log(res)
+                //console.log(res)
                 $('#subid').val(res.subjectdetails.id)
                 $('#subname').val(res.subjectdetails.subject)
                 $('#subtoedit').text(res.subjectdetails.subject.toUpperCase())

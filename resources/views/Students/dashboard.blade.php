@@ -30,9 +30,15 @@
     </div>
     <div class="col-lg-4 col-md-4 col-sm-10">
        <h6 class="text-center text-danger"><u><b>Parent Details</b></u></h6>
-       <p class="text-center">Parent's Name : <span class="text-success"><b>{{ explode(',',session()->get('LoggedInUser.parentinfo'))[0] }} {{ explode(',',session()->get('LoggedInUser.parentinfo'))[1] }}</b></span></p> 
-       <p class="text-center">Parent's Phone : <span class="text-success"><b>{{ explode(',',session()->get('LoggedInUser.parentinfo'))[2] }}</b></span></p> 
-       <p class="text-center">Parent's Email : <span class="text-success"><b>{{ explode(',',session()->get('LoggedInUser.parentinfo'))[3] }}</b></span></p> 
+        @if (session()->get('LoggedInUser.parentinfo') == NULL)
+        <p class="text-center">Parent has not yet been registered</p>
+        @else
+        <p class="text-center">Parent's Name : <span class="text-success"><b>{{ explode(',',session()->get('LoggedInUser.parentinfo'))[0] }} {{ explode(',',session()->get('LoggedInUser.parentinfo'))[1] }}</b></span></p> 
+        <p class="text-center">Parent's Phone : <span class="text-success"><b>{{ explode(',',session()->get('LoggedInUser.parentinfo'))[2] }}</b></span></p> 
+        <p class="text-center">Parent's Email : <span class="text-success"><b>{{ explode(',',session()->get('LoggedInUser.parentinfo'))[3] }}</b></span></p> 
+        @endif
+
+      
     </div>
 </div>
 <hr>

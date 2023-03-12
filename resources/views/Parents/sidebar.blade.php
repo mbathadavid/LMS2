@@ -8,14 +8,16 @@
   <!-- <img src="{{ asset('images/$schoolinfo->logo') }}" class=" img-fluid img-thumbnail" alt=""> -->
 </div>
 
+<div class="text-center w3-red p-2"><b>Parent Portal</b></div>
+
 <div class="card-body">
     <div class="sidenavlinks">
     <a href="/parentdashboard" class="text-decoration-none fs-5"><i class="fa fa-home"></i>&nbsp;My Students <span class="badge w3-yellow">{{ count($fnames) }}</span></a>
     <a href="{{ route('parent.profile') }}" class="text-decoration-none fs-5"><i class="fas fa-user-tie"></i>&nbsp;Profile</a>
 
-    <!-- <a href="/communications" class="text-decoration-none fs-5"><i class="fas fa-sms"></i>&nbsp;Communicate</a> -->
+    <!-- <a href="/communications" parent.profile parent.notifications parent.noticeboard class="text-decoration-none fs-5"><i class="fas fa-sms"></i>&nbsp;Communicate</a> -->
     <a href="{{ route('parent.feestructure') }}" class="text-decoration-none fs-5"><i class="fas fa-print"></i>&nbsp;Fee Structures</a>
-    <a href="{{ route('parent.notifications') }}" class="text-decoration-none fs-5"><i class="fas fa-bell"></i>&nbsp;Notifications <span class="badge w3-red">{{ count($notifications) }}</span></a>
+    <a href="/parentnotifications" class="text-decoration-none fs-5"><i class="fas fa-bell"></i>&nbsp;Notifications <span class="badge w3-red">{{ count($notifications) }}</span></a>
 
     <button class="communicatebtn outline-none fs-5">
     <i class="fas fa-sms"></i>&nbsp;Communications
@@ -23,7 +25,7 @@
     </button>
     <div id="commsdropdown" class="commsdropdown d-none w3-animate-top">
       <a href="{{ route('parent.messaging') }}" class="text-decoration-none fs-6"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send Message to School</a>
-      <a href="{{ route('parent.noticeboard') }}" class="text-decoration-none fs-6"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Notice Board <span class="badge w3-red">{{ count($notices) }}</span></a>
+      <a href="/parentnoticeboard" class="text-decoration-none fs-6"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Notice Board <span class="badge w3-red">{{ count($notices) }}</span></a>
       <a href="{{ route('parent.mymessages') }}" class="text-decoration-none fs-6"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;My Send Messages <span class="badge w3-green">{{ count($mymessages) }}</span></a>
     </div>
 

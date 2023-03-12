@@ -24,6 +24,8 @@ class CreateStudentsTable extends Migration
             $table->string('UPI')->nullable();
             $table->string('StudentId')->nullable();
             $table->string('schoolsystem');
+            $table->string('schoolingtype')->nullable();
+            $table->string('assignedhostel')->nullable();
             $table->integer('KCPE_marks')->nullable();
             $table->string('current_class');
             $table->Integer('current_classid');

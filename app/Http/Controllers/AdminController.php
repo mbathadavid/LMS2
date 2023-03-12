@@ -16,6 +16,8 @@ use App\Models\cbcmarks;
 use App\Models\School;
 use App\Models\Guardian;
 use App\Models\Staff;
+use App\Models\feepayment;
+use App\Models\expenses;
 use App\Models\School_Data;
 use App\Models\ResultThread;
 use App\Models\notifications;
@@ -94,6 +96,7 @@ class AdminController extends Controller
             $admin->phone = $request->phone;
             $username = $request->phone.'@'.$request->school;
             $admin->username = $username;
+            $admin->priviledges = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15';
             $admin->password = Hash::make('password123');
             $admin->save();
 
@@ -320,12 +323,31 @@ class AdminController extends Controller
                                 ->where('Status','In Store')
                                 ->get();
 
-            
+            $resultthreads = ResultThread::where('sid',$sid)
+                                ->get();
+
+            $cbcassessments = cbcassessment::where('sid',$sid)
+                                ->get();
+
+            $pendingbalances = [];
+            $currenttermbalances = [];
+            $overallbalances = [];
+
+            foreach ($totalstudents as $key => $student) {
+                array_push($pendingbalances,$student->pendingbalances);
+                array_push($currenttermbalances,$student->feebalance);
+                array_push($overallbalances,$student->ovbalance);
+            }
             
             $data = [
                 'adminInfo' => $admininfo,
                 'schoolinfo' => $schoolinfo,
                 'sid' => $sid,
+                'pendingbalances' => array_sum($pendingbalances),
+                'currenttermbalances' => array_sum($currenttermbalances),
+                'overallbalances' => array_sum($overallbalances),
+                'resultthreads' => count($resultthreads),
+                'cbcassessments' => count($cbcassessments),
                 'books' => count($books),
                 'borrowedbooks' => count($borrowedbooks),
                 'instorebooks' => count($instorebooks),
@@ -640,6 +662,7 @@ public function clubs(){
         return redirect('/adminlogin');
     }
 }
+
 //function for returning classes
 public function classes(){
     if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
@@ -654,6 +677,22 @@ public function classes(){
         return redirect('/adminlogin');
     }
 }
+
+//function for returning classes
+public function hostels(){
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = DB::table('school__data')->max('id');
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first()
+        ];
+    
+        return view('adminFiles.domitories',$data);   
+    } else {
+        return redirect('/adminlogin');
+    }
+}
+
 //function for returning departments
 public function departments(){
     if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
@@ -700,9 +739,27 @@ public function feeStructure(){
 public function feeCollection(){
     if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
         $maxid = DB::table('school__data')->max('id');
+        $sid = session()->get('schooldetails.id');
+        $totalstudents = Student::where('sid',$sid)
+                                    ->get();
+
+        $pendingbalances = [];
+        $currenttermbalances = [];
+        $overallbalances = [];
+                        
+        foreach ($totalstudents as $key => $student) {
+            array_push($pendingbalances,$student->pendingbalances);
+            array_push($currenttermbalances,$student->feebalance);
+            array_push($overallbalances,$student->ovbalance);
+        }
+                                    
+
         $data = [
             'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
-            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first()
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'pendingbalances' => array_sum($pendingbalances),
+            'currenttermbalances' => array_sum($currenttermbalances),
+            'overallbalances' => array_sum($overallbalances),
         ];
     
         return view('adminFiles.collectfee',$data);   
@@ -714,9 +771,29 @@ public function feeCollection(){
 public function financialReport(){
     if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
         $maxid = DB::table('school__data')->max('id');
+        $sid = session()->get('schooldetails.id');
+        $expenses = expenses::where('sid',$sid)
+                      ->get();
+
+        $feepayments = feepayment::where('sid',$sid)
+                      ->get();
+
+        $actualexpenses = [];
+        $actualpayments = [];
+
+        foreach ($expenses as $key => $expense) {
+            array_push($actualexpenses,$expense->amount);
+        }
+
+        foreach ($feepayments as $key => $feepayment) {
+            array_push($actualpayments,$feepayment->amountpayed);
+        }
+
         $data = [
             'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
-            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first()
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'actualexpenses' => array_sum($actualexpenses),
+            'actualpayments' => array_sum($actualpayments)
         ];
 
         return view('adminFiles.finreport',$data);    

@@ -177,7 +177,7 @@ $(document).ready(function(){
                             html += '<tr>';
                             html += '<td>'+item.Assessment+'</td>';
                             html += '<td>'+item.Type+'</td>';
-                            html += '<td><a class="btn btn-sm btn-success" href="/cbc-student-perfomance/{{ $student["id"] }}/'+item.id+'">Analyze</a></td>';
+                            html += '<td><a class="btn btn-sm btn-success" href="/my-assessment-perfomance/{{ $student["id"] }}/'+item.id+'">Analyze</a></td>';
                             html += '</tr>';
 
                             $("#cbcperfomancetable").append(html);
@@ -210,7 +210,7 @@ $(document).ready(function(){
                       html += '<td>'+res.grades[i]+'</td>';
                       html += '<td>'+res.ovpositions[i]+'</td>';
                       html += '<td>'+res.strpositions[i]+'</td>';
-                      html += '<td><a class="btn btn-sm btn-danger" href="/student-perfomance/{{ $student["id"] }}/'+res.threadids[i]+'">Analyze</a></td>';
+                      html += '<td><a class="btn btn-sm btn-danger" href="/my-examination-perfomance/{{ $student["id"] }}/'+res.threadids[i]+'">Analyze</a></td>';
                       html += '</tr>';
 
                       $("#perfomancetable").append(html);

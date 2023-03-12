@@ -8,6 +8,8 @@
   <!-- <img src="{{ asset('images/$schoolinfo->logo') }}" class=" img-fluid img-thumbnail" alt=""> -->
 </div>
 
+<div class="text-center w3-red p-2"><b>Student Portal</b></div>
+
 <div class="card-body">
     <div class="sidenavlinks">
     <a href="/studentdashboard" class="text-decoration-none fs-5"><i class="fa fa-home"></i>&nbsp;Dashboard</a>

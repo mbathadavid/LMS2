@@ -338,7 +338,7 @@
                data: formData,
                //dataType: 'json',
                success: function(res){
-                   console.log(res)
+                   //console.log(res)
                    if (res.status == 400) {
                     $('#submiteditclass').val('EDIT CLASS');
                     showError('editclass', res.messages.editclass);
@@ -392,7 +392,7 @@
                 method: 'GET',
                 url: `/fetchclasses/${sid}`,
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     if (res.classes.length == 0) {
                         $('tbody').html('<h5 class="text-danger">There are no classes registered yet</h5>')
                     } else {
@@ -428,7 +428,7 @@
                 url: `/classteacher/${sid}/${utype}`,
                 //dataType: 'jsons',
                 success: function(res) {
-                    console.log(res.teachers);
+                    //console.log(res.teachers);
                     if (res.teachers == 0) {
                         $("#teachers").html('')
                         $('#teachers').html('No Teachers registered yet')
@@ -470,7 +470,7 @@
                 method: 'GET',
                 url: '/fetchexams',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                     if (res.exams.length == 0) {
                         $('#classtocompre').text('Sorry!There are no classes added recently')
                     } else {
@@ -607,7 +607,7 @@
          $('.resultscomputation').addClass('d-none');
      })
 
-        //Book deleting ajax
+    //Class deleting ajax
      $(document).on('click', '#classdeletebtn',function(e){
          e.preventDefault();
          var ids = []
@@ -627,7 +627,7 @@
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fecthclasses()
                     $('#response').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');

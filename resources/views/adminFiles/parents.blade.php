@@ -773,7 +773,7 @@ $(document).on('click', '#delbtn',function(e){
                 processData: false,
                 //dataType: 'json',
                 success: function(res){
-                    console.log(res)
+                    //console.log(res)
                    if (res.status == 200) {
                     fetchparents();
                     fecthclasses();

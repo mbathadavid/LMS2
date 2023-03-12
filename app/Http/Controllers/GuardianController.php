@@ -464,7 +464,7 @@ class GuardianController extends Controller
     }
 
     //Function to return profile page
-    public function parentProfile(){
+    public function parentProfile() {
         if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
             $maxid = session()->get('schooldetails.id');
 
@@ -475,53 +475,53 @@ class GuardianController extends Controller
                         ->orderByDesc('id')
                         ->get();
     
-        $uid = session()->get('LoggedInUser.id');
-    
-        $notifications = notifications::where('sid',$maxid)
-                        ->where('type','noticeboard')
-                        ->orWhere('toberecievedby',$uid)
-                        ->where('deleted',0)
-                        ->orderByDesc('id')
-                        ->get();
-    
-        $mymessages = notifications::where('sid',$maxid)
-                                    ->where('type','parentmessage')
-                                    ->where('uid',$uid)
-                                    ->where('deleted',0)
-                                    ->get();
-                        
-        $parentstudents = Guardian::find($uid);
-                                
-        $fnames = [];
-        $lnames = [];
-        $profiles = [];
-        $classes = [];
-        $ids = [];
-                                
-        for ($i=0; $i < count(explode(",",$parentstudents['Students'])); $i++) { 
-            $student = Student::where('UPI',explode(",",$parentstudents['Students'])[$i])
-                              ->orwhere('AdmissionNo',explode(",",$parentstudents['Students'])[$i])
-                              ->get();
-            array_push($fnames,$student[0]['Fname']);
-            array_push($lnames,$student[0]['Lname']);
-            array_push($profiles,$student[0]['profile']);
-            array_push($classes,$student[0]['current_class']);
-            array_push($ids,$student[0]['id']);
+            $uid = session()->get('LoggedInUser.id');
+        
+            $notifications = notifications::where('sid',$maxid)
+                            ->where('type','noticeboard')
+                            ->orWhere('toberecievedby',$uid)
+                            ->where('deleted',0)
+                            ->orderByDesc('id')
+                            ->get();
+        
+            $mymessages = notifications::where('sid',$maxid)
+                                        ->where('type','parentmessage')
+                                        ->where('uid',$uid)
+                                        ->where('deleted',0)
+                                        ->get();
+                            
+            $parentstudents = Guardian::find($uid);
+                                    
+            $fnames = [];
+            $lnames = [];
+            $profiles = [];
+            $classes = [];
+            $ids = [];
+                                    
+            for ($i=0; $i < count(explode(",",$parentstudents['Students'])); $i++) { 
+                $student = Student::where('UPI',explode(",",$parentstudents['Students'])[$i])
+                                ->orwhere('AdmissionNo',explode(",",$parentstudents['Students'])[$i])
+                                ->get();
+                array_push($fnames,$student[0]['Fname']);
+                array_push($lnames,$student[0]['Lname']);
+                array_push($profiles,$student[0]['profile']);
+                array_push($classes,$student[0]['current_class']);
+                array_push($ids,$student[0]['id']);
+                }
+        
+                $data = [
+                    'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+                    'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+                    'notices' => $notices,
+                    'fnames' => $fnames,
+                    'mymessages' => $mymessages,
+                    'notifications' => $notifications
+                ];
+        
+                return view('Parents.profile',$data);
+            } else {
+                return redirect('/parentlogin');
             }
-    
-            $data = [
-                'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
-                'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
-                'notices' => $notices,
-                'fnames' => $fnames,
-                'mymessages' => $mymessages,
-                'notifications' => $notifications
-            ];
-    
-            return view('Parents.profile',$data);
-        } else {
-            return redirect('/parentlogin');
-        }
         //$maxid = DB::table('school__data')->max('id');
     }
 

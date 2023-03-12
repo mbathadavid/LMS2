@@ -33,7 +33,7 @@
     @yield('content')
     </main>
 
-    <div class="scrolling-text"><h6 class="text-danger">For Technical Support or Queries Call/SMS/WhatsApp <b class="w3-green p-1">0748269865/0792801096</b> or Send an Email to <b class="w3-green p-1">info@shuleyetu.co.ke</b></h6></div>
+    <div class="scrolling-text w3-grey"><h6 id="actaulscrolltext" class="m-1">For Technical Support or any other Queries Call/SMS/WhatsApp <b class="text-danger">0748269865/0792801096</b> or Send an Email to <b class="text-danger">info@shuleyetu.co.ke</b></h6></div>
     <!--
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -78,6 +78,12 @@
             $('#libdropdown').toggleClass('d-none');
             $('#libicon').toggleClass('d-none');
             $('#libiconup').toggleClass('d-none');
+        })
+        $('.facilitiesbtn').click(function(e){
+            e.preventDefault();
+            $('#facilitiesdropdown').toggleClass('d-none');
+            $('#facilitiesicon').toggleClass('d-none');
+            $('#facilitiesiconup').toggleClass('d-none');
         })
         $('.academicbtn').click(function(e){
             e.preventDefault();

@@ -518,7 +518,7 @@ $(document).ready(function(){
               data: formData,
               success: function(res){
                 //$('#subject1').text('');
-                  console.log(res)
+                  //console.log(res)
                 if (res.status == 400) {
                     showError('maxscoreset', res.messages.maxscoreset);
                     showError('subjectdiv', res.messages.subjectno);

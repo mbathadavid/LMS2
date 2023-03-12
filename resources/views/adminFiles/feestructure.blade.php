@@ -34,6 +34,14 @@
             <input type="number" value="{{ session()->get('schooldetails.id') }}" name="sid" id="sid" hidden>
             <input type="number" value="{{ session()->get('LoggedInUser.id') }}" name="uid" id="uid" hidden>
             <div class="form-group mb-2">
+                <label for="">Select Category</label>
+                <select name="category" id="category" class="form-control">
+                    <option value="">Select Category</option>
+                    <option value="Boarding">Boarding</option>
+                    <option value="Day Schooling">Day Schooling</option> 
+                </select>
+            </div>
+            <div class="form-group mb-2">
                 <label for="">Select Term</label>
                 <select name="term" id="term" class="form-control">
                     <option value="">Select Term</option>
@@ -159,6 +167,13 @@
                 <input readonly type="text" name="editclassname" id="editclassname" class="form-control">
             </div>
             <div class="form-group mb-2">
+                <select readonly name="editcategory" id="editcategory" class="form-control">
+                    <option id="editcategoryval"></option>
+                    <option value="Boarding">Boarding</option>
+                    <option value="Day Schooling">Day Schooling</option> 
+                </select>
+            </div>
+            <div class="form-group mb-2">
                 <select readonly name="term" id="term2" class="form-control">
                     <option id="editterm"></option>
                     <option value="TERM ONE">TERM ONE</option>
@@ -202,7 +217,8 @@
         <thead>
             <tr>
             <th scope="col">Select</th>
-            <th scope="col">Term</th> 
+            <th scope="col">Term</th>
+            <th scope="col">Category</th> 
             <th scope="col">Classes</th>
             <th scope="col">Modules</th>
             <th scope="col">Amounts</th>
@@ -364,6 +380,7 @@
                     showError('term', res.messages.term);
                     showError('module', res.messages.modules);
                     showError('amount', res.messages.amounts);
+                    showError('category', res.messages.category);
                     $('#missingclassalert').removeClass('d-none');
                     $('#missingclassalert').text(res.messages.classes);
                 }
@@ -445,6 +462,7 @@
                             $('#feestructures').append('<tr>\
                             <td><input value="'+item.id+'" type="checkbox" class="checkboxid" name="" id="feeselectbox"></td>\
                             <td>'+item.Term+'</td>\
+                            <td>'+item.Category+'</td>\
                             <td>'+(item.classnames)+'</td>\
                             <td id="modules" class="text-danger">'+item.modules.split(',')+'</td>\
                             <td>'+item.amounts+'</td>\
@@ -488,7 +506,7 @@
                 //console.log(res)
                 filename = `${res.feestructure.classnames}`;
 
-                $("#fclass").text(res.feestructure.classnames)
+                $("#fclass").text(res.feestructure.classnames+' ('+res.feestructure.Category+')')
                 $("#viewFeetrstructureModal").modal('show')   
                 
                 var items = res.feestructure.modules.split(",");
@@ -572,6 +590,8 @@
                     //console.log(res)
                     $("#editterm").val(res.feestructure.Term);
                     $("#editterm").text(res.feestructure.Term);
+                    $("#editcategoryval").val(res.feestructure.Category);
+                    $("#editcategoryval").text(res.feestructure.Category);
                     $("#fid").val(res.feestructure.id);
                     $("#editclassname").val(res.feestructure.classnames);
                     $("#cid").val(res.feestructure.classes);

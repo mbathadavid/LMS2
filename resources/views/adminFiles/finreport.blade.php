@@ -16,7 +16,53 @@
 </div>
 <div id="main" class="maincontent">
 @include('adminFiles.topnav')
-<h6 class="text-danger">Financial Reports Generator</h6>
+<div class="row justify-content-center mb-2">
+<div class="col-lg-6 col-md-6 col-sm-6">
+<div class="w3-green p-2">
+<h6 class="text-center">Total Collected Fee</h6>
+<h6 class="text-center">KSH. <b>{{ $actualpayments }}</b></h6>
+</div>
+</div>
+<div class="col-lg-6 col-md-6 col-sm-6">
+<div class="w3-green p-2">
+<h6 class="text-center">Total Recored Expenditure</h6>
+<h6 class="text-center">KSH. <b>{{ $actualexpenses }}</b></h6>  
+</div>   
+</div>
+<hr>
+
+<div class="row justify-content-center mb-2">
+<div class="col-lg-6 col-md-8 col-sm-10">
+<form action="#" method="post" id="expensefeeform">
+    <h6 class="text-center">Select time period from below here to compare amount expenses and fee collected</h6>
+        <input type="number" name="sid" value="{{ session()->get('schooldetails.id') }}" id="sid" hidden>
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-6 col-md-8 col-sm-12">
+                  <div class="form-group mb-2">
+                    <label for=""><b>From Date</b></label>
+                    <input type="date" name="expensefeestartdate" id="expensefeestartdate" class="form-control">
+                 <div class="invalid-feedback"></div>  
+                </div>
+                </div>
+
+                <div class="col-lg-6 col-md-8 col-sm-12">
+                 <div class="form-group mb-2">
+                    <label for=""><b>To Date</b></label>
+                    <input type="date" name="expensefeetodate" id="expensefeetodate" class="form-control">
+                    <div class="invalid-feedback"></div> 
+                 </div>  
+                </div>
+            </div>
+            <button type="submit" class="btn btn-sm w3-green form-control">COMPARE EXPENSES TO FEE COLLETED</button>
+        </form>
+        <div id="feeexpense" class="w3-grey p-3 mt-2 d-none">
+            <h5 class="text-center" id="periodstate"></h5>
+            <h6 class="text-center">Fee Collected : KSH.<span id="feecoll"></span></h6>
+            <h6 class="text-center">Expenditures : KSH. <span id="expenserec"></span></h6>
+        </div>
+</div>   
+</div>
+<hr>
 
 <!--Fee Payment Financial Report Start--->
 <div id="feereport" class="w3-animate-left d-none">
@@ -263,6 +309,35 @@ $("#expensereportselect").change(function(e){
             $(this).prop("disabled",false);
         })
     }   
+})
+
+//Generate Fee Payment Report Form Submit
+$("#expensefeeform").submit(function(e){
+    e.preventDefault();
+    removeValidationClasses($('#expensefeeform'))
+    var formdata = new FormData($(this)[0]);
+        $.ajax({
+            method: 'POST',
+            url: '/comparefeetoexpenses',
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            data: formdata,
+            success: function(res) {
+                //console.log(res);
+                if (res.status == 400) {
+                    showError('expensefeestartdate',res.messages.expensefeestartdate);
+                    showError('expensefeetodate',res.messages.expensefeetodate);
+                } else if (res.status == 200) {
+                    $('#feeexpense').removeClass('d-none');
+                    $('#periodstate').text(`Fee Collected Compared to Expenditure from ${res.from} to ${res.to}`);
+                    $('#feecoll').text('');
+                    $('#expenserec').text('');
+                    $('#feecoll').text(res.totalfeepayed);
+                    $('#expenserec').text(res.totalexpenses);
+                }
+                }
+         })
 })
 
 //Generate Fee Payment Report Form Submit
