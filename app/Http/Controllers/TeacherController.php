@@ -23,8 +23,8 @@ class TeacherController extends Controller
         'salutation' => 'required',
         'firstname' => 'required',
         'lastname' => 'required',
-        'phone' => 'required|unique:staff',
-        'email' => 'email|unique:staff',
+        'phone' => 'required',
+        'email' => 'email',
         'position' => 'required',
         'gender' => 'required',
         'file' => 'image'
@@ -36,6 +36,17 @@ class TeacherController extends Controller
                'messages' => $validator->getMessageBag()
            ]);
        } else {
+
+        $checkteacher = Staff::where('sid',$request->sid)
+                             ->where('Phone',$request->phone)
+                             ->get();
+
+        if (count($checkteacher)) {
+            return response()->json([
+                'status' => 401,
+                'messages' => 'This number has already been registered for another staff member'
+            ]);
+        } else {
            $teacher = new Staff;
            $teacher->sid = $request->sid;
            $teacher->salutation = $request->salutation;
@@ -47,6 +58,19 @@ class TeacherController extends Controller
            $teacher->Role = $request->role;
            $teacher->Email = $request->email;
            $teacher->Phone = $request->phone;
+
+           if ($request->tscnumber) {
+                $teacher->TscNumber = $request->tscnumber;
+           }
+
+           if ($request->nssf) {
+                $teacher->NSSF = $request->nssf;
+           }
+
+           if ($request->nhif) {
+                $teacher->NHIF = $request->nhif;
+           }
+        
            $username = $request->phone.'@'.$maxid;
            $teacher->username = $username;
            $teacher->password = Hash::make('password123');
@@ -101,7 +125,7 @@ class TeacherController extends Controller
                'messages' => $request->role."'s records registered successfully. They can use their Phone Number Or Email and Password as password123", 
            ]);
        }
-       
+    } 
     }
     //fetch teachers
     public function fetchteachers($sid,$uid,$stype){
@@ -236,6 +260,9 @@ class TeacherController extends Controller
                $teacher->Position = $request->editposition;
                $teacher->Email = $request->editemail;
                $teacher->Phone = $request->editpno;
+               $teacher->TscNumber = $request->edittsc;
+               $teacher->NHIF = $request->editnhif;
+               $teacher->NSSF = $request->editnssf;
                $teacher->username = $request->editpno.'@'.$maxid;
                //$teacher->password = 'password123';
                            

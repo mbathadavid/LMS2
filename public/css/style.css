@@ -96,16 +96,42 @@
     letter-spacing: 4px;
     padding: 2px; 
 }
-#studentmgmtol,#staffmgmtol,#academicmgmtol,#financemgmtol,#communicationmgmtol,#librarymgmtol,#parentmgmtol {
+#studentmgmtol,#staffmgmtol,#academicmgmtol,#financemgmtol,#communicationmgmtol,#perfomanceanalysismgmtol,#librarymgmtol,#parentmgmtol {
     background-color: white;
     display: none;
 }
-#studentmgmtol,#staffmgmtol,#academicmgmtol,#financemgmtol,#communicationmgmtol,#librarymgmtol,#parentmgmtol li {
+#studentmgmtol,#staffmgmtol,#academicmgmtol,#financemgmtol,#communicationmgmtol,#perfomanceanalysismgmtol,#librarymgmtol,#parentmgmtol li {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     letter-spacing: 1px;
 }
-#modulesservices {
-    background-color: #ccffcc;
+#modules {
+    background-color: #c5f5c5;
+}
+/* #modulesservices {
+    display: flex;
+    flex-wrap: wrap;
+} */
+#module {
+
+}
+#resultslipdiv {
+    background-color: grey;
+    padding: 6px;
+}
+#theresultslip {
+    background-color: white;
+    padding: 5px;
+}
+#resultsliplogo {
+    max-height: 150px;
+    max-width: 150px;
+}
+#classteacherremarks {
+    font-weight: bold;
+    color: black;
+}
+#faqs {
+    background-color: white;
 }
 .realexplanation {
     border-left: 5px solid #00cc99;

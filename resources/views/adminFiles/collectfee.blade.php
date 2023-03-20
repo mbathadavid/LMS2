@@ -142,9 +142,18 @@
     <button id="downloadfeepaymentreceipt" class="btn w3-red btn-sm mb-1"><i class="fas fa-file-pdf"></i>&nbsp;DOWNLOAD</button>
     <button id="printfeepaymentreceipt" class="btn w3-green btn-sm mb-1"><i class="fas fa-print"></i>&nbsp;PRINT</button>
 <div id="innerreceiptdiv">
-    <h5 class="text-center text-danger">{{ session()->get('schooldetails.name') }}</h5>
+<div class="row justify-content-center align-items-center">
+    <h6 class="text-center text-success">{{ session()->get('schooldetails.name') }}</h6>
+    <div id="resultsliplogo">
+        <img src="{{ asset('images/' . session()->get('schooldetails.logo')) }}" class=" img-fluid" alt="">
+    </div>
+    <h6 class="text-center">{{ session()->get('schooldetails.motto') }}</h6>
+    <h6 class="text-center">{{ session()->get('schooldetails.pobox') }} {{ session()->get('schooldetails.town') }}, {{ session()->get('schooldetails.phone') }}</h6>
+</div>
+
+    <!-- <h5 class="text-center text-danger">{{ session()->get('schooldetails.name') }}</h5>
     <h6 class="text-center text-success">{{ session()->get('schooldetails.motto') }}</h6>
-    <h6 class="text-center text-info">{{ session()->get('schooldetails.pobox') }} {{ session()->get('schooldetails.town') }}, {{ session()->get('schooldetails.phone') }}</h6>
+    <h6 class="text-center text-info">{{ session()->get('schooldetails.pobox') }} {{ session()->get('schooldetails.town') }}, {{ session()->get('schooldetails.phone') }}</h6> -->
     <hr>
     <h5 class="text-center">FEE PAYMENT RECEIPT</h5>
     <h6>Student Name: <span class="text-success" id="stufeepaymentname"></span></h6>
@@ -156,7 +165,7 @@
     <h6 class="">Initial Pending Balance <span class="text-danger" id="initialpbalance"></span>/=</h6>
     <h6 class="">Initial Current Term Balance <span class="text-danger" id="initialcbalance"></span>/=</h6>
     <h6 class="">Initial Overall Balance <span class="text-danger" id="initialovbalance"></span>/=</h6>
-    <h5 class="text-center">Amount Received <span class="text-danger" id="feeamountreceived"></span>/=</h5>
+    <h5 class="">Amount Received <span class="text-danger" id="feeamountreceived"></span>/=</h5>
     <h6>Current Pending Balance <span class="text-danger" id="afterpaypendingbalance"></span>/=</h6>
     <h6>Current Term Balance <span class="text-danger" id="afterpaytermbalance"></span>/=</h6>
     <h6>Current Overall Balance <span class="text-danger" id="afterpayovbalance"></span>/=</h6>
@@ -276,7 +285,7 @@
         }
         });
 
-        var filename = ""
+        var filename = "";
 
         //Submit Search Student Form
         $('#searchstudent').submit(function(e){

@@ -510,7 +510,7 @@
 <button id="pathwaybtn" class="btn btn-sm w3-indigo m-1">Assign Pathway</button>
 <button id="pathsubbtn" class="btn btn-sm w3-green m-1">Enroll Subjects</button>
 <button id="activatebtn" class="btn btn-sm btn-success m-1">Activate</button>
-<button id="examsbtn" class="btn btn-sm btn-danger m-1">View Results</button>
+<button id="viewperfomance" class="btn btn-sm btn-danger m-1">View Perfomance</button>
 <button id="viewfeesbtn" class="btn btn-sm btn-primary m-1">Fee Payment History</button>
 <button id="viewbtn" class="btn btn-sm btn-info m-1"><i class="fas fa-eye"></i>&nbsp;View</button>
 <button id="editbtn" class="btn btn-sm btn-warning m-1"><i class="fas fa-edit"></i>&nbsp;Edit</button> 
@@ -1417,6 +1417,22 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
             fetchstudent2(ids)
             fecthclasses3()
            $('#studentupdateModal').modal('show'); 
+        }
+     })
+
+     //Student Perfomance
+     $(document).on('click', '#viewperfomance',function(e){
+         e.preventDefault();
+         var ids = []
+         $('#studentcheckbox:checked').each(function(i){
+            ids[i] = $(this).val()
+        })
+        if (ids.length < 1) {
+            alert('Please select a student to view perfomance');
+        } else if(ids.length > 1){
+            alert('You can only view perfomance of one student at a time. Select only one student');
+        } else {
+           window.location = `/studentperfomance/${ids}`;
         }
      })
 

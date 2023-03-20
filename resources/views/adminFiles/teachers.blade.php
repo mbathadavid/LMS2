@@ -27,7 +27,7 @@
     <div class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title text-success text-center" id="teacheraddModalLabel">Support Staff Edit Modal<h5>
+            <h5 class="modal-title text-success text-center" id="teacheraddModalLabel">Teacher Edit Modal<h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -63,8 +63,24 @@
                 <input class="form-control" type="text" name="editlname" id="editlname">
                 <div class="invalid-feedback"></div>
              </div>
+             <div class="form-group mb-2">
+                <label for="">TSC Number</label>
+                <input class="form-control" type="text" name="edittsc" id="edittsc">
+                <div class="invalid-feedback"></div>
+             </div>
+             <div class="form-group mb-2">
+                <label for="">NSSF</label>
+                <input class="form-control" type="text" name="editnssf" id="editnssf">
+                <div class="invalid-feedback"></div>
+             </div>
             </div>
+
             <div class="col-lg-6">
+            <div class="form-group mb-2">
+                <label for="">NHIF</label>
+                <input class="form-control" type="text" name="editnhif" id="editnhif">
+                <div class="invalid-feedback"></div>
+             </div>
             <div class="form-group mb-2">
                 <label for="">Phone Number</label>
                 <input class="form-control" type="text" name="editpno" id="editpno">
@@ -214,23 +230,38 @@
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="">FirstName</label>
+                        <label for="">First Name</label>
                         <input placeholder="First Name" type="text" name="firstname" id="firstname" class="form-control">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="">SecondName</label>
+                        <label for="">Second Name</label>
                         <input placeholder="Second Name" type="text" name="secondname" id="secondname" class="form-control">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-group mb-3">
-                        <label for="">LastName</label>
+                        <label for="">Last Name</label>
                         <input placeholder="Last Name" type="text" name="lastname" id="lastname" class="form-control">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="">TSC Number</label>
+                        <input placeholder="TSC Number" type="text" name="tscnumber" id="tscnumber" class="form-control">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="">NSSF</label>
+                        <input placeholder="NSSF" type="text" name="nssf" id="nssf" class="form-control">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="col-lg-6">
+                <div class="form-group mb-3">
+                        <label for="">NHIF</label>
+                        <input placeholder="NHIF" type="text" name="nhif" id="nhif" class="form-control">
+                        <div class="invalid-feedback"></div>
+                    </div>
                 <div class="form-group mb-3">
                         <label for="">Phone Number</label>
                         <input placeholder="Phone Number" type="tel" name="phone" id="phone" class="form-control">
@@ -435,6 +466,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     //$('#teacherregform').find('input').val('');
                     $('#frame').src = 'images/avatar.png';
                     $("#teacheraddModal").modal('hide'); 
+                   } else if (res.status == 401) {
+                    showError('phone', res.messages);
                    }
                    
                }
@@ -469,8 +502,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     $('#editteachersubmitbtn').val('EDIT TEACHER');
                     $('#regresponse').html('<div class="alert alert-success alert-dismissible w3-animate-zoom show" role="alert"><strong>'+res.messages+'</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>')
                     $('#regresponse').removeClass('d-none');
-                   $('#frame').src = 'images/avatar.png';
-                   $("#teachereditModal").modal('hide'); 
+                    $('#frame').src = 'images/avatar.png';
+                    $("#teachereditModal").modal('hide'); 
                    }
                    
                }
@@ -537,6 +570,9 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     <h6>Email : <span class="text-danger">'+data.Email+'</span></h6>\
                     <h6>Username : <span class="text-danger">'+data.username+'</span></h6>\
                     <h6>Phone : <span class="text-danger">'+data.Phone+'</span></h6>\
+                    <h6>TSC Number : <span class="text-danger">'+(data.TscNumber == null ? 'No TSC Number' : data.TscNumber)+'</span></h6>\
+                    <h6>NHIF : <span class="text-danger">'+(data.NHIF == null ? 'No NHIF' : data.NHIF)+'</span></h6>\
+                    <h6>NSSF : <span class="text-danger">'+(data.NSSF == null ? 'No NSSF' : data.NSSF)+'</span></h6>\
                     ');
                 }                   
                 })
@@ -557,6 +593,9 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     $('#editfname').val(data.Fname);
                     $('#editsname').val(data.Sname);
                     $('#editlname').val(data.Lname);
+                    $('#edittsc').val(data.TscNumber);
+                    $('#editnhif').val(data.NHIF);
+                    $('#editnssf').val(data.NSSF);
                     $('#editpno').val(data.Phone);
                     $('#editemail').val(data.Email);
                     $('#editpositionval').val(data.Position);

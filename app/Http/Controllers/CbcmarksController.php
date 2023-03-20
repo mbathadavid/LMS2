@@ -341,6 +341,8 @@ class CbcmarksController extends Controller
                         ->where('examid',$req->subexamthread)
                         ->get();
 
+        $assessment = cbcassessment::find($req->subexamthread);
+
         foreach ($students as $key => $student) {
             if ($student->AdmissionNo === NULL) {
                 array_push($admupis,$student->UPI);
@@ -377,7 +379,8 @@ class CbcmarksController extends Controller
             'admsubs' => $admsubs,
             'admmarks' => $admmarks,
             'admremarks' => $admremarks,
-            'admmaxscores' => $admmaxscores
+            'admmaxscores' => $admmaxscores,
+            'assessment' => $assessment
         ]);
     } 
 }

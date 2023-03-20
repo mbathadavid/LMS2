@@ -54,8 +54,12 @@ Route::get('/',[AdminController::class, 'landingpage']);
  Route::get('/adminprofile',[AdminController::class, 'profile'])->name('adminprofile');
  Route::get('/performance-analysis',[AdminController::class, 'performanceAnalysis']);
  Route::get('/cbc-assessment-analysis',[AdminController::class, 'cbcperformanceAnalysis']);
- Route::get('//student-reviews',[AdminController::class, 'studentreviewsAnalysis']);
+ Route::get('/student-reviews',[AdminController::class, 'studentreviewsAnalysis']);
  Route::get('/analysis/{class}/{tid}',[AdminController::class, 'classperformanceAnalysis']);
+ Route::get('/student-assessment-perfomance/{stuid}/{aid}',[AdminController::class, 'cbcstudentPerfomance']);
+ Route::get('/student-examination-perfomance/{stuid}/{eid}',[AdminController::class, 'studentPerfomance']);
+ Route::get('/student-subject-perfomance/{stuid}/{subid}',[AdminController::class, 'subjectPerfomance']);
+ Route::get('/studentperfomance/{stuid}',[AdminController::class, 'studentDetails']);
 //  Route::get('/analyze-subject-performance',[AdminController::class, 'analyzeSubjects']);
  Route::get('/analyzesubject/{class}/{sid}/{subid}/{tid}',[AdminController::class, 'analyzeSubjects']);
  Route::get('/subjectstudents',[AdminController::class, 'analyzeSubjects']);
@@ -93,6 +97,8 @@ Route::get('/',[AdminController::class, 'landingpage']);
 
 // communications routes start
 Route::get('/communications',[AdminController::class, 'communucationsview']);
+Route::get('/Fee-Reminders',[AdminController::class, 'feeReminders']);
+Route::get('/Send-Exam-Results',[AdminController::class, 'sendExamResults']);
 Route::get('/notify',[AdminController::class, 'adminnotififyView'])->name('admin.notify');
 Route::get('/staff-noticeboard',[AdminController::class, 'adminnoticeboardView']);
 Route::get('/staff-notifications',[AdminController::class, 'notificationsView']);
@@ -100,6 +106,7 @@ Route::get('/parent-messages',[AdminController::class, 'adminparentmessagesView'
 Route::get('/my-messages',[AdminController::class, 'adminmymessagesView'])->name('admin.mymessages');
 Route::get('/sms-messaging-history',[AdminController::class, 'messagingHistory']);
 Route::post('/sendmessage',[CommunicationsController::class, 'sendMessage'])->name('admin.sendmessage');
+Route::post('/sendfeereminder',[CommunicationsController::class, 'sendfeeReminder']);
 Route::get('/fetchmessaginghistory/{sid}',[CommunicationsController::class, 'fetchsendMessages']);
 // communications routes end
 
@@ -267,6 +274,7 @@ Route::post('/editassessment',[CbcassessmentController::class, 'editAssessment']
 
 /**Marks handling routes */
 Route::post('/addmarks',[MarkController::class, 'addMarks']);
+Route::post('/checkstudentandmarks',[MarkController::class, 'checkstudentMarks']);
 Route::post('/updatemarks',[MarkController::class, 'updateMarks']);
 Route::post('/addmissingmarks',[MarkController::class, 'addmissingMarks']);
 Route::post('/checkmarks',[MarkController::class, 'checkMarks']);

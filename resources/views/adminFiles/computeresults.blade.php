@@ -20,14 +20,15 @@
 @if(count($students) == 0)
 <h6 class="text-center text-success">There are currently no students in <b>{{ $currentclass['class'] }} {{ $currentclass['stream'] }}</b>.Go to <a href="/students"> and promote students to this class.</a></h6>
 @else
-<div class="row border border-success border-2">
+<div class="row border border-success border-2 table-responsive">
     <div class="col-lg-12 d-flex justify-content-space-between align-items-center">
         <h5 class="text-primary bg-info p-1 m-1">{{ $currentexam['Examination'] }}</h5>
         <h5 class="text-danger p-1 m-1">{{ $currentexam['ExamType'] }}</h5>
         <h5 class="text-success bg-info p-1 m-1"> {{ $currentclass['class'] }} {{ $currentclass['stream'] }}</h5>
         <form action="#" method="post" id="subselectform">
             <div class="form-group">
-             <select name="subject" id="subjectdiv" class="form-control">
+             <select style="width: auto;" name="subject" id="subjectdiv" class="form-control">
+                <label for="">Select Subject</label>
                 <option value="">--Select Subject To View/Add Marks--</option>
                     @foreach($subjects as $subject)
                     <option value="{{ $subject->subject }},{{ $subject->id }}">{{ $subject->subject }}</option>
@@ -324,21 +325,21 @@
                         $("#marksviewheading").addClass('d-none');
                         appenddata +='<td><input value="'+item.id+'" type="checkbox" name="enableupdate[]" id="enableupdate"> <span class="text-danger"><b>Edit</b></span></td>';
                         appenddata +='<td><button value="'+item.AdmissionNo+'" class="btn btn-sm w3-red" id="delbtn"><i class="fas fa-trash"></i></button></td>';
-                        appenddata +='<td><input send="send" readonly disabled type="number" value="'+item.AdmissionNo+'" sval2="'+item.id+'" name="viewadmissionnumber[]" id="viewadmissionnumber" id2="updation" class="form-control"></td>';
-                        appenddata +='<td class="d-none"><input send="send" readonly disabled type="number" value="'+res.pids[item.AdmissionNo]+'" sval2="'+item.id+'" name="pkeys[]" id="pkeys" id2="updation" class="form-control"></td>';
-                        appenddata +='<td><input send="send" readonly disabled type="text" value="'+item.Fname+'" sval2="'+item.id+'" name="viewfirstname[]" id="viewfirstname" id2="updation" class="form-control"></td>';
-                        appenddata +='<td><input send="send" readonly disabled type="text" value="'+item.Lname+'" sval2="'+item.id+'" name="viewlname[]" id="viewlname" id2="updation" class="form-control"></td>'; 
-                        appenddata +='<td><input send="send" readonly disabled type="text" value="'+res.admsmarks[item.AdmissionNo]+'" sval="'+item.id+'" name="viewmarks[]" id="viewlname" id2="updation" class="form-control"></td>';
-                        appenddata +='<td><input send="send" readonly disabled type="text" value="'+res.outof.maxscore+'" sval="'+item.id+'" name="viewmaxscore[]" id="viewlname" id2="updation" class="form-control"></td>';  
+                        appenddata +='<td><input style="width: auto;" send="send" readonly disabled type="number" value="'+item.AdmissionNo+'" sval2="'+item.id+'" name="viewadmissionnumber[]" id="viewadmissionnumber" id2="updation" class="form-control"></td>';
+                        appenddata +='<td class="d-none"><input style="width: auto;" send="send" readonly disabled type="number" value="'+res.pids[item.AdmissionNo]+'" sval2="'+item.id+'" name="pkeys[]" id="pkeys" id2="updation" class="form-control"></td>';
+                        appenddata +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+item.Fname+'" sval2="'+item.id+'" name="viewfirstname[]" id="viewfirstname" id2="updation" class="form-control"></td>';
+                        appenddata +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+item.Lname+'" sval2="'+item.id+'" name="viewlname[]" id="viewlname" id2="updation" class="form-control"></td>'; 
+                        appenddata +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+res.admsmarks[item.AdmissionNo]+'" sval="'+item.id+'" name="viewmarks[]" id="viewlname" id2="updation" class="form-control"></td>';
+                        appenddata +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+res.outof.maxscore+'" sval="'+item.id+'" name="viewmaxscore[]" id="viewlname" id2="updation" class="form-control"></td>';  
                   } 
                     else { 
                         $('#withoutmarksadd').removeClass('d-none')
                         appenddata2 +='<td><input value="'+item.id+'" type="checkbox" name="enablemarksinsert[]" id="enablemarksinsert"> <span class="text-success"><b>Add</b></span></td>';
-                        appenddata2 +='<td><input send="send" readonly disabled type="number" value="'+item.AdmissionNo+'" insid2="'+item.id+'" name="enteradmissionnumber[]" id="enteradmissionnumber" class="form-control"></td>';
-                        appenddata2 +='<td><input send="send" readonly disabled type="text" value="'+item.Fname+'" insid2="'+item.id+'" name="enterfirstname[]" id="enterfirstname" class="form-control"></td>';
-                        appenddata2 +='<td><input send="send" readonly disabled type="text" value="'+item.Lname+'" insid2="'+item.id+'" name="enterlname[]" id="enterlname" class="form-control"></td>';
-                        appenddata2 +='<td><input send="send" readonly disabled type="text" value="" insid="'+item.id+'" name="entermarks[]" id="entermarks" class="form-control"></td>';
-                        appenddata2 +='<td><input send="send" readonly disabled type="text" value="'+res.outof.maxscore+'" insid2="'+item.id+'" name="entermaxscore[]" id="entermaxscore" class="form-control"></td>';  
+                        appenddata2 +='<td><input style="width: auto;" send="send" readonly disabled type="number" value="'+item.AdmissionNo+'" insid2="'+item.id+'" name="enteradmissionnumber[]" id="enteradmissionnumber" class="form-control"></td>';
+                        appenddata2 +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+item.Fname+'" insid2="'+item.id+'" name="enterfirstname[]" id="enterfirstname" class="form-control"></td>';
+                        appenddata2 +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+item.Lname+'" insid2="'+item.id+'" name="enterlname[]" id="enterlname" class="form-control"></td>';
+                        appenddata2 +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="" insid="'+item.id+'" name="entermarks[]" id="entermarks" class="form-control"></td>';
+                        appenddata2 +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+res.outof.maxscore+'" insid2="'+item.id+'" name="entermaxscore[]" id="entermaxscore" class="form-control"></td>';  
                     } 
                     appenddata +='</tr>';
                     $("#viewmarkstable").append(appenddata);
@@ -355,10 +356,10 @@
                             var appenddata3 = '';
                             appenddata3 +='<tr id="tablerow" sval="'+item.id+'">';
                             appenddata3 +='<td><input value="'+item.id+'" type="checkbox" name="disable" id="disable"></td>';
-                            appenddata3 +='<td><input send="send" sval="'+item.id+'" readonly type="number" value="'+item.AdmissionNo+'" name="admissionnumber[]" id="admissionnumber" class="form-control admissionnumber"></td>';
-                            appenddata3 +='<td><input send="send" sval="'+item.id+'" readonly type="text" value="'+item.Fname+'" name="firstname[]" id="firstname" class="form-control firstname"></td>';
-                            appenddata3 +='<td><input send="send" sval="'+item.id+'" readonly type="text" value="'+item.Lname+'" name="lname[]" id="lname" class="form-control lname"></td>';
-                            appenddata3 +='<td><div class="form-group"><input send="send" sval="'+item.id+'" type="number" class="form-control maxscored" name="maxscored[]" id="maxscored"><div class="invalid-feedback"></div></div></td>';  
+                            appenddata3 +='<td><input style="width: auto;" send="send" sval="'+item.id+'" readonly type="number" value="'+item.AdmissionNo+'" name="admissionnumber[]" id="admissionnumber" class="form-control admissionnumber"></td>';
+                            appenddata3 +='<td><input style="width: auto;" send="send" sval="'+item.id+'" readonly type="text" value="'+item.Fname+'" name="firstname[]" id="firstname" class="form-control firstname"></td>';
+                            appenddata3 +='<td><input style="width: auto;" send="send" sval="'+item.id+'" readonly type="text" value="'+item.Lname+'" name="lname[]" id="lname" class="form-control lname"></td>';
+                            appenddata3 +='<td><div class="form-group"><input style="width: auto;" send="send" sval="'+item.id+'" type="number" class="form-control maxscored" name="maxscored[]" id="maxscored"><div class="invalid-feedback"></div></div></td>';  
                             appenddata3 +='</tr>';
                             $("#entermarkstbody").append(appenddata3); 
                         })  
@@ -419,10 +420,10 @@
                             var appenddata3 = '';
                             appenddata3 +='<tr id="tablerow" sval="'+item.id+'">';
                             appenddata3 +='<td><input value="'+item.id+'" type="checkbox" name="disable" id="disable"></td>';
-                            appenddata3 +='<td><input send="send" sval="'+item.id+'" readonly type="number" value="'+item.AdmissionNo+'" name="admissionnumber[]" id="admissionnumber" class="form-control admissionnumber"></td>';
-                            appenddata3 +='<td><input send="send" sval="'+item.id+'" readonly type="text" value="'+item.Fname+'" name="firstname[]" id="firstname" class="form-control firstname"></td>';
-                            appenddata3 +='<td><input send="send" sval="'+item.id+'" readonly type="text" value="'+item.Lname+'" name="lname[]" id="lname" class="form-control lname"></td>';
-                            appenddata3 +='<td><div class="form-group"><input send="send" sval="'+item.id+'" type="number" class="form-control maxscored" name="maxscored[]" id="maxscored"><div class="invalid-feedback"></div></div></td>';  
+                            appenddata3 +='<td><input style="width: auto;" send="send" sval="'+item.id+'" readonly type="number" value="'+item.AdmissionNo+'" name="admissionnumber[]" id="admissionnumber" class="form-control admissionnumber"></td>';
+                            appenddata3 +='<td><input style="width: auto;" send="send" sval="'+item.id+'" readonly type="text" value="'+item.Fname+'" name="firstname[]" id="firstname" class="form-control firstname"></td>';
+                            appenddata3 +='<td><input style="width: auto;" send="send" sval="'+item.id+'" readonly type="text" value="'+item.Lname+'" name="lname[]" id="lname" class="form-control lname"></td>';
+                            appenddata3 +='<td><div class="form-group"><input style="width: auto;" send="send" sval="'+item.id+'" type="number" class="form-control maxscored" name="maxscored[]" id="maxscored"><div class="invalid-feedback"></div></div></td>';  
                             appenddata3 +='</tr>';
                             $("#entermarkstbody").append(appenddata3); 
                         })   
@@ -439,22 +440,22 @@
                         $("#marksviewheading").addClass('d-none');
                         appenddata +='<td><input value="'+item.id+'" type="checkbox" name="enableupdate[]" id="enableupdate"> <span class="text-danger"><b>Edit</b></span></td>';
                         appenddata +='<td><button value="'+item.AdmissionNo+'" class="btn btn-sm w3-red" id="delbtn"><i class="fas fa-trash"></i></button></td>';
-                        appenddata +='<td><input send="send" readonly disabled type="number" value="'+item.AdmissionNo+'" sval2="'+item.id+'" name="viewadmissionnumber[]" id="viewadmissionnumber" id2="updation" class="form-control"></td>';
-                        appenddata +='<td class="d-none"><input send="send" readonly disabled type="number" value="'+res.pids[item.AdmissionNo]+'" sval2="'+item.id+'" name="pkeys[]" id="pkeys" id2="updation" class="form-control"></td>';
-                        appenddata +='<td><input send="send" readonly disabled type="text" value="'+item.Fname+'" sval2="'+item.id+'" name="viewfirstname[]" id="viewfirstname" id2="updation" class="form-control"></td>';
-                        appenddata +='<td><input send="send" readonly disabled type="text" value="'+item.Lname+'" sval2="'+item.id+'" name="viewlname[]" id="viewlname" id2="updation" class="form-control"></td>'; 
-                        appenddata +='<td><input send="send" readonly disabled type="text" value="'+res.admsmarks[item.AdmissionNo]+'" sval="'+item.id+'" name="viewmarks[]" id="viewmarks" id2="updation" class="form-control"></td>';
-                        appenddata +='<td><input send="send" readonly disabled type="text" value="'+res.outof.maxscore+'" sval="'+item.id+'" name="viewmaxscore[]" id="viewlname" id2="updation" class="form-control"></td>';  
+                        appenddata +='<td><input style="width: auto;" send="send" readonly disabled type="number" value="'+item.AdmissionNo+'" sval2="'+item.id+'" name="viewadmissionnumber[]" id="viewadmissionnumber" id2="updation" class="form-control"></td>';
+                        appenddata +='<td class="d-none"><input style="width: auto;" send="send" readonly disabled type="number" value="'+res.pids[item.AdmissionNo]+'" sval2="'+item.id+'" name="pkeys[]" id="pkeys" id2="updation" class="form-control"></td>';
+                        appenddata +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+item.Fname+'" sval2="'+item.id+'" name="viewfirstname[]" id="viewfirstname" id2="updation" class="form-control"></td>';
+                        appenddata +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+item.Lname+'" sval2="'+item.id+'" name="viewlname[]" id="viewlname" id2="updation" class="form-control"></td>'; 
+                        appenddata +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+res.admsmarks[item.AdmissionNo]+'" sval="'+item.id+'" name="viewmarks[]" id="viewmarks" id2="updation" class="form-control"></td>';
+                        appenddata +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+res.outof.maxscore+'" sval="'+item.id+'" name="viewmaxscore[]" id="viewlname" id2="updation" class="form-control"></td>';  
                     } 
                     else { 
                         $('#withoutmarksadd').removeClass('d-none');
                         $("#viewmarkstable2").html("");
                         appenddata2 +='<td><input value="'+item.id+'" type="checkbox" name="enablemarksinsert[]" id="enablemarksinsert"> <span class="text-success"><b>Add</b></span></td>';
-                        appenddata2 +='<td><input send="send" readonly disabled type="number" value="'+item.AdmissionNo+'" insid2="'+item.id+'" name="enteradmissionnumber[]" id="enteradmissionnumber" class="form-control"></td>';
-                        appenddata2 +='<td><input send="send" readonly disabled type="text" value="'+item.Fname+'" insid2="'+item.id+'" name="enterfirstname[]" id="enterfirstname" class="form-control"></td>';
-                        appenddata2 +='<td><input send="send" readonly disabled type="text" value="'+item.Lname+'" insid2="'+item.id+'" name="enterlname[]" id="enterlname" class="form-control"></td>';
-                        appenddata2 +='<td><input send="send" readonly disabled type="text" value="" insid="'+item.id+'" name="entermarks[]" id="entermarks" class="form-control"></td>';
-                        appenddata2 +='<td><input send="send" readonly disabled type="text" value="'+res.outof.maxscore+'" insid2="'+item.id+'" name="entermaxscore[]" id="entermaxscore" class="form-control"></td>'; 
+                        appenddata2 +='<td><input style="width: auto;" send="send" readonly disabled type="number" value="'+item.AdmissionNo+'" insid2="'+item.id+'" name="enteradmissionnumber[]" id="enteradmissionnumber" class="form-control"></td>';
+                        appenddata2 +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+item.Fname+'" insid2="'+item.id+'" name="enterfirstname[]" id="enterfirstname" class="form-control"></td>';
+                        appenddata2 +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+item.Lname+'" insid2="'+item.id+'" name="enterlname[]" id="enterlname" class="form-control"></td>';
+                        appenddata2 +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="" insid="'+item.id+'" name="entermarks[]" id="entermarks" class="form-control"></td>';
+                        appenddata2 +='<td><input style="width: auto;" send="send" readonly disabled type="text" value="'+res.outof.maxscore+'" insid2="'+item.id+'" name="entermaxscore[]" id="entermaxscore" class="form-control"></td>'; 
                     } 
                     appenddata +='</tr>';
                     $("#viewmarkstable").append(appenddata);

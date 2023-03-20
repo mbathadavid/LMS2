@@ -16,6 +16,7 @@
 </div>
 <div id="main" class="maincontent">
 @include('adminFiles.topnav')
+@if(in_array(2,explode(',',session()->get('LoggedInUser.priviledges'))))
 <div class="row justify-content-center mb-2">
 <div class="col-lg-4 col-md-4 col-sm-4">
 <div class="w3-green p-2">
@@ -36,6 +37,7 @@
 </div>   
 </div>
 <hr>
+@endif
 
 <div class="row justify-content-center mb-2">
 <div class="col-lg-6 col-md-6 col-sm-6">

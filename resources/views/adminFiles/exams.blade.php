@@ -18,9 +18,11 @@
 @include('adminFiles.topnav')
 <h4>Examination(s)</h4>
 <div class="mb-2">
-@if(in_array(8,explode(',',session()->get('schooldetails.privildeges'))))
-<button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#examaddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD NEW EXAM</button>
+@if(in_array(8,explode(',',session()->get('LoggedInUser.privildeges'))))
+
 @endif
+<button class="btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#examaddModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD NEW EXAM</button>
+
 
 <!-- <button class="btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#CBCModal" type="button"><i class="fas fa-plus-circle"></i>&nbsp;ADD NEW CBC ASSESSMENT</button> -->
 </div>

@@ -23,9 +23,9 @@
     <a data-bs-toggle="modal" data-bs-target="#loginmodal" href="" id="loginnav">Login</a>
     <!-- <a href="" data-bs-toggle="modal" data-bs-target="#schoolregmodal" id="regnav">Register School</a> -->
     <a href="#modules" id="modulesnav">Modules & Services</a>
-    <a href="#" id="learnonlinenav">Learn Online</a>
-    <a href="#" id="markertplacenav">Market Place</a>
-    <a href="" id="plansnav">Teaching Vacancies</a>
+    <a href="#faqs" id="learnonlinenav">FAQs</a>
+    <!--<a href="#" id="markertplacenav">Market Place</a>
+    <a href="" id="plansnav">Teaching Vacancies</a> -->
 </div>
 <div class="closeopennav">
 <a id="openbar" class="openbar" href=""><i class="fas fa-bars"></i></a>
@@ -39,10 +39,12 @@
     <a data-bs-toggle="modal" data-bs-target="#loginmodal" href="" id="loginnav">Login</a>
     <!-- <a href="" data-bs-toggle="modal" data-bs-target="#schoolregmodal" id="regnav">Register School</a> -->
     <a href="#modules" id="modulesnav">Modules & Services</a>
-    <a href="#" id="learnonlinenav">Learn Online</a>
-    <a href="#" id="markertplacenav">Market Place</a>
-    <a href="#" id="plansnav">Teaching Vacancies</a>
+    <a href="#faqs" id="learnonlinenav">FAQs</a>
+    <!--<a href="#" id="markertplacenav">Market Place</a>
+    <a href="#" id="plansnav">Teaching Vacancies</a> -->
 </div>
+
+<div id="introduction" class="w3-green text-center p-4"><b>Digital Transformation for your school is here with you at hand. Centralize all your school operations in a single interface and a comprehensive platform that unites your students, staff, and parents.</b></div>
 
 <!-- Slider Start-->
 <div class="row justify-content-center" style="background-color: white; padding: 10px;">
@@ -119,10 +121,10 @@
   </div>
 </div>
 
-<div class="mySlides w3-display-container w3-animate-zoom w3-xlarge w3-green w3-card-4">
+<!-- <div class="mySlides w3-display-container w3-animate-zoom w3-xlarge w3-green w3-card-4">
     <p class="text-center">Thank you! Choose us today and achieve digital tranformation for your school.</p>
     <p class="text-center">We are your number one partner in school management</p>
-</div>
+</div> -->
 
 <button class="w3-button w3-display-left w3-indigo" onclick="plusDivs(-1)">&#10094;</button>
 <button class="w3-button w3-display-right w3-indigo" onclick="plusDivs(1)">&#10095;</button>
@@ -147,30 +149,44 @@
 </div>
 
 
-<div class="row justify-content-center align-items-center mt-3 mb-3">
-    <div class="col-lg-8 col-md-10 col-sm-12" id="modulesservices">
-        <!-- <h6 class="text-center">Ever wondered what Shuleyetu can achieve you achieve? Well, Shuleyetu offers the following broad categories of services for school management</h6> -->
-        <div id="modules" class="row justify-content-center align-items-center">
+<div id="modules" class="row justify-content-center align-items-center mt-3 mb-0">
+<h5 class="text-info text-center"><b>Features</b></h5>
+    <div class="col-lg-12 col-md-12 col-sm-12" id="modulesservices">
+        <!-- <div id="module">
+            <h6>Students Management</h6>
+            <hr>
+
+        </div>
+
+        <div id="module">
+            <h6>Staff Management</h6>
+            <hr>
+            
+        </div> -->
+        <div class="row justify-content-center align-items-center">
             <div id="modulesmgmt" class="col-lg-5 col-md-6 col-sm-12">
              <h6><a href="" id="studentmgmt">Students Management <i class="fa fa-angle-down" id="icon1"></i></a></h6>
               <ol type="i" id="studentmgmtol">
                   <li>Register New Students.</li>
                   <li>Manage Registered Students.</li>
                   <li>Promote Students To Classes.</li>
-                  <li>Manage Students Class Attendance</li>
+                  <li>Manage Student Marks</li>
+                  <li>Enroll Students to Subjects/Learning Areas.</li>
                   <li>Clear Students Who have Completed School</li>
               </ol>
              <h6><a href="" id="staffmgmt">Staff & Support Staff Management <i class="fa fa-angle-down" id="icon2"></i></a></h6>
                 <ol type="i" id="staffmgmtol">
-                    <li>Register New Staff Members.</li>
-                    <li>Manage Registered Staff.</li>
+                    <li>Register New Teachers and Staff Members.</li>
+                    <li>Manage Registered Staff and Teachers.</li>
+                    <li>Manage their details</li>
+                    <li>Manage Staff and Teacher Attendance</li>
                 </ol>
             <h6><a href="" id="parentmgmt">Parents Management <i class="fa fa-angle-down" id="icon7"></i></a></h6>
                 <ol type="i" id="parentmgmtol">
-                    <li>Register New Parents.</li>
+                    <li>Register New Parents' Details.</li>
                     <li>Manage Registered Parents.</li>
                     <li>Send Bulk Text SMS to Parents</li>
-                    <li>Send Emails To Parents</li>
+                    <li>Assign them details to access the system</li>
                 </ol>
              <h6><a href="" id="academicmgmt">Academics Management <i class="fa fa-angle-down" id="icon3"></i></a></h6>
                 <ol type="i" id="academicmgmtol">
@@ -179,16 +195,16 @@
                     <li>Manage 8-4-4 Examinations</li>
                     <li>Manage grading System</li>
                     <li>Give and review student periodic Reports</li>
-                    <li>Analyze Class and Student Perfomance</li>
                     <li>Auto-Grade Subjects</li>
                     <li>Auto-Compute Results</li>
                     <li>Print Results</li>
                     <li>Auto-generate transcripts</li>
                     <li>Auto-generate Result Slips</li>
-                    <li>Thousands of Online Past Papers</li>
+                    <li>Send Results to Parents/Guardians</li>
+                    <!-- <li>Thousands of Online Past Papers</li>
                     <li>Online Revision Materials</li>
                     <li>Assign Online Assignments To Students</li>
-                    <li>Collect Assignments Online.</li>
+                    <li>Collect Assignments Online.</li> -->
                 </ol>
              <h6><a href="" id="librarymgmt">Library Management <i class="fa fa-angle-down" id="icon4"></i></a></h6>
                 <ol type="i" id="librarymgmtol">
@@ -204,15 +220,26 @@
                     <li>Collect Fees</li>
                     <li>Track and Record Expenses</li>
                     <li>Auto-generate financial reports</li>
-                    <li>M-PESA fee payment intergration (Advanced)</li>
+                    <li>Compare expenditures to fee collection.</li>
+                    <li>Print Fee Receipt</li>
+                    <li>Show Student Fee Payment History</li>
+                    <!-- <li>M-PESA fee payment intergration (Advanced)</li> -->
                 </ol>
              <h6><a href="" id="communicationmgmt">Communication Management <i class="fa fa-angle-down" id="icon6"></i></a></h6>
              <ol type="i" id="communicationmgmtol">
                 <li>Manage Parents & staff Contacts</li>
                 <li>Contact Parents through Bulk text SMS</li>
                 <li>Contact Staff through Bulk text SMS</li>
-                <li>Send Emails to Parents/Staff</li>
+                <li>Send Fee Reminders to Parents</li>
+                <li>Send Assessment & Exam Results to Parents</li>
                 <li>Send System Notifications to staff, parents and students</li>
+             </ol>
+             <h6><a href="" id="perfomanceanalysismgmt">Perfomance Analysis <i class="fa fa-angle-down" id="icon8"></i></a></h6>
+             <ol type="i" id="perfomanceanalysismgmtol">
+                <li>Comprehensive Class Perfomance Analysis</li>
+                <li>Visualized Class Perfomance Analysis</li>
+                <li>Individual Student Perfomance Analysis</li>
+                <li>Class Subject Visualization</li>
              </ol>
             </div>
            
@@ -220,14 +247,35 @@
     </div>
 </div>
 
+<!-- FAQS Start -->
+<div id="faqs" class="row justify-content-center align-items-center mb-0">
+    <h5 class="text-info text-center"><b>Frequently Asked Questions</b></h5>
+    <div class="col-lg-12 col-md-12 col-sm-12 p-3">
+        <ol type="1">
+            <li><h6>I do not have a laptop, does that mean that I won't be able to use the system? <br><span class="text-danger"><b>Not having a laptop should not get you worried. The system has been designed following the principles of responsive web design. It scales to fit in screens of all sizes, everybody is able to use the system regardless of the device they are using.</b></span></h6></li>
+            <li>
+                <h6>Who can access the system? <span class="text-danger"><b>The system has the following portals</b></span></h6></li>
+                <ul>
+                    <li>Administrator Portal</li>
+                    <li>Staff Portal</li>
+                    <li>Student Portal</li>
+                    <li>Parent Portal</li>
+                </ul>
+            </li>        
+        </ol>
+        <h5 class="text-center w3-green">To Book a Demo <b>CALL/SMS/WHATSAPP 0748269865</b></h5>
+    </div>
+</div>
+<!-- FAQS End -->
+
 <div id="contactsdiv2">
     <div id="contacts3">
     <div id="contacts">
         <h6>OUR CONTACTS</h6>
         <p>Need to get in touch with the kenyan <br> largest Learning Management System? Below are our contacts</p>
         <div id="contactlinks">
-            <a href="tel:+254792801096"><i class="fas fa-phone"></i> Phone:&nbsp; 0792801096</a></br>
-            <a href="https://api.whatsapp.com/send?phone=+254748269865&text=Hello, Need assistance to register my school">WhatsApp:&nbsp; 0792801096</a><br>
+            <a href="tel:+254748269865"><i class="fas fa-phone"></i> Phone:&nbsp; 0748269865</a></br>
+            <a href="https://api.whatsapp.com/send?phone=+254748269865&text=Hello there at shuleyetu?">WhatsApp:&nbsp; 0748269865</a><br>
             <a href="mailto:info@shuleyetu.co.ke?Subject=Hello Shuleyetu">Email:&nbsp; info@shuleyetu.co.ke</a>
          </div>
          <p>Contact Shuleyetu LMS today and get enrolled to the best Learning Management ERP.</p>
@@ -440,6 +488,13 @@
         $(this).toggleClass('hovered')
         $('#communicationmgmtol').slideToggle('slow');
         $('#icon6').toggleClass('fa-angle-down fa-angle-up')
+       })
+
+       $('#perfomanceanalysismgmt').click(function(e){
+        e.preventDefault();
+        $(this).toggleClass('hovered')
+        $('#perfomanceanalysismgmtol').slideToggle('slow');
+        $('#icon8').toggleClass('fa-angle-down fa-angle-up')
        })
 
        $('#parentmgmt').click(function(e){

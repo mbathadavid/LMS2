@@ -453,10 +453,10 @@
                     var appenddata = '';
                     appenddata +='<tr sval="'+item.id+'">';
                     appenddata +='<td><input value="'+item.id+'" type="checkbox" name="enableupdate[]" id="removestudent"></td>';
-                    appenddata +='<td><input send="send" readonly type="text" value="'+(item.AdmissionNo == null ? item.UPI : item.AdmissionNo)+'" sval2="'+item.id+'" name="viewadmissionnumber[]" id="viewadmissionnumber" class="form-control"></td>';
-                    appenddata +='<td><input send="send" readonly type="text" value="'+item.current_class+'" sval2="'+item.id+'" name="currentclass[]" id="currentclass" class="form-control"></td>';
-                    appenddata +='<td><input send="send" readonly type="text" value="'+item.Fname+'" sval2="'+item.id+'" name="viewfirstname[]" id="viewfirstname" class="form-control"></td>';
-                    appenddata +='<td><input send="send" readonly type="text" value="'+item.Lname+'" sval2="'+item.id+'" name="viewlname[]" id="viewlname" class="form-control"></td>'; 
+                    appenddata +='<td><input style="width: auto;" send="send" readonly type="text" value="'+(item.AdmissionNo == null ? item.UPI : item.AdmissionNo)+'" sval2="'+item.id+'" name="viewadmissionnumber[]" id="viewadmissionnumber" class="form-control"></td>';
+                    appenddata +='<td><input style="width: auto;" send="send" readonly type="text" value="'+item.current_class+'" sval2="'+item.id+'" name="currentclass[]" id="currentclass" class="form-control"></td>';
+                    appenddata +='<td><input style="width: auto;" send="send" readonly type="text" value="'+item.Fname+'" sval2="'+item.id+'" name="viewfirstname[]" id="viewfirstname" class="form-control"></td>';
+                    appenddata +='<td><input style="width: auto;" send="send" readonly type="text" value="'+item.Lname+'" sval2="'+item.id+'" name="viewlname[]" id="viewlname" class="form-control"></td>'; 
                     
                     var mark = [];
                     var missingmark = [];
@@ -478,10 +478,10 @@
                     }
                     appenddata +='<td class="d-none"><input send="send" readonly type="text" value="'+missingmark+'" sval2="'+item.id+'" name="availableexams[]" id="availableexams" id2="updation2" class="form-control"></td>';  
                     appenddata +='<td class="d-none"><input send="send" readonly type="text" value="'+mark+'" sval2="'+item.id+'" name="scores[]" id="scores" id2="updation2" class="form-control"></td>';  
-                    appenddata +='<td><input send="send" readonly type="number" value="" sval2="'+item.id+'" name="finalscore[]" id="finalScore" id2="updation2" class="form-control"></td>';  
-                    appenddata +='<td><input send="send" readonly type="number" value="" sval2="'+item.id+'" name="points[]" id="points" id2="updation2" class="form-control"></td>'; 
-                    appenddata +='<td><input send="send" readonly type="text" value="" sval2="'+item.id+'" name="grades[]" id="grades" id2="updation2" class="form-control"></td>'; 
-                    appenddata +='<td><input send="send" readonly type="text" value="" sval2="'+item.id+'" name="remarks[]" id="remarks" id2="updation2" class="form-control"></td>';
+                    appenddata +='<td><input style="width: auto;" send="send" readonly type="number" value="" sval2="'+item.id+'" name="finalscore[]" id="finalScore" id2="updation2" class="form-control"></td>';  
+                    appenddata +='<td><input style="width: auto;" send="send" readonly type="number" value="" sval2="'+item.id+'" name="points[]" id="points" id2="updation2" class="form-control"></td>'; 
+                    appenddata +='<td><input style="width: auto;" send="send" readonly type="text" value="" sval2="'+item.id+'" name="grades[]" id="grades" id2="updation2" class="form-control"></td>'; 
+                    appenddata +='<td><input style="width: auto;" send="send" readonly type="text" value="" sval2="'+item.id+'" name="remarks[]" id="remarks" id2="updation2" class="form-control"></td>';
                     
                     appenddata +='</tr>';
                     $("#computeexamresultstable").append(appenddata);

@@ -540,7 +540,9 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     //$('#teacherregform').find('input').val('');
                    $('#frame').src = 'images/avatar.png';
                    $("#teacheraddModal").modal('hide'); 
-                   }   
+                   } else if (res.status == 401) {
+                    showError('phone', res.messages);
+                   }  
                }
             });
         })

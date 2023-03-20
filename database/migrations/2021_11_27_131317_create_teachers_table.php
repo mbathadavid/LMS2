@@ -22,8 +22,11 @@ class CreateTeachersTable extends Migration
             $table->string('Lname')->nullable();
             $table->string('Gender')->nullable();
             $table->string('Position')->nullable();
-            $table->string('Email')->nullable()->unique();
-            $table->string('Phone')->nullable()->unique();
+            $table->string('Email')->nullable();
+            $table->string('Phone')->nullable();
+            $table->string('TscNumber')->nullable();
+            $table->string('NSSF')->nullable();
+            $table->string('NHIF')->nullable();
             $table->string('password')->default('password123');
             $table->string('Profile')->default('avatar.png');
             $table->string('Active')->default('Yes');

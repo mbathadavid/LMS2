@@ -6,9 +6,11 @@ use App\Models\Student;
 use App\Models\classes;
 use App\Models\Subject;
 use App\Models\Grade;
-use App\Models\exam;
+use App\Models\Exam;
 use App\Models\ResultThread;
+use App\Models\FinalGrade;
 use App\Models\cbcassessment;
+use App\Models\cbcmarks;
 use App\Models\computedfinalresulst;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -89,6 +91,90 @@ class MarkController extends Controller
        }
        
     }
+    }
+
+    //Check for marks and students
+    public function checkstudentMarks(Request $req){
+        $validator = Validator::make($req->all(),[
+            'classforresults' => 'required',
+            'assessmentorexam' => 'required'
+        ],
+        [
+            'classforresults.required' => 'You must select a class',
+            'assessmentorexam.required' => 'You must select from above'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'messages' => $validator->getMessageBag()
+            ]);
+        } else {
+            $cls = explode(',', $req->classforresults)[1];
+            $classid = explode(',', $req->classforresults)[0];
+
+            if ($cls === "CBC") {
+                $students = Student::where('sid',$req->sid)
+                                    ->where('current_classid',$classid)
+                                    ->get();
+
+                $marks = cbcmarks::where('sid',$req->sid)
+                                ->where('classid',$classid)
+                                ->where('examid',$req->assessmentorexam)
+                                ->get();
+
+                $exam = cbcassessment::find($req->assessmentorexam);
+
+                return response()->json([
+                    'students' => $students,
+                    'marks' => $marks,
+                    'exam' => $exam,
+                    'cls' => $cls
+                ]);
+            } else if ($cls === "8-4-4") {
+                if ($req->examorthread === "Examination") {
+                    $students = Student::where('sid',$req->sid)
+                                    ->where('current_classid',$classid)
+                                    ->get();
+
+                    $marks = Mark::where('sid',$req->sid)
+                                 ->where('classid',$classid)
+                                 ->where('examid',$req->assessmentorexam)
+                                 ->get();
+
+                    $exam = Exam::find(explode(',',$req->assessmentorexam)[0]);
+
+                    return response()->json([
+                        'students' => $students,
+                        'marks' => $marks,
+                        'exam' => $exam,
+                        'cls' => $cls,
+                        'examorthread' => $req->examorthread
+                    ]);
+                    
+                } else if ($req->examorthread === "Finalresults") {
+                    $students = Student::where('sid',$req->sid)
+                                    ->where('current_classid',$classid)
+                                    ->get();
+
+                    $marks = computedfinalresulst::where('sid',$req->sid)
+                                                ->where('tid',$req->assessmentorexam)
+                                                ->where('Class_id',$classid) 
+                                                ->get();
+
+                    $exam = ResultThread::find($req->assessmentorexam);
+
+                    return response()->json([
+                        'students' => $students,
+                        'marks' => $marks,
+                        'exam' => $exam,
+                        'cls' => $cls,
+                        'examorthread' => $req->examorthread
+                    ]);
+                }
+            }
+            
+        }
     }
 
     //Add missing marks
@@ -362,6 +448,12 @@ class MarkController extends Controller
                     ->whereRaw('FIND_IN_SET(?, subids)', [explode(',',$req->subject)[0]])
                     ->get();
 
+        // $students = DB::table('students')
+        //             ->where('current_classid', $req->class)
+        //             ->whereRaw('FIND_IN_SET(?, subids)', [explode(',',$req->subject)[0]])
+        //             ->get();
+      
+
 
         $subject = Subject::select('subject')
                     ->where('sid',$req->sid)
@@ -392,7 +484,7 @@ class MarkController extends Controller
         $examnames = [];
 
         for ($i=0; $i < count($exams); $i++) { 
-            $examname = exam::find($exams[$i]);
+            $examname = Exam::find($exams[$i]);
             array_push($examnames,$examname['Examination']);
         }
 

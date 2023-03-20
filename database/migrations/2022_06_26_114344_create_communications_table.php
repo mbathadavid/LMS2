@@ -16,7 +16,7 @@ class CreateCommunicationsTable extends Migration
         Schema::create('communications', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sid');
-            $table->string('message');
+            $table->longText('message');
             $table->string('number');
             $table->string('status_code')->nullable();
             $table->string('network_id')->nullable();

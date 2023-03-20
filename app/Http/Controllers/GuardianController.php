@@ -36,8 +36,8 @@ class GuardianController extends Controller
                 'firstname' => 'required',
                 //'secondname' => 'required',
                 'lastname' => 'required',
-                'phone' => 'required|unique:guardians',
-                'email' => 'email|unique:guardians', 
+                'phone' => 'required',
+                'email' => 'email', 
                 //'altphone' => 'unique:guardians',
                 'admsions' => 'required',
                 'file' => 'image'
@@ -50,18 +50,18 @@ class GuardianController extends Controller
                 'firstname' => 'required',
                 //'secondname' => 'required',
                 'lastname' => 'required',
-                'phone' => 'required|unique:guardians',
+                'phone' => 'required',
                 //'email' => 'email|unique:guardians', 
                 //'altphone' => 'unique:guardians',
                 'admsions' => 'required',
                 'file' => 'image'
             ],
-        [
-            'admsions.required' => 'Please Match Parent With Their Child/Children',
-            'firstname.required' => 'Please specify the First Name of the Parent',
-            'lastname.required' => 'Please specify the Last Name',
-            'phone.required' => 'Please Enter the Phone Number of the Parent'
-        ]);
+            [
+                'admsions.required' => 'Please Match Parent With Their Child/Children',
+                'firstname.required' => 'Please specify the First Name of the Parent',
+                'lastname.required' => 'Please specify the Last Name',
+                'phone.required' => 'Please Enter the Phone Number of the Parent'
+            ]);
         }
         
     if ($validator->fails()) {
@@ -77,83 +77,95 @@ class GuardianController extends Controller
         //                 ->update(['parentinfo' => $req->firstname.','.$req->lastname.','.$req->parent_guardian.','.$req->phone.','.$req->email]);
         // }
 
-        $students = explode(',',$req->admsions);
-        $student = Student::whereIn('UPI', $students)->orWhereIn('AdmissionNo', $students)->update(['parentinfo' => $req->firstname.','.$req->lastname.','.$req->parent_guardian.','.$req->phone.','.$req->email]);
+        $checkparent = Guardian::where('sid',$req->sid)
+                                ->where('Phone',$req->phone)
+                                ->get();
 
+        if (count($checkparent)) {
+            return response()->json([
+                'status' => 401,
+                'messages' => 'This number has already been registered for another parent'
+            ]);
 
-        $guardian = new Guardian;
-        $guardian->sid = $req->sid;
-        $guardian->Fname = $req->firstname;
-        $guardian->Sname = $req->secondname;
-        $guardian->Lname = $req->lastname;
-       // $guardian->Active = $req->active;
-        $guardian->Parent_Guardian = $req->parent_guardian;
-        $guardian->Students = $req->admsions;
-        $guardian->Phone = $req->phone;
-        $username = $req->phone.'@'.$maxid;
-        $guardian->username = $username;
-        $guardian->Email = $req->email;
-        $guardian->Gender = $req->gender;
-
-        if ($req->altphone == null) {
-            
-        } else{
-            $guardian->AltPhone = $req->altphone;
-        }
-        if ($req->password) {
-            $guardian->Password = $req->password;  
         } else {
-            $guardian->Password = Hash::make('password123');
+            $students = explode(',',$req->admsions);
+            $student = Student::whereIn('UPI', $students)->orWhereIn('AdmissionNo', $students)->update(['parentinfo' => $req->firstname.','.$req->lastname.','.$req->parent_guardian.','.$req->phone.','.$req->email]);
+
+            $guardian = new Guardian;
+            $guardian->sid = $req->sid;
+            $guardian->Fname = $req->firstname;
+            $guardian->Sname = $req->secondname;
+            $guardian->Lname = $req->lastname;
+        // $guardian->Active = $req->active;
+            $guardian->Parent_Guardian = $req->parent_guardian;
+            $guardian->Students = $req->admsions;
+            $guardian->Phone = $req->phone;
+            $username = $req->phone.'@'.$maxid;
+            $guardian->username = $username;
+            $guardian->Email = $req->email;
+            $guardian->Gender = $req->gender;
+
+            if ($req->altphone == null) {
+                
+            } else{
+                $guardian->AltPhone = $req->altphone;
+            }
+            if ($req->password) {
+                $guardian->Password = $req->password;  
+            } else {
+                $guardian->Password = Hash::make('password123');
+            }
+            
+            if ($req->hasFile('file')) {
+                $file = $req->file('file');
+                $extension = $file->getClientOriginalExtension();
+                $filename = time().'logo'.'.'.$extension;
+                $file->move('images/', $filename);
+                $guardian->Profile = $filename;
+            }
+
+            $schooldetails = School_Data::find($req->sid);
+
+            //Inform by SMS Start
+            $curl = curl_init();
+
+            $post_data = [
+                "mobile" => $req->phone,
+                "response_type" => "json",
+                "sender_name" => "23107",
+                "service_id" => 0,
+                "message" => "You have been registered as a parent at ".$schooldetails['name'].". Username is ".$username.", and password is password123. Click https://www.shuleyetu.co.ke/parentlogin to log in"
+            ];
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.mobitechtechnologies.com/sms/sendsms',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 15,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($post_data),
+                CURLOPT_HTTPHEADER => array(
+                    'h_api_key: ae42640feb185a424fdce5d4c6bde3ab955f7e332782024b527cda3c4a8d43cc',
+                    'Content-Type: application/json'
+                ),
+                ));
+
+                $response = curl_exec($curl);
+
+                curl_close($curl);
+            //Inform by SMS Start
+
+
+            $guardian->save();
+            return response()->json([
+                'status' => 200,
+                'messages' => 'Parent Registered Successfully'
+            ]);
         }
-        
-        if ($req->hasFile('file')) {
-            $file = $req->file('file');
-            $extension = $file->getClientOriginalExtension();
-            $filename = time().'logo'.'.'.$extension;
-            $file->move('images/', $filename);
-            $guardian->Profile = $filename;
-        }
 
-        $schooldetails = School_Data::find($req->sid);
-
-        //Inform by SMS Start
-        $curl = curl_init();
-
-        $post_data = [
-            "mobile" => $req->phone,
-            "response_type" => "json",
-            "sender_name" => "23107",
-            "service_id" => 0,
-            "message" => "You have been registered as a parent at ".$schooldetails['name'].". Username is ".$username.", and password is password123. Click https://www.shuleyetu.co.ke/parentlogin to log in"
-        ];
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.mobitechtechnologies.com/sms/sendsms',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 15,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($post_data),
-            CURLOPT_HTTPHEADER => array(
-                'h_api_key: ae42640feb185a424fdce5d4c6bde3ab955f7e332782024b527cda3c4a8d43cc',
-                'Content-Type: application/json'
-            ),
-            ));
-
-            $response = curl_exec($curl);
-
-            curl_close($curl);
-        //Inform by SMS Start
-
-
-        $guardian->save();
-        return response()->json([
-            'status' => 200,
-            'messages' => 'Parent Registered Successfully'
-        ]);
     }
     }
 

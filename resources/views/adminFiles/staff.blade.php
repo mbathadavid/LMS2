@@ -428,6 +428,8 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     //$('#teacherregform').find('input').val('');
                    $('#frame').src = 'images/avatar.png';
                    $("#teacheraddModal").modal('hide'); 
+                   } else if (res.status == 401) {
+                    showError('phone', res.messages);
                    }
                    
                }
@@ -529,6 +531,7 @@ frame2.src=URL.createObjectURL(event.target.files[0]);
                     <h6>Position : <span class="text-danger">'+data.Position+'</span></h6>\
                     <h6>Email : <span class="text-danger">'+data.Email+'</span></h6>\
                     <h6>Phone : <span class="text-danger">'+data.Phone+'</span></h6>\
+                    <h6>Username : <span class="text-danger">'+data.username+'</span></h6>\
                     ');
                 }                   
                 })

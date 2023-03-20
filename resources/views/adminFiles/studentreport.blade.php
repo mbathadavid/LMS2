@@ -303,9 +303,9 @@ $(document).ready(function(){
                     //const element = subids[i];
                 var html = "";
                 html += '<tr>';
-                html += '<td><input value="'+ids[i]+'" type="checkbox" name="genreportcheckbox[]" id="genreportcheckbox" checked></td>';
-                html += '<td><input stuid="'+ids[i]+'" value="'+stunames[i]+'" type="text" class="form-control" name="generalreportname[]" id="generalreportname" readonly></td>';
-                html += '<td><textarea stuid="'+ids[i]+'" name="thegeneralreport[]" id="thegeneralreport" cols="30" rows="10" class="form-control"></textarea></td>';
+                html += '<td><input style="width: auto;" value="'+ids[i]+'" type="checkbox" name="genreportcheckbox[]" id="genreportcheckbox" checked></td>';
+                html += '<td><input style="width: auto;" stuid="'+ids[i]+'" value="'+stunames[i]+'" type="text" class="form-control" name="generalreportname[]" id="generalreportname" readonly></td>';
+                html += '<td><textarea style="width: auto;" stuid="'+ids[i]+'" name="thegeneralreport[]" id="thegeneralreport" cols="30" rows="10" class="form-control"></textarea></td>';
                 html += '</tr>';
                 html += '<hr>';
 
@@ -351,9 +351,9 @@ $(document).ready(function(){
                     //const element = subids[i];
                     var html = "";
                     html += '<tr>';
-                    html += '<td><input value="'+subids[0].split(',')[i]+'" type="checkbox" class="" name="subjectcheckbox[]" id="subjectcheckbox"></td>';
-                    html += '<td><input subjectid="'+subids[0].split(',')[i]+'" value="'+sublearns[0].split(',')[i]+'" type="text" class="form-control" name="subjecttobereported[]" id="subjecttobereported" readonly disabled></td>';
-                    html += '<td><textarea subjectid="'+subids[0].split(',')[i]+'" name="subjectreport[]" id="subjectreport" cols="30" rows="10" class="form-control" disabled></textarea></td>';
+                    html += '<td><input style="width: auto;" value="'+subids[0].split(',')[i]+'" type="checkbox" class="" name="subjectcheckbox[]" id="subjectcheckbox"></td>';
+                    html += '<td><input style="width: auto;" subjectid="'+subids[0].split(',')[i]+'" value="'+sublearns[0].split(',')[i]+'" type="text" class="form-control" name="subjecttobereported[]" id="subjecttobereported" readonly disabled></td>';
+                    html += '<td><textarea style="width: auto;" subjectid="'+subids[0].split(',')[i]+'" name="subjectreport[]" id="subjectreport" cols="30" rows="10" class="form-control" disabled></textarea></td>';
                     html += '</tr>';
                     html += '<hr>';
 

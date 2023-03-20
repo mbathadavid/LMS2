@@ -7,7 +7,7 @@ use App\Models\Librarian;
 use App\Models\Book;
 use App\Models\Term;
 use App\Models\classes;
-use App\Models\exam;
+use App\Models\Exam;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Mark;
@@ -15,6 +15,8 @@ use App\Models\communications;
 use App\Models\cbcmarks;
 use App\Models\School;
 use App\Models\Guardian;
+use App\Models\generalreports;
+use App\Models\subjectreports;
 use App\Models\Staff;
 use App\Models\feepayment;
 use App\Models\expenses;
@@ -417,41 +419,45 @@ class AdminController extends Controller
 
     //Admin Perfomance CBC Perfomance analysis page
     public function cbcperformanceAnalysis(){
-        $maxid = session()->get('schooldetails.id');
-        $threads = cbcassessment::where('sid',$maxid)
-                                ->OrderbyDesc('id')
+        if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+            $maxid = session()->get('schooldetails.id');
+            $threads = cbcassessment::where('sid',$maxid)
+                                    ->OrderbyDesc('id')
+                                    ->get();
+
+            $subjects = Subject::where('sid',$maxid)
+                                ->where('educationsystem','CBC')
                                 ->get();
 
-        $subjects = Subject::where('sid',$maxid)
-                            ->where('educationsystem','CBC')
-                            ->get();
+            $streams = classes::where('sid',$maxid)
+                                ->where('educationsystem','CBC')
+                                ->get();
 
-        $streams = classes::where('sid',$maxid)
-                            ->where('educationsystem','CBC')
-                            ->get();
+            $subnames = [];
+            $subids = [];
 
-        $subnames = [];
-        $subids = [];
+            foreach ($subjects as $key => $subject) {
+                array_push($subnames,$subject->subject);
+                array_push($subids,$subject->id);
+            }
 
-        foreach ($subjects as $key => $subject) {
-            array_push($subnames,$subject->subject);
-            array_push($subids,$subject->id);
+            $subidcombination = array_combine($subids,$subnames);
+
+            $data = [
+                'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+                'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+                'threads' => $threads,
+                'subjects' => $subjects,
+                'streams' => $streams,
+                'subnames' => $subnames,
+                'subids' => $subids,
+                'subidcombination' => $subidcombination
+            ];
+
+            return view('adminFiles.cbcperformanceanalysis',$data);
+        } else {
+            return redirect('/adminlogin');
         }
-
-        $subidcombination = array_combine($subids,$subnames);
-
-        $data = [
-            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
-            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
-            'threads' => $threads,
-            'subjects' => $subjects,
-            'streams' => $streams,
-            'subnames' => $subnames,
-            'subids' => $subids,
-            'subidcombination' => $subidcombination
-        ];
-
-        return view('adminFiles.cbcperformanceanalysis',$data);
     }
 
 //Function to return student reviewing view
@@ -478,6 +484,14 @@ public function classperformanceAnalysis($class,$tid){
                                     ->where('level','Secondary')
                                     ->where('deleted',0)
                                     ->get();
+
+        $subnames = [];
+        $subids = [];
+
+        foreach ($subjects as $key => $subject) {
+            array_push($subnames,$subject->subject);
+            array_push($subids,$subject->id);
+        }
         
         $computedmarks = computedfinalresulst::where('sid',$maxid)
                                     ->where('tid', $tid)
@@ -485,6 +499,12 @@ public function classperformanceAnalysis($class,$tid){
                                     ->where('Finalscore','!=',null)
                                     ->orderBydesc('FinalScore')
                                     ->get();
+
+        $subjectmarks = FinalGrade::where('sid',$maxid)
+                                    ->where('tid',$tid)
+                                    ->get();
+
+        $examthread = ResultThread::find($tid);
     
         $subnames = [];
         $subids = [];
@@ -500,7 +520,9 @@ public function classperformanceAnalysis($class,$tid){
                 'subjects' => $subjects,
                 'computedmarks' => $computedmarks,
                 'subnames' => $subnames,
-                'subids' => $subids 
+                'subids' => $subids,
+                'examthread' => $examthread,
+                'subjectmarks' => $subjectmarks 
             ];
     
             return view('adminFiles.classperformanceanalysis',$data);  
@@ -619,6 +641,76 @@ public function communucationsview(){
     }
 }
 
+//function for returning Fee Reminder View
+public function feeReminders(){
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = DB::table('school__data')->max('id');
+        $sid = session()->get('schooldetails.id');
+
+        $students = Student::where('sid',$sid)
+                            ->where('deleted',0)
+                            ->where('completed',0)
+                            ->get();
+
+        $parentcontacts = [];
+
+        foreach ($students as $key => $student) {
+            if ($student->parentinfo !== NULL) {
+                array_push($parentcontacts,explode(',',$student->parentinfo)[4]);
+            }
+            
+        }
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'students' => $students,
+            'parentcontacts' => $parentcontacts
+        ];
+    
+        return view('adminFiles.feereminders',$data);  
+    } else {
+        return redirect('/adminlogin');
+    }
+}
+
+//function for returning Send Exam Results View
+public function sendExamResults(){
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = DB::table('school__data')->max('id');
+        $sid = session()->get('schooldetails.id');
+
+        $classes = classes::where('sid',$sid)
+                            ->where('deleted',0)
+                            ->get();
+
+        $asessements = cbcassessment::where('sid',$sid)
+                                    ->OrderByDesc('id')
+                                    ->get();
+
+        $threads = ResultThread::where('sid',$sid)
+                                ->OrderByDesc('id')
+                                ->get();
+
+        $examinations = Exam::where('sid',$sid)
+                            ->where('deleted',0)
+                            ->OrderByDesc('id')
+                            ->get();
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'classes' => $classes,
+            'asessements' => $asessements,
+            'threads' => $threads,
+            'examinations' => $examinations
+        ];
+    
+        return view('adminFiles.sendexamresults',$data);  
+    } else {
+        return redirect('/adminlogin');
+    }
+}
 
 //function for returning staff
 public function staff(){
@@ -814,7 +906,7 @@ public function autoresults(){
                             ->where('sid',$sid)
                             ->get();
 
-        $exams = exam::where('sid',$sid)
+        $exams = Exam::where('sid',$sid)
                      ->get();
 
         $data = [
@@ -995,7 +1087,7 @@ public function examinations(){
         $classes = classes::all();
         $librarians = Librarian::all();
         $terms = Term::all();
-        $exams = exam::where('deleted',0)
+        $exams = Exam::where('deleted',0)
                             ->get();
         $maxid = DB::table('school__data')->max('id');
         $data = [
@@ -1034,13 +1126,13 @@ public function examinations(){
                         ->where('educationsystem','8-4-4')
                         ->get();
             $currentclass = classes::find($classid);
-            $currentexam = exam::find($examid);
+            $currentexam = Exam::find($examid);
             $students = Student::where('current_classid',$classid)
                         ->where('sid',$sid)
                         ->get();
             $adms = [];
             $terms = Term::all();
-            $exams = exam::where('deleted',0)
+            $exams = Exam::where('deleted',0)
                 ->where('sid',$sid)
                 ->get();
             $subjects = Subject::where('sid',$sid)
@@ -1252,6 +1344,328 @@ public function examinations(){
         
     }
 
+    //Function to return details view
+public function studentDetails($stuid) {
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+
+    $notices = notifications::where('sid',$maxid)
+                    ->where('type','noticeboard')
+                    ->where('group','Parents')
+                    ->where('deleted',0)
+                    ->orderByDesc('id')
+                    ->get();
+
+    $uid = session()->get('LoggedInUser.id');
+
+    $notifications = notifications::where('sid',$maxid)
+                    ->where('type','noticeboard')
+                    ->orWhere('toberecievedby',$uid)
+                    ->where('deleted',0)
+                    ->orderByDesc('id')
+                    ->get();
+
+    $mymessages = notifications::where('sid',$maxid)
+                                ->where('type','parentmessage')
+                                ->where('uid',$uid)
+                                ->where('deleted',0)
+                                ->orderByDesc('id')
+                                ->get();
+                    
+    $parentstudents = Guardian::find($uid);
+            
+    $fnames = [];
+    $lnames = [];
+    $profiles = [];
+    $classes = [];
+    $ids = [];
+            
+
+    $student = Student::find($stuid);
+    $books = Book::where('borrowed_by',$student['AdmissionNo'])
+                      ->orWhere('borrowed_by',$student['UPI'])
+                      ->get();
+
+    $payedfees = feepayment::where('AdmorUPI',$student['AdmissionNo'])
+                            ->orWhere('AdmorUPI',$student['UPI'])
+                            ->get();
+
+    $generalreports = generalreports::where('studentid',$student['id'])
+                                    ->orderByDesc('created_at')
+                                    ->get();
+
+    //$computedresults = computedfinalresulst::where() 
+
+    $issuedbooks = [];
+    $fees = [];
+
+    foreach ($payedfees as $key => $payedfee) {
+        array_push($fees,$payedfee->amount);
+    }
+
+    foreach ($books as $key => $book) {
+        array_push($issuedbooks,$book->BookNumber);
+    }
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'notices' => $notices,
+            'fnames' => $fnames,
+            'mymessages' => $mymessages,
+            'notifications' => $notifications,
+            'student' => $student,
+            'books' => $issuedbooks,
+            'totalfees' => array_sum($fees),
+            'generalreports' => $generalreports
+        ];
+
+        return view('adminFiles.studentperfomance',$data);
+    } else {
+        return redirect('/adminlogin');
+    } 
+}
+
+//Function to return student perfomance view
+public function studentPerfomance($stuid,$aid) {
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+
+    $notices = notifications::where('sid',$maxid)
+                    ->where('type','noticeboard')
+                    ->where('group','Parents')
+                    ->where('deleted',0)
+                    ->orderByDesc('id')
+                    ->get();
+
+    $uid = session()->get('LoggedInUser.id');
+
+    $notifications = notifications::where('sid',$maxid)
+                    ->where('type','noticeboard')
+                    ->orWhere('toberecievedby',$uid)
+                    ->where('deleted',0)
+                    ->orderByDesc('id')
+                    ->get();
+
+    $mymessages = notifications::where('sid',$maxid)
+                                ->where('type','parentmessage')
+                                ->where('uid',$uid)
+                                ->where('deleted',0)
+                                ->orderByDesc('id')
+                                ->get();
+                    
+    $parentstudents = Guardian::find($uid);
+            
+    $fnames = [];
+    $lnames = [];
+    $profiles = [];
+    $classes = [];
+    $ids = [];
+
+    $student = Student::find($stuid);
+    $resultthread = ResultThread::find($aid);
+
+    $examscores = computedfinalresulst::where('tid',$aid)
+                                      ->where('AdmissionNo',$student['AdmissionNo'])
+                                      ->orWhere('AdmissionNo',$student['UPI'])
+                                      ->get();
+
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'notices' => $notices,
+            'fnames' => $fnames,
+            'mymessages' => $mymessages,
+            'notifications' => $notifications,
+            'student' => $student,
+            'examscores' => $examscores[0],
+            'resultthread' => $resultthread
+        ];
+
+        return view('adminFiles.studentmarks',$data);
+    } else {
+        return redirect('/adminlogin');
+    } 
+}
+
+//Function to return CBC Analysis View
+public function cbcstudentPerfomance($stuid,$aid) {
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+
+        $notices = notifications::where('sid',$maxid)
+                        ->where('type','noticeboard')
+                        ->where('group','Parents')
+                        ->where('deleted',0)
+                        ->orderByDesc('id')
+                        ->get();
+    
+        $uid = session()->get('LoggedInUser.id');
+    
+        $notifications = notifications::where('sid',$maxid)
+                        ->where('type','noticeboard')
+                        ->orWhere('toberecievedby',$uid)
+                        ->where('deleted',0)
+                        ->orderByDesc('id')
+                        ->get();
+    
+        $mymessages = notifications::where('sid',$maxid)
+                                    ->where('type','parentmessage')
+                                    ->where('uid',$uid)
+                                    ->where('deleted',0)
+                                    ->orderByDesc('id')
+                                    ->get();
+                        
+        $parentstudents = Guardian::find($uid);
+                
+        $fnames = [];
+        $lnames = [];
+        $profiles = [];
+        $classes = [];
+        $ids = [];
+    
+        $student = Student::find($stuid);
+        $cbcassessment = cbcassessment::find($aid);
+        $studentmarks = cbcmarks::where('examid',$aid)
+                                ->where('AdmissionNo',$student['AdmissionNo'])
+                                ->orWhere('AdmissionNo',$student['UPI'])
+                                ->get();
+    
+            $data = [
+                'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+                'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+                'notices' => $notices,
+                'fnames' => $fnames,
+                'mymessages' => $mymessages,
+                'notifications' => $notifications,
+                'cbcassessment' => $cbcassessment,
+                'studentmarks' => $studentmarks,
+                'student' => $student
+            ];
+    
+            return view('adminFiles.cbcstudentmarks',$data);
+    } else {
+        return redirect('/adminlogin');
+    } 
+}
+
+//Function to return subject perfomance view
+public function subjectPerfomance($stuid,$subid) {
+    if (session()->has('schooldetails') && session()->has('LoggedInUser')) {
+        $maxid = session()->get('schooldetails.id');
+
+        $notices = notifications::where('sid',$maxid)
+                        ->where('type','noticeboard')
+                        ->where('group','Parents')
+                        ->where('deleted',0)
+                        ->orderByDesc('id')
+                        ->get();
+    
+        $uid = session()->get('LoggedInUser.id');
+    
+        $notifications = notifications::where('sid',$maxid)
+                        ->where('type','noticeboard')
+                        ->orWhere('toberecievedby',$uid)
+                        ->where('deleted',0)
+                        ->orderByDesc('id')
+                        ->get();
+    
+        $mymessages = notifications::where('sid',$maxid)
+                                    ->where('type','parentmessage')
+                                    ->where('uid',$uid)
+                                    ->where('deleted',0)
+                                    ->orderByDesc('id')
+                                    ->get();
+                        
+        $parentstudents = Guardian::find($uid);
+                
+        $fnames = [];
+        $lnames = [];
+        $profiles = [];
+        $classes = [];
+        $ids = [];
+    
+        $student = Student::find($stuid);
+        $reports = subjectreports::where('studentid',$student['id'])
+                                 ->where('subjectid',$subid)
+                                 ->orderByDesc('created_at')
+                                 ->get();
+    
+        $cbcscores = cbcmarks::where('subid',$subid)
+                            ->where('AdmissionNo',$student['AdmissionNo']) 
+                            ->orWhere('AdmissionNo',$student['UPI'])
+                            ->orderByDesc('created_at')
+                            ->get();
+    
+        $marks = FinalGrade::where('subid',$subid)
+                           ->where('AdmissionNo',$student['AdmissionNo'])
+                           ->orWhere('AdmissionNo',$student['UPI'])
+                           ->orderByDesc('created_at')
+                           ->get();
+    
+        $subject = Subject::find($subid);
+    
+        $cbcthreads = [];
+        $examthreads = [];
+        $cbcmarks = [];
+        $regmarks = [];
+        $cbcgrades = [];
+        $reggrades = [];
+        $cbcremarks = [];
+        $regremarks = [];
+        $availablescores = [];
+        $thescores = [];
+        $maxscores = [];
+    
+        foreach ($cbcscores as $key => $cbcscore) {
+            array_push($cbcmarks,$cbcscore->marks);
+            array_push($cbcremarks,$cbcscore->Remarks);
+            array_push($cbcgrades,$cbcscore->Grade);
+            array_push($maxscores,$cbcscore->maxscore);
+    
+            $cbcassessment = cbcassessment::find($cbcscore->examid);
+            array_push($cbcthreads,$cbcassessment['Assessment']);
+        }
+    
+        foreach ($marks as $key => $mark) {
+            array_push($regmarks,$mark->score);
+            array_push($reggrades,$mark->grade);
+            array_push($regremarks,$mark->Remarks);
+            array_push($availablescores,$mark->availablescores);
+            array_push($thescores,$mark->scores);
+    
+            $resultthreads = ResultThread::find($mark->tid);
+            array_push($examthreads,$resultthreads['name'].','.$resultthreads['term'].','.$resultthreads['year']);
+        }
+        
+        $data = [
+            'adminInfo' => DB::table('admins')->where('id', session('LoggedInUser'))->first(),
+            'schoolinfo' => DB::table('school__data')->where('id',$maxid)->first(),
+            'notices' => $notices,
+            'fnames' => $fnames,
+            'mymessages' => $mymessages,
+            'notifications' => $notifications,
+            'cbcthreads' => $cbcthreads,
+            'examthreads' => $examthreads,
+            'cbcmarks' => $cbcmarks,
+            'regmarks' => $regmarks,
+            'cbcgrades' => $cbcgrades,
+            'reggrades' => $reggrades,
+            'cbcremarks' => $cbcremarks,
+            'regremarks' => $regremarks,
+            'availablescores' => $availablescores,
+            'thescores' => $thescores,
+            'maxscores' => $maxscores,
+            'student' => $student,
+            'reports' => $reports,
+            'subject' => $subject['subject']
+        ];
+    
+        return view('adminFiles.subjectperfomance',$data);
+    } else {
+        return redirect('/adminlogin');
+    } 
+}
 
     //function to logout
     public function logoutAdmin(){

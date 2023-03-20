@@ -94,6 +94,8 @@
     <div id="commsdropdown" class="commsdropdown d-none w3-animate-top">
       <!-- <a href="/library"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Librarians</a> -->
       <a href="/communications" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send SMS Message</a>
+      <a href="/Fee-Reminders" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send Fee Reminders</a>
+      <a href="/Send-Exam-Results" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send Exam/Assessement Results</a>
       <a href="{{ route('admin.notify') }}" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send Notifications</a>
       <a href="/staff-noticeboard" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Notice Board</a>
       <a href="{{ route('admin.parentmessages') }}" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Parent Messages</a>
@@ -195,6 +197,8 @@
       <!-- <a href="/library"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Librarians</a> -->
       @if(in_array(13,explode(',',session()->get('LoggedInUser.priviledges'))))
       <a href="/communications" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send SMS Message</a>
+      <a href="/Fee-Reminders" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send Fee Reminders</a>
+      <a href="/Send-Exam-Results" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send Exam/Assessement Results</a>
       @endif
       <a href="{{ route('admin.notify') }}" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Send Notifications</a>
       <a href="/staff-noticeboard" class="text-decoration-none"><i class="fas fa-angle-right"></i><i class="fas fa-angle-right"></i>&nbsp;Notice Board</a>

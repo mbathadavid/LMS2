@@ -16,6 +16,58 @@
 </div>
 <div id="main" class="maincontent">
 @include('adminFiles.topnav')
+<!---Student Print Result Slip Modal--->
+<div class="modal fade" id="resultslipModal" tabindex="-1" aria-labelledby="resultslipModal">
+    <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title text-success text-center" id="teacheraddModalLabel">Print Student Result Slip</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div id="resultslipdiv">
+                    <button id="downloadresultslip" class="btn w3-red btn-sm mb-1"><i class="fas fa-file-pdf"></i>&nbsp;DOWNLOAD</button>
+                    <button id="printresultslip" class="btn w3-green btn-sm mb-1"><i class="fas fa-print"></i>&nbsp;PRINT</button>
+                <div id="theresultslip">
+                    <div class="row justify-content-center align-items-center">
+                    <h6 class="text-center text-success">{{ session()->get('schooldetails.name') }}</h6>
+                        <div id="resultsliplogo">
+                            <img src="{{ asset('images/' . session()->get('schooldetails.logo')) }}" class=" img-fluid" alt="">
+                        </div>
+                        <h6 class="text-center">{{ session()->get('schooldetails.motto') }}</h6>
+                        <h6 class="text-center">{{ session()->get('schooldetails.pobox') }} {{ session()->get('schooldetails.town') }}, {{ session()->get('schooldetails.phone') }}</h6>
+                    </div>
+                    <hr>
+                <h6 class="text-center"> Name : <span id="stuname" class="text-danger"></span>, Adm/UPI : <span id="adm" class="text-danger"></span>, Class : <span id="cls" class="text-danger"></span></h6>
+                <table class="table">
+                <thead>
+                    <tr class="w3-green">
+                        <th scope="col">Learning Area</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Grade</th>
+                        <th scope="col">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody id="subjectstable">
+                    
+                </tbody>
+                </table>
+                <div class="form-group mt-2">
+                    <label for=""><h6 class="text-danger"><b>Class Teacher Remarks</b></h6></label>
+                    <textarea class="form-control" style="width: 100%;" name="classteacherremarks" id="classteacherremarks" cols="30" rows="3">
+
+                    </textarea>
+                </div>
+                <h6 class="mt-2">Results for <span id="assessment" class="text-danger"></span> Produced by <b>{{ session()->get('LoggedInUser.Salutation') }} {{ session()->get('LoggedInUser.Fname') }} {{ session()->get('LoggedInUser.Lname') }}</b></h6>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+<!---Student Print Result Slip Modal--->
+
+
 <div class="row justify-content-center align-items-center">
     <div class="col-lg-10 col-md-10 col-sm-12">
     <form action="#" id="analysisform" method="post">
@@ -81,6 +133,8 @@ $(document).ready(function(){
         }
     });
 
+    var filename = "";
+
     //Submit Analysis form
     $("#analysisform").submit(function(e){
             e.preventDefault();
@@ -96,6 +150,7 @@ $(document).ready(function(){
                 data: formData,
                //dataType: 'json',
                success: function(res){
+                    //console.log(res.assessment.Assessment);
                     $('#subjectanalysebtn').val('VIEW MARKS');
                     $("#studentscores").html('');
 
@@ -111,6 +166,7 @@ $(document).ready(function(){
                         if (res.admupis.includes(admupi)) {
                             $.each(res.admsubs, function(key,item2){
                                 if (key == admupi) {
+                                    html += '<button assessment="'+res.assessment.Assessment+'" adm="'+admupi+'" cls="'+item.current_class+'" name="'+item.Fname+' '+item.Lname+'" admsubs="'+item2+'" admmarks="'+res.admmarks[key]+'" admmaxscores="'+res.admmaxscores[key]+'" admgrades="'+res.admgrades[key]+'" admremarks="'+res.admremarks[key]+'" id="actionbtn" class="btn-sm btn-danger m-1">Generate Result Slip</button>'
                                     html += '<div class="table-responsive">';
                                     html += '<table class="table">';
                                     html += '<thead class="w3-green">';
@@ -150,6 +206,67 @@ $(document).ready(function(){
                }
             })
         })
+
+        //Action btn clicking
+    $(document).on('click', '#actionbtn',function(e){
+         e.preventDefault();
+         var adm = $(this).attr('adm');
+         var adm = $(this).attr('adm');
+         var name = $(this).attr('name');
+         var cls = $(this).attr('cls');
+         var admsubs = $(this).attr('admsubs');
+         var admmarks = $(this).attr('admmarks');
+         var admmaxscores = $(this).attr('admmaxscores');
+         var admgrades = $(this).attr('admgrades');
+         var assessment = $(this).attr('assessment');
+         var admremarks = $(this).attr('admremarks');
+         filename = adm+' resultslip';
+
+         $("#resultslipModal").modal('show');
+
+         $("#subjectstable").html('');
+         $("#stuname").text(`${name}`);
+         $("#adm").text(`${adm}`);
+         $("#cls").text(`${cls}`);
+
+            for (let i = 0; i < admsubs.split(',').length; i++) {
+                    const element = admsubs.split(',')[i];
+                    html = '';
+                    html += '<tr>';
+                    html += '<td>'+element+'</td>';
+                    html += '<td>'+admmarks.split(',')[i]+'/'+admmaxscores.split(',')[i]+'</td>';
+                    html += '<td>'+admgrades.split(',')[i]+'</td>';
+                    html += '<td>'+admremarks.split(',')[i]+'</td>';
+                    html += '</tr>';
+                    $("#subjectstable").append(html);
+                }
+           $("#assessment").text(assessment);          
+     })
+
+       //Print Fee Receipt
+       $('#printresultslip').click(function(e){
+            e.preventDefault();
+            $("#theresultslip").print({
+            globalStyles : true,
+        })
+    })
+
+    //Download Fee Receipt
+    window.onload = function(){
+        document.getElementById('downloadresultslip').addEventListener('click',()=>{
+            const results = this.document.getElementById('theresultslip');
+
+            var opt = {
+                //margin: 0.5,
+                filename: `${filename}.pdf`,
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 1 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().from(results).set(opt).save();
+        })
+    }
 })
 </script>
 @endsection
